@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CHOSEN | Gate</title>
+    <style>
+        body { background-color: #000; color: #fff; font-family: 'serif'; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .container { text-align: center; }
+        .mapae { width: 120px; height: 120px; border: 1px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 50px; animation: rotate 25s linear infinite; color: #333; font-size: 1.5rem; }
+        @keyframes rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        h1 { font-weight: 100; letter-spacing: 12px; font-size: 0.9rem; color: #666; margin-bottom: 30px; }
+        input { background: none; border: none; border-bottom: 1px solid #222; color: #fff; text-align: center; padding: 12px; width: 220px; outline: none; transition: 0.6s; letter-spacing: 2px; }
+        input:focus { border-bottom-color: #fff; }
+        button { margin-top: 40px; background: none; border: 1px solid #222; color: #444; padding: 10px 40px; cursor: pointer; transition: 0.6s; letter-spacing: 3px; font-size: 0.8rem; }
+        button:hover { border-color: #fff; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mapae">?</div>
+        <h1>IDENTIFY YOURSELF</h1>
+        <input type="password" id="code" placeholder="ACCESS CODE" onkeypress="if(event.keyCode==13) login()">
+        <br>
+        <button onclick="login()">ENTER THE VOID</button>
+    </div>
+    <script>
+        function login() {
+            const val = document.getElementById('code').value;
+            // 테스트용 임시 코드: chosen111
+            if(val === "chosen111") {
+                alert("Welcome, the chosen one.");
+            } else {
+                alert("You are not the identified.");
+            }
+        }
+    </script>
+</body>
+</html>

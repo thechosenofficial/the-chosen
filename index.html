@@ -3,42 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CHOSEN | Identify Yourself</title>
+    <title>THE CHOSEN | Terminal v1.0</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: 'serif'; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .container { text-align: center; }
-        .mapae { width: 120px; height: 120px; border: 1px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 50px; animation: rotate 25s linear infinite; color: #333; font-size: 1.5rem; transition: 0.5s; }
-        @keyframes rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-        h1 { font-weight: 100; letter-spacing: 12px; font-size: 0.8rem; color: #666; margin-bottom: 30px; text-transform: uppercase; }
-        input { background: none; border: none; border-bottom: 1px solid #222; color: #fff; text-align: center; padding: 12px; width: 240px; outline: none; transition: 0.6s; letter-spacing: 2px; font-size: 0.9rem; }
-        input:focus { border-bottom-color: #fff; }
-        button { margin-top: 40px; background: none; border: 1px solid #222; color: #444; padding: 10px 40px; cursor: pointer; transition: 0.6s; letter-spacing: 3px; font-size: 0.7rem; text-transform: uppercase; }
-        button:hover { border-color: #fff; color: #fff; }
+        /* MS-DOS 네온 그린 감성 설정 */
+        body { 
+            background-color: #000; 
+            color: #00FF41; /* 클래식 터미널 그린 */
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            text-shadow: 0 0 5px #00FF41; /* 글자 발광 효과 */
+        }
+        .terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 2; background-size: 100% 2px, 3px 100%; }
+        .container { text-align: center; z-index: 3; }
+        .mapae { font-size: 3rem; margin-bottom: 20px; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        h1 { font-size: 1.2rem; letter-spacing: 5px; margin-bottom: 40px; }
+        
+        /* 분절된 입력창 스타일 */
+        .code-group { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 30px; }
+        .code-input { 
+            background: none; border: 1px solid #00FF41; color: #00FF41; 
+            text-align: center; width: 60px; height: 40px; font-size: 1rem;
+            font-family: 'Courier New', monospace; outline: none;
+        }
+        .hyphen { font-size: 1.5rem; }
+
+        button { 
+            background: #00FF41; color: #000; border: none; 
+            padding: 10px 30px; cursor: pointer; font-family: inherit;
+            font-weight: bold; margin-top: 20px; transition: 0.3s;
+        }
+        button:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; }
+        
+        .buy-ticket { 
+            margin-top: 30px; display: block; color: #00FF41; 
+            text-decoration: none; font-size: 0.8rem; opacity: 0.7; 
+        }
+        .buy-ticket:hover { text-decoration: underline; opacity: 1; }
     </style>
 </head>
 <body>
+    <div class="terminal-overlay"></div>
     <div class="container">
-        <div class="mapae" id="icon">?</div>
-        <h1>Identify Yourself</h1>
-        <input type="password" id="code" placeholder="ACCESS CODE" onkeypress="if(event.keyCode==13) login()">
-        <br>
-        <button onclick="login()">Enter the Void</button>
+        <div class="mapae">> ? _</div>
+        <h1>IDENTIFY YOURSELF</h1>
+        
+        <div class="code-group">
+            <input type="text" maxlength="3" class="code-input" id="c1" placeholder="ㅁㅁㅁ" oninput="moveNext(this, 'c2')">
+            <span class="hyphen">-</span>
+            <input type="text" maxlength="4" class="code-input" id="c2" placeholder="ㅁㅁㅁㅁ" oninput="moveNext(this, 'c3')">
+            <span class="hyphen">-</span>
+            <input type="text" maxlength="4" class="code-input" id="c3" placeholder="ㅁㅁㅁㅁ" oninput="moveNext(this, 'c4')">
+            <span class="hyphen">-</span>
+            <input type="text" maxlength="4" class="code-input" id="c4" placeholder="ㅁㅁㅁㅁ">
+        </div>
+
+        <button onclick="checkAccess()">ENTER THE TEMPLE</button>
+        <a href="#" class="buy-ticket" onclick="alert('OpenSea Page Coming Soon...')">BUY TICKET</a>
     </div>
 
     <script>
-        async function login() {
-            const input = document.getElementById('code').value;
-            if (!input) return;
+        // 자동 커서 이동 로직
+        function moveNext(current, nextId) {
+            if (current.value.length >= current.maxLength) {
+                document.getElementById(nextId).focus();
+            }
+        }
 
-            // 보안을 위한 해시 대조 로직 (내일 1,111개 전체 리스트 연동 예정)
-            // 임시 테스트 코드: TC1-A8K2-F9N3-X7P1
-            if(input === "TC1-A8K2-F9N3-X7P1") {
-                document.getElementById('icon').style.color = "#fff";
-                document.getElementById('icon').style.borderColor = "#fff";
-                alert("Welcome, the chosen guardian.");
-                window.location.href = "inner-sanctum.html"; 
+        function checkAccess() {
+            const code = `${document.getElementById('c1').value}-${document.getElementById('c2').value}-${document.getElementById('c3').value}-${document.getElementById('c4').value}`;
+            
+            // 테스트용 코드: TC1-A8K2-F9N3-X7P1
+            if(code.toUpperCase() === "TC1-A8K2-F9N3-X7P1") {
+                alert("ACCESS GRANTED. WELCOME GUARDIAN.");
+                window.location.href = "inner-sanctum.html";
             } else {
-                alert("You are not the identified.");
+                alert("ACCESS DENIED. SYSTEM REBOOTING...");
+                location.reload();
             }
         }
     </script>

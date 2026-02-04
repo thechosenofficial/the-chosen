@@ -5,97 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Chosen</title>
     <style>
-        /* Apple Dark Mode Aesthetics */
-        :root {
-            --bg-color: #000000;
-            --container-bg: #1c1c1e;
-            --text-main: #ffffff;
-            --text-secondary: #86868b;
-            --input-bg: #2c2c2e;
-            --accent-blue: #0071e3;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background-color: #000; /* 완전한 검정 */
+            color: #fff;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
+            font-family: -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
-
-        .login-card {
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 40px;
-            color: var(--text-main);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
+        .content { text-align: center; width: 90%; max-width: 320px; }
+        h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 50px; }
         input {
-            width: 100%;
-            padding: 18px 15px;
-            background-color: var(--input-bg);
-            border: 1px solid #3a3a3c;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 17px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;
+            width: 100%; padding: 16px; background: #1c1c1e; border: 1px solid #333;
+            border-radius: 12px; color: #fff; font-size: 16px; box-sizing: border-box;
+            outline: none; margin-bottom: 30px; text-align: center;
         }
-
-        input:focus {
-            border-color: var(--accent-blue);
+        .btn-main {
+            width: 100%; padding: 16px; background: #fff; color: #000;
+            border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
+            cursor: pointer; margin-bottom: 12px;
         }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 30px;
+        .btn-sub {
+            background: none; border: none; color: #0071e3; font-size: 14px;
+            cursor: pointer; width: 100%; text-decoration: none;
         }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: opacity 0.2s ease;
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>The Chosen</h1>
+        <input type="password" id="pw" placeholder="Access Code" onkeypress="if(event.keyCode==13) enter()">
+        <button class="btn-main" onclick="enter()">LOGIN</button>
+        <a href="https://opensea.io/" target="_blank" class="btn-sub">BUY TICKET</a>
+    </div>
+    <script>
+        function enter() {
+            const v = document.getElementById('pw').value.toUpperCase();
+            if(v === "TC1-A8K2-F9N3-X7P1") {
+                window.location.href = "inner-sanctum.html";
+            } else {
+                alert("Access Denied.");
+            }
         }
-
-        .btn-login {
-            background-color: var(--text-main);
-            color: #000;
-        }
-
-        .btn-buy {
-            background: none;
-            color: var(--accent-blue);
-            font-size: 15px;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        footer {
-            margin-top:
+    </script>
+</body>
+</html>

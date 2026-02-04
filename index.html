@@ -4,52 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Chosen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&display=swap" rel="stylesheet">
     <style>
+        /* Gemini Dark Mode Palette */
+        :root {
+            --gemini-bg: #131314; /* 제미나이 다크 배경색 */
+            --input-border: #444746;
+            --text-main: #e3e3e3;
+            --text-white: #ffffff;
+            --apple-gray: #8e8e93;
+        }
+
         body {
-            background-color: #000; /* 완전한 검정 */
-            color: #fff;
-            margin: 0;
+            background-color: var(--gemini-bg);
+            color: var(--text-main);
+            font-family: 'Caesar Dressing', cursive; /* 요청하신 폰트 적용 */
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            font-family: -apple-system, sans-serif;
+            margin: 0;
             -webkit-font-smoothing: antialiased;
         }
-        .content { text-align: center; width: 90%; max-width: 320px; }
-        h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 50px; }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: normal;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        /* 얄상하고 긴 입력창 & 애플 스타일 화살표 버튼 */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
         input {
-            width: 100%; padding: 16px; background: #1c1c1e; border: 1px solid #333;
-            border-radius: 12px; color: #fff; font-size: 16px; box-sizing: border-box;
-            outline: none; margin-bottom: 30px; text-align: center;
+            width: 100%;
+            padding: 12px 50px 12px 20px; /* 오른쪽 버튼 공간 확보 */
+            background: transparent;
+            border: 1px solid var(--input-border);
+            border-radius: 30px; /* 얄상한 라운드 */
+            color: var(--text-white);
+            font-size: 16px;
+            font-family: 'Courier New', monospace; /* 코드 가독성을 위해 */
+            outline: none;
+            transition: border-color 0.3s;
         }
-        .btn-main {
-            width: 100%; padding: 16px; background: #fff; color: #000;
-            border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
-            cursor: pointer; margin-bottom: 12px;
+
+        input:focus {
+            border-color: var(--text-white);
         }
-        .btn-sub {
-            background: none; border: none; color: #0071e3; font-size: 14px;
-            cursor: pointer; width: 100%; text-decoration: none;
+
+        .arrow-login {
+            position: absolute;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            background-color: var(--text-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .arrow-login:hover {
+            transform: scale(1.1);
+        }
+
+        .arrow-login svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--gemini-bg);
+        }
+
+        /* 흰색 BUY TICKET 버튼 */
+        .buy-ticket {
+            display: block;
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .buy-ticket:hover {
+            opacity: 1;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="content">
+
+    <div class="container">
         <h1>The Chosen</h1>
-        <input type="password" id="pw" placeholder="Access Code" onkeypress="if(event.keyCode==13) enter()">
-        <button class="btn-main" onclick="enter()">LOGIN</button>
-        <a href="https://opensea.io/" target="_blank" class="btn-sub">BUY TICKET</a>
+        
+        <div class="input-wrapper">
+            <input type="password" id="accessCode" placeholder="Access Code" onkeypress="if(event.keyCode==13) login()">
+            <button class="arrow-login" onclick="login()">
+                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+            </button>
+        </div>
+
+        <a href="https://opensea.io/" target="_blank" class="buy-ticket">BUY TICKET</a>
     </div>
+
     <script>
-        function enter() {
-            const v = document.getElementById('pw').value.toUpperCase();
-            if(v === "TC1-A8K2-F9N3-X7P1") {
+        function login() {
+            const code = document.getElementById('accessCode').value.toUpperCase();
+            // Test Code: TC1-A8K2-F9N3-X7P1
+            if(code === "TC1-A8K2-F9N3-X7P1") {
                 window.location.href = "inner-sanctum.html";
             } else {
-                alert("Access Denied.");
+                alert("ACCESS DENIED.");
             }
         }
     </script>
+
 </body>
 </html>

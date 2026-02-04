@@ -3,33 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CHOSEN | Gate</title>
+    <title>THE CHOSEN | Identify Yourself</title>
     <style>
         body { background-color: #000; color: #fff; font-family: 'serif'; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
         .container { text-align: center; }
-        .mapae { width: 120px; height: 120px; border: 1px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 50px; animation: rotate 25s linear infinite; color: #333; font-size: 1.5rem; }
+        .mapae { width: 120px; height: 120px; border: 1px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 50px; animation: rotate 25s linear infinite; color: #333; font-size: 1.5rem; transition: 0.5s; }
         @keyframes rotate { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-        h1 { font-weight: 100; letter-spacing: 12px; font-size: 0.9rem; color: #666; margin-bottom: 30px; }
-        input { background: none; border: none; border-bottom: 1px solid #222; color: #fff; text-align: center; padding: 12px; width: 220px; outline: none; transition: 0.6s; letter-spacing: 2px; }
+        h1 { font-weight: 100; letter-spacing: 12px; font-size: 0.8rem; color: #666; margin-bottom: 30px; text-transform: uppercase; }
+        input { background: none; border: none; border-bottom: 1px solid #222; color: #fff; text-align: center; padding: 12px; width: 240px; outline: none; transition: 0.6s; letter-spacing: 2px; font-size: 0.9rem; }
         input:focus { border-bottom-color: #fff; }
-        button { margin-top: 40px; background: none; border: 1px solid #222; color: #444; padding: 10px 40px; cursor: pointer; transition: 0.6s; letter-spacing: 3px; font-size: 0.8rem; }
+        button { margin-top: 40px; background: none; border: 1px solid #222; color: #444; padding: 10px 40px; cursor: pointer; transition: 0.6s; letter-spacing: 3px; font-size: 0.7rem; text-transform: uppercase; }
         button:hover { border-color: #fff; color: #fff; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="mapae">?</div>
-        <h1>IDENTIFY YOURSELF</h1>
+        <div class="mapae" id="icon">?</div>
+        <h1>Identify Yourself</h1>
         <input type="password" id="code" placeholder="ACCESS CODE" onkeypress="if(event.keyCode==13) login()">
         <br>
-        <button onclick="login()">ENTER THE VOID</button>
+        <button onclick="login()">Enter the Void</button>
     </div>
+
     <script>
-        function login() {
-            const val = document.getElementById('code').value;
-            // 테스트용 임시 코드: chosen111
-            if(val === "chosen111") {
-                alert("Welcome, the chosen one.");
+        async function login() {
+            const input = document.getElementById('code').value;
+            if (!input) return;
+
+            // 보안을 위한 해시 대조 로직 (내일 1,111개 전체 리스트 연동 예정)
+            // 임시 테스트 코드: TC1-A8K2-F9N3-X7P1
+            if(input === "TC1-A8K2-F9N3-X7P1") {
+                document.getElementById('icon').style.color = "#fff";
+                document.getElementById('icon').style.borderColor = "#fff";
+                alert("Welcome, the chosen guardian.");
+                window.location.href = "inner-sanctum.html"; 
             } else {
                 alert("You are not the identified.");
             }

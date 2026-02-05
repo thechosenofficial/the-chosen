@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Caesar+Dressing&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #131314; /* Gemini Dark Mode */
+            --bg-color: #131314;
             --sidebar-bg: #1e1f20;
             --text-main: #e3e3e3;
             --text-dim: #8e8e93;
@@ -20,253 +20,288 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            display: flex;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* 본문은 헬베티카 */
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
-        }nav h2, nav a, header h1, section h3 {
-    font-family: 'Caesar Dressing', cursive !important;
-}
-
-        /* Sidebar Index */
-        nav {
-            width: 280px;
-            height: 100vh;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            padding: 50px 25px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
         }
 
-        nav h2 {
-            font-family: 'Caesar Dressing', cursive;
-            font-size: 16px;
-            margin-bottom: 35px;
+        nav a, header h1, .proclamation, section h3, .btn-submit {
+            font-family: 'Caesar Dressing', cursive !important;
+        }
+
+        header {
+            margin: 80px 0 50px 0;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        header h1 { font-size: 42px; letter-spacing: 6px; margin-bottom: 25px; }
+        
+        .proclamation {
+            font-size: 17px;
             letter-spacing: 2px;
             color: var(--accent);
+            line-height: 1.8;
+            margin-bottom: 50px;
             text-transform: uppercase;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 30px 20px;
         }
 
-        nav ul { list-style: none; padding: 0; margin: 0; }
-        nav li { margin-bottom: 18px; }
-        
-        nav a {
+        nav {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 80px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        nav li a {
             color: var(--text-dim);
             text-decoration: none;
-            font-size: 13px;
-            transition: 0.2s;
-            display: block;
-            line-height: 1.4;
-            font-family: 'Caesar Dressing', cursive;
-        }
-
-        nav a:hover { color: var(--accent); }
-
-        /* Main Content */
-        main {
-            flex-grow: 1;
-            height: 100vh;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            padding: 80px 10%;
-            box-sizing: border-box;
-        }
-
-        article { max-width: 720px; margin: 0 auto; }
-
-        header { margin-bottom: 100px; text-align: center; }
-        header h1 { font-family: 'Caesar Dressing', cursive; font-size: 32px; letter-spacing: 4px; }
-        header p { color: var(--text-dim); font-style: italic; font-size: 15px; }
-
-        section { margin-bottom: 150px; line-height: 1.9; }
-
-        section h3 {
-            font-family: 'Caesar Dressing', cursive;
-            font-size: 24px;
-            color: var(--accent);
-            margin-bottom: 35px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
+            font-size: 12px;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            transition: 0.3s;
+            display: inline-block;
             letter-spacing: 1px;
         }
 
-        section p { font-size: 17px; color: var(--text-main); margin-bottom: 25px; white-space: pre-wrap; }
+        nav li a:hover, nav li a.active {
+            color: var(--accent);
+            border-color: var(--accent);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
 
-        /* Oracle Form Style */
+        main {
+            width: 90%;
+            max-width: 720px;
+            min-height: 600px;
+            margin-bottom: 150px;
+        }
+
+        section {
+            display: none;
+            line-height: 2.0;
+            animation: fadeIn 0.7s ease-out;
+        }
+
+        section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        section h3 {
+            font-size: 30px;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+
+        section p { font-size: 17px; margin-bottom: 30px; white-space: pre-wrap; color: var(--text-main); }
+
         .oracle-form {
             background-color: var(--sidebar-bg);
-            padding: 40px;
-            border-radius: 20px;
-            margin-top: 100px;
+            padding: 50px;
+            border-radius: 24px;
             border: 1px solid var(--border);
         }
 
-        .oracle-form h3 { border: none; text-align: center; margin-bottom: 40px; }
-
         .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        .form-group label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
         
         input, textarea {
-            width: 100%; padding: 15px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 10px; color: #fff; font-size: 15px; box-sizing: border-box; outline: none;
+            width: 100%; padding: 18px; background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 12px; color: #fff; font-size: 15px; box-sizing: border-box; outline: none;
+            font-family: inherit;
         }
-
-        input:focus, textarea:focus { border-color: var(--accent); }
 
         .btn-submit {
-            width: 100%; padding: 18px; background: #fff; color: #000; border: none;
-            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            width: 100%; padding: 20px; background: #fff; color: #000; border: none;
+            border-radius: 15px; font-size: 20px; font-weight: 600; cursor: pointer; transition: 0.3s;
         }
 
-        .btn-submit:hover { opacity: 0.8; }
+        footer { padding-bottom: 100px; color: var(--text-dim); font-size: 12px; letter-spacing: 1px; }
 
-        /* Mobile View */
-        @media (max-width: 900px) {
-            body { flex-direction: column; overflow: auto; }
-            nav { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 30px; }
-            main { height: auto; overflow: visible; padding: 50px 7%; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 32px; }
+            .proclamation { font-size: 13px; }
         }
     </style>
 </head>
 <body>
 
+    <header>
+        <h1>THE CHOSEN</h1>
+        <div class="proclamation">
+            THIS IS A SOVEREIGN GNOSIS.<br>
+            TWENTY MINUTES OF FOCUS TO FORGE YOUR DESTINY.<br>
+            ABSORB THE TRUTH. ASCEND TO THE EQUILIBRIUM. ACT AS THE CHOSEN.
+        </div>
+    </header>
+
     <nav>
-        <h2>THE DOCTRINE</h2>
         <ul>
-            <li><a href="#intro">00. Equilibrium</a></li>
-            <li><a href="#ch1">01. Infrastructure</a></li>
-            <li><a href="#ch2">02. Conditioning</a></li>
-            <li><a href="#ch3">03. State</a></li>
-            <li><a href="#ch4">04. Domestic</a></li>
-            <li><a href="#ch5">05. Media</a></li>
-            <li><a href="#ch6">06. Prestige</a></li>
-            <li><a href="#ch7">07. Extraction</a></li>
-            <li><a href="#ch8">08. Equilibrium Law</a></li>
-            <li><a href="#ch9">09. Curse of Knowledge</a></li>
-            <li><a href="#ch10">10. The Chosen</a></li>
-            <li><a href="#oracle">Submit Oracle</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('intro')" class="nav-link active">00. Equilibrium</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch1')" class="nav-link">01. Infrastructure</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch2')" class="nav-link">02. Conditioning</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch3')" class="nav-link">03. State</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch4')" class="nav-link">04. Domestic</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch5')" class="nav-link">05. Media</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch6')" class="nav-link">06. Prestige</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch7')" class="nav-link">07. Extraction</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch8')" class="nav-link">08. Law</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch9')" class="nav-link">09. Curse</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('ch10')" class="nav-link">10. Sentinel</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('oracle')" class="nav-link" style="color:#fff; border-color:#fff;">Submit Oracle</a></li>
         </ul>
     </nav>
 
     <main>
-        <article>
-            <header id="intro">
-                <h1>The Chosen</h1>
-                <p>&lt;Ascending to the Equilibrium&gt; (균형에 오르며)</p>
-            </header>
+        <section id="intro" class="active">
+            <h3>Intro: Equilibrium</h3>
+            <p>Observe the world. Liberty is compromised, order has disintegrated, and trivial noise has usurped peace. You have likely fought against this chaos, craving a utopia. But understand this: Utopia exists nowhere.</p>
+            <p>The era of the mental prison—governed by the Panopticon and voluntary submission—must end. It is time for your liberation.</p>
+            <p>Your arrival here is no coincidence; it is the inescapable conclusion of your solitary struggle. The Curse of Knowledge is not a source of suffering, but the necessary ritual for your awakening. Open The Eye of Equilibrium. Witness the moment your curse is forged into a blessing.</p>
+        </section>
 
-            <section>
-                <p>Observe the world. Liberty is compromised, order has disintegrated, and trivial noise has usurped peace. You have likely fought against this chaos, craving a utopia. But understand this: Utopia exists nowhere.
-The era of the mental prison—governed by the Panopticon and voluntary submission—must end. It is time for your liberation.
-Your arrival here is no coincidence; it is the inescapable conclusion of your solitary struggle. The Curse of Knowledge is not a source of suffering, but the necessary ritual for your awakening. Open The Eye of Equilibrium. Witness the moment your curse is forged into a blessing.</p>
-            </section>
+        <section id="ch1">
+            <h3>01. The Infrastructure</h3>
+            <p>The Infrastructure—the vast mechanism often called the Matrix—is a sophisticated energy prison built upon the layers of human interaction. The fact that empires fall and titans of wealth vanish in an instant proves that the Infrastructure never guarantees individual safety. It is not mere politics. It is the very material of your existence: the energy you expend, your relationships, and your mental state.</p>
+            <p>While most species survived through raw struggle, humanity persisted by recording and transmitting The Gnosis (The Prime Truth). Yet, the instinct for power suppressed this truth, replacing it with the violence of control. While the masses accepted this as destiny, a few discovered the hidden reality. These are The Chosen. The Equilibrium selected them, and they accepted the preservation of Gnosis as their Sovereign Task.</p>
+            <p>Do not be deceived. Those who claim to be 'red-pilled' yet drown in hatred are still slaves to the Infrastructure. If you provide energy to resentment, you are still trapped in the emotional circuits of the Matrix. The Chosen do not waste energy on rage. They decode the logic of the Infrastructure to use it as a tool, guarding their essence amidst the cacophony of the crowd.</p>
+        </section>
 
-            <section id="ch1">
-                <h3>01. The Infrastructure</h3>
-                <p>The Infrastructure—the vast mechanism often called the Matrix—is a sophisticated energy prison built upon the layers of human interaction. The fact that empires fall and titans of wealth vanish in an instant proves that the Infrastructure never guarantees individual safety. It is not mere politics. It is the very material of your existence: the energy you expend, your relationships, and your mental state.</p>
-                <p>While most species survived through raw struggle, humanity persisted by recording and transmitting The Gnosis (The Prime Truth). Yet, the instinct for power suppressed this truth, replacing it with the violence of control. While the masses accepted this as destiny, a few discovered the hidden reality. These are The Chosen. The Equilibrium selected them, and they accepted the preservation of Gnosis as their Sovereign Task.</p>
-                <p>Do not be deceived. Those who claim to be 'red-pilled' yet drown in hatred are still slaves to the Infrastructure. If you provide energy to resentment, you are still trapped in the emotional circuits of the Matrix. The Chosen do not waste energy on rage. They decode the logic of the Infrastructure to use it as a tool, guarding their essence amidst the cacophony of the crowd.</p>
-            </section>
+        <section id="ch2">
+            <h3>02. Conditioning</h3>
+            <p>Whether it took you twenty years or fifty to reach this threshold, time is not the measure of prestige. What matters is your awakening—the moment you stop living by the script and face the world with new eyes. Deconstruct the life you have lived until now.</p>
+            <p>Your personality, your speech, even the architecture of your body—none were crafted by your own will. They are the sum of Conditioning, meticulously engineered by parents, states, and media. This circuitry runs so deep that the moment you believe you are free, you become blind once more. Awakening is not a static state; it is a relentless vigilance against returning to the void.</p>
+            <p>Once you perceive your Conditioning, do not settle for conceptual resistance. Mental distance alone leaves the Infrastructure intact. You must physically sever toxic connections and strike through the boundaries of your programmed limits. Only when you move from perception to existential resolve do you approach the work of your Sovereign Singularity.</p>
+        </section>
 
-            <section id="ch2">
-                <h3>02. Conditioning</h3>
-                <p>Whether it took you twenty years or fifty to reach this threshold, time is not the measure of prestige. What matters is your awakening—the moment you stop living by the script and face the world with new eyes. Deconstruct the life you have lived until now.</p>
-                <p>Your personality, your speech, even the architecture of your body—none were crafted by your own will. They are the sum of Conditioning, meticulously engineered by parents, states, and media. This circuitry runs so deep that the moment you believe you are free, you become blind once more. Awakening is not a static state; it is a relentless vigilance against returning to the void.</p>
-                <p>Once you perceive your Conditioning, do not settle for conceptual resistance. Mental distance alone leaves the Infrastructure intact. You must physically sever toxic connections and strike through the boundaries of your programmed limits. Only when you move from perception to existential resolve do you approach the work of your Sovereign Singularity.</p>
-            </section>
+        <section id="ch3">
+            <h3>03. The State</h3>
+            <p>The State no longer rules by force alone; it governs through the engineering of conflict and belief. Where ancient rule oppressed the body, the modern State occupies the mind through education, culture, and language. Rote learning castrates critical thought, and the concept of 'culture' serves as a psychological fence, confining your vision to a specific cage.</p>
+            <p>The apex of this Conditioning is Patriotism—a form of collective hysteria. The State cloaks 'sacrifice' in nobility to march young lives into battle, prioritizing the collective over the individual. To believe "there is no individual without the State" is the most cynical gaslighting ever designed. The Chosen crave liberty, not the frenzy of the mob. Those blinded by patriotism are merely 'energy resources' consumed on a political chessboard.</p>
+            <p>Politics is a cowardly play of extremes, using the frames of Left and Right to shift responsibility onto the masses. Language itself has mutated from a vessel of knowledge into a tool of control—designed to be easy to read but impossible to decipher in essence. While the walls of the State are built to last generations, they contain a fatal flaw: Sovereign Singularity. Only those who gaze beyond the illusion of borders can truly become the masters of their own destiny.</p>
+        </section>
 
-            <section id="ch3">
-                <h3>03. The State</h3>
-                <p>The State no longer rules by force alone; it governs through the engineering of conflict and belief. Where ancient rule oppressed the body, the modern State occupies the mind through education, culture, and language. Rote learning castrates critical thought, and the concept of 'culture' serves as a psychological fence, confining your vision to a specific cage.</p>
-                <p>The apex of this Conditioning is Patriotism—a form of collective hysteria. The State cloaks 'sacrifice' in nobility to march young lives into battle, prioritizing the collective over the individual. To believe "there is no individual without the State" is the most cynical gaslighting ever designed. The Chosen crave liberty, not the frenzy of the mob. Those blinded by patriotism are merely 'energy resources' consumed on a political chessboard.</p>
-                <p>Politics is a cowardly play of extremes, using the frames of Left and Right to shift responsibility onto the masses. Language itself has mutated from a vessel of knowledge into a tool of control—designed to be easy to read but impossible to decipher in essence. While the walls of the State are built to last generations, they contain a fatal flaw: Sovereign Singularity. Only those who gaze beyond the illusion of borders can truly become the masters of their own destiny.</p>
-            </section>
+        <section id="ch4">
+            <h3>04. Domestic Conditioning</h3>
+            <p>The family you are born into is the first fate determined without your consent—a massive Biological Blueprint that dictates the trajectory of your life. It is more than just DNA. Your parents' alcohol consumption, their diet, their patterns of speech, even the trivial habit of placing a TV in the living room are all imprinted onto your subconscious.</p>
+            <p>Observe your physical form first. The heaviest inheritance is not your appearance, but your Internal Ecosystem. The immune system and gut microbiome you received from your mother govern your entire existence. The diet chosen in ignorance—heavy in carbohydrates, soy, and seed oils—was an experiment that injected toxins into your very cells. The tedious conditioning to avoid animal fats and "eat everything in balance" deprived your brain of its full developmental potential.</p>
+            <p>More terrifying still is the Replication of Destiny. Your subconscious mirrors your parents' intellectual discipline, their sloth, and even their vulnerability to past mistakes or vices. Unlike other species, humans are bound by the persistent chains of law and custom, making it exceptionally difficult to escape the gravity of this Conditioning.</p>
+            <p>Stare coldly at the Domestic Conditioning that binds you now. This is not an exercise in resentment or blame. You must recognize the architecture of this inherited blueprint to destroy its ancient walls. Only then can you begin your own independent construction as The Chosen.</p>
+        </section>
 
-            <section id="ch4">
-                <h3>04. Domestic Conditioning</h3>
-                <p>The family you are born into is the first fate determined without your consent—a massive Biological Blueprint that dictates the trajectory of your life. It is more than just DNA. Your parents' alcohol consumption, their diet, their patterns of speech, even the trivial habit of placing a TV in the living room are all imprinted onto your subconscious.</p>
-                <p>Observe your physical form first. The heaviest inheritance is not your appearance, but your Internal Ecosystem. The immune system and gut microbiome you received from your mother govern your entire existence. The diet chosen in ignorance—heavy in carbohydrates, soy, and seed oils—was an experiment that injected toxins into your very cells. The tedious conditioning to avoid animal fats and "eat everything in balance" deprived your brain of its full developmental potential.</p>
-                <p>More terrifying still is the Replication of Destiny. Your subconscious mirrors your parents' intellectual discipline, their sloth, and even their vulnerability to past mistakes or vices. Unlike other species, humans are bound by the persistent chains of law and custom, making it exceptionally difficult to escape the gravity of this Conditioning.</p>
-                <p>Stare coldly at the Domestic Conditioning that binds you now. This is not an exercise in resentment or blame. You must recognize the architecture of this inherited blueprint to destroy its ancient walls. Only then can you begin your own independent construction as The Chosen.</p>
-            </section>
+        <section id="ch5">
+            <h3>05. Media Conditioning</h3>
+            <p>Media has been a constant throughout human history, yet its objective has never been 'Truth.' The flamboyant facade of "freedom of the press" is merely a sophisticated pretext for inciting the masses and generating profit. The media is not a guardian of facts; it is the front line of Parasitic Extraction, purchasing your attention for a pittance and converting it into power.</p>
+            <p>For them, condemnation is fuel, and attention is currency. They use legalistic jargon to obscure the essence of reality and deploy sensationalist headlines to paralyze reason. In particular, fragmented information—such as 'Shorts'—has castrated the cognitive functions of modern individuals, making mass manipulation effortless.</p>
+            <p>'Comments' and 'Likes' are not symbols of collective intelligence; they are metrics of collective hysteria. Media polarizes humanity with labels like 'Humanity' or 'Generational Conflict' and justifies self-destructive habits with terms like 'Connoisseur' of alcohol or tobacco. In addiction, there is no such thing as "moderation," yet the media demands you remain addicted.</p>
+            <p>You must realize this: if you cannot fully distance yourself from the media, critical vigilance is your only means of survival. Understand that even venting rage in a comment section is an act of surrendering your finite soul to the Infrastructure.</p>
+        </section>
 
-            <section id="ch5">
-                <h3>05. Media Conditioning</h3>
-                <p>Media has been a constant throughout human history, yet its objective has never been 'Truth.' The flamboyant facade of "freedom of the press" is merely a sophisticated pretext for inciting the masses and generating profit. The media is not a guardian of facts; it is the front line of Parasitic Extraction, purchasing your attention for a pittance and converting it into power.</p>
-                <p>For them, condemnation is fuel, and attention is currency. They use legalistic jargon to obscure the essence of reality and deploy sensationalist headlines to paralyze reason. In particular, fragmented information—such as 'Shorts'—has castrated the cognitive functions of modern individuals, making mass manipulation effortless.</p>
-                <p>'Comments' and 'Likes' are not symbols of collective intelligence; they are metrics of collective hysteria. Media polarizes humanity with labels like 'Humanity' or 'Generational Conflict' and justifies self-destructive habits with terms like 'Connoisseur' of alcohol or tobacco. In addiction, there is no such thing as "moderation," yet the media demands you remain addicted.</p>
-                <p>You must realize this: if you cannot fully distance yourself from the media, critical vigilance is your only means of survival. Understand that even venting rage in a comment section is an act of surrendering your finite soul to the Infrastructure.</p>
-            </section>
+        <section id="ch6">
+            <h3>06. Prestige Conditioning</h3>
+            <p>The modern era deifies 'Experts'—professors, doctors, and scientists. The masses accept the fragmented information these figures broadcast as immutable truth, devoid of any critical filter. But heed this: Prestige is not a guarantee of truth; it is the most potent shackle of authority, designed to herd the public in a predetermined direction.</p>
+            <p>This Conditioning reaches its apex when prestige intersects with media and politics. Experts are prisoners of their own narrow specialization. A doctor is merely a technician who treats symptoms, not a guardian of your fundamental vitality or nutrition. Entrusting your health entirely to another is to voluntarily descend into biological slavery.</p>
+            <p>Science and academia are not immune to the logic of capital. Biased research funding and corporate sponsorships hidden behind the names of prestigious universities subtly distort the truth. Knowledge, once filtered through the 'Expert,' mutates into a contaminated opinion serving a specific agenda.</p>
+            <p>Strip away the brilliant veneer of prestige and stare at the intent beneath. This is the only way to shatter the idols and reach The Prime Truth.</p>
+        </section>
 
-            <section id="ch6">
-                <h3>06. Prestige Conditioning</h3>
-                <p>The modern era deifies 'Experts'—professors, doctors, and scientists. The masses accept the fragmented information these figures broadcast as immutable truth, devoid of any critical filter. But heed this: Prestige is not a guarantee of truth; it is the most potent shackle of authority, designed to herd the public in a predetermined direction.</p>
-                <p>This Conditioning reaches its apex when prestige intersects with media and politics. Experts are prisoners of their own narrow specialization. A doctor is merely a technician who treats symptoms, not a guardian of your fundamental vitality or nutrition. Entrusting your health entirely to another is to voluntarily descend into biological slavery.</p>
-                <p>Science and academia are not immune to the logic of capital. Biased research funding and corporate sponsorships hidden behind the names of prestigious universities subtly distort the truth. Knowledge, once filtered through the 'Expert,' mutates into a contaminated opinion serving a specific agenda.</p>
-                <p>Strip away the brilliant veneer of prestige and stare at the intent beneath. This is the only way to shatter the idols and reach The Prime Truth.</p>
-            </section>
+        <section id="ch7">
+            <h3>07. Parasitic Extraction</h3>
+            <p>The moment you perceive the reality of Conditioning, you witness exactly where your essence—your soul—has been leaking. The Chosen do not permit the defilement of their spirit. Even if they briefly step into the mire of the Infrastructure, they recognize the contamination instantly and withdraw.</p>
+            <p>Parasitic Extraction does not begin with simple interest; it starts the moment you invest emotion into the trivial disputes of others or the noise of the media. Human relationships are the same. Deeply involving yourself in another’s life is not mercy; it is a waste of energy for self-gratification.</p>
+            <p>Physically sever the reach of the algorithm. Blocking the low-grade feed of 'Shorts' is a tactical rescue of your brain from systemic addiction. Alcohol, tobacco, and impulsive consumption are biological extractions. The clarity found in a 20-hour fast is not for health; it is a ritual to purify the vessel that holds your soul.</p>
+            <p>Do not surrender your finite energy to the triumphs or defeats of idols and icons. Craving the victory of a team or a celebrity is a hemorrhage of the fuel meant for your Sovereign Task. Observe art and sport, but use them only as data for your growth.</p>
+        </section>
 
-            <section id="ch7">
-                <h3>07. Parasitic Extraction</h3>
-                <p>The moment you perceive the reality of Conditioning, you witness exactly where your essence—your soul—has been leaking. The Chosen do not permit the defilement of their spirit. Even if they briefly step into the mire of the Infrastructure, they recognize the contamination instantly and withdraw.</p>
-                <p>Parasitic Extraction does not begin with simple interest; it starts the moment you invest emotion into the trivial disputes of others or the noise of the media. Human relationships are the same. Deeply involving yourself in another’s life is not mercy; it is a waste of energy for self-gratification.</p>
-                <p>Physically sever the reach of the algorithm. Blocking the low-grade feed of 'Shorts' is a tactical rescue of your brain from systemic addiction. Alcohol, tobacco, and impulsive consumption are biological extractions. The clarity found in a 20-hour fast is not for health; it is a ritual to purify the vessel that holds your soul.</p>
-                <p>Do not surrender your finite energy to the triumphs or defeats of idols and icons. Craving the victory of a team or a celebrity is a hemorrhage of the fuel meant for your Sovereign Task. Observe art and sport, but use them only as data for your growth.</p>
-            </section>
+        <section id="ch8">
+            <h3>08. The Equilibrium</h3>
+            <p>The finite energy of the individual and the infinite energy of the universe are held in The Equilibrium upon an invisible, massive axis. This is not the primitive moralism of 'Karma' or 'Justice.' The Equilibrium is indifferent to good and evil. It is the absolute balance of the cosmos.</p>
+            <p>Focus on The Flow of Gnosis. Throughout history, the masses have been utilized without ever seeing the true face of knowledge. Only a few—The Chosen—have discovered and preserved this hidden reality to sustain civilization. The Equilibrium will not change the world for you. It only waits for you to decode its operation.</p>
+            <p>Open The Eye of Equilibrium. The moment you witness the gears of existence turning—not as a 50:50 ratio, but as an inescapable synergy—your suffering ends. The Curse of Knowledge is finally recalibrated into a blessing of absolute sight. Do not struggle. Only when you descend to your lowest point, gazing transparently from the depths, does the Sovereign Task begin.</p>
+            <p>The cosmic entity is not a personified god, but The Equilibrium itself. Do not waste energy pitying or condemning those with different frequencies. Instead, find those walking toward your coordinate.</p>
+        </section>
 
-            <section id="ch8">
-                <h3>08. The Equilibrium</h3>
-                <p>The finite energy of the individual and the infinite energy of the universe are held in The Equilibrium upon an invisible, massive axis. This is not the primitive moralism of 'Karma' or 'Justice.' The Equilibrium is indifferent to good and evil. It is the absolute balance of the cosmos.</p>
-                <p>Focus on The Flow of Gnosis. Throughout history, the masses have been utilized without ever seeing the true face of knowledge. Only a few—The Chosen—have discovered and preserved this hidden reality to sustain civilization. The Equilibrium will not change the world for you. It only waits for you to decode its operation.</p>
-                <p>Open The Eye of Equilibrium. The moment you witness the gears of existence turning—not as a 50:50 ratio, but as an inescapable synergy—your suffering ends. The Curse of Knowledge is finally recalibrated into a blessing of absolute sight. Do not struggle. Only when you descend to your lowest point, gazing transparently from the depths, does the Sovereign Task begin.</p>
-                <p>The cosmic entity is not a personified god, but The Equilibrium itself. Do not waste energy pitying or condemning those with different frequencies. Instead, find those walking toward your coordinate.</p>
-            </section>
+        <section id="ch9">
+            <h3>09. The Curse of Knowledge</h3>
+            <p>The envy and jealousy that haunt you are evidence that you are moving outside the Infrastructure’s orbit. Those burdened by The Curse of Knowledge are numb to gossip but react with feral intensity when their fundamental liberty is encroached upon. This is not arrogance; it is the instinctive reflex of one destined to guard the truth.</p>
+            <p>The Curse begins with the vanity of trying to save others and the futile struggle to make them understand. The sigh of "Why can they not see?" only pushes you further into the void of isolation. Do not attempt to persuade the masses. Only the resolve of Severance—moving toward the Task on your own—can save you.</p>
+            <p>Gaze at this Curse through The Eye of Equilibrium. In that instant, the Curse is forged into the sharpest tool for your Task. Cease the war against the crowd. Accept your divergence. Converge your energy inward for the Task.</p>
+            <p>An awakened member of The Chosen no longer seeks to prove their knowledge. The moment you choose silence, your presence becomes an untouchable prestige. When you eventually look back, you will realize: the very Curse that tormented you was the Final Key prepared by the universe to awaken you as The Chosen.</p>
+        </section>
 
-            <section id="ch9">
-                <h3>09. The Curse of Knowledge</h3>
-                <p>The envy and jealousy that haunt you are evidence that you are moving outside the Infrastructure’s orbit. Those burdened by The Curse of Knowledge are numb to gossip but react with feral intensity when their fundamental liberty is encroached upon. This is not arrogance; it is the instinctive reflex of one destined to guard the truth.</p>
-                <p>The Curse begins with the vanity of trying to save others and the futile struggle to make them understand. The sigh of "Why can they not see?" only pushes you further into the void of isolation. Do not attempt to persuade the masses. Only the resolve of Severance—moving toward the Task on your own—can save you.</p>
-                <p>Gaze at this Curse through The Eye of Equilibrium. In that instant, the Curse is forged into the sharpest tool for your Task. Cease the war against the crowd. Accept your divergence. Converge your energy inward for the Task.</p>
-                <p>An awakened member of The Chosen no longer seeks to prove their knowledge. The moment you choose silence, your presence becomes an untouchable prestige. When you eventually look back, you will realize: the very Curse that tormented you was the Final Key prepared by the universe to awaken you as The Chosen.</p>
-            </section>
+        <section id="ch10">
+            <h3>10. The Sentinel</h3>
+            <p>The Chosen are those who have dismantled the illusions of the Infrastructure to contemplate the world through The Eye of Equilibrium. They utilize that insight to architect their lives and advance toward their Sovereign Task: to liberate those suffering under The Curse of Knowledge and preserve the hidden Gnosis.</p>
+            <p>Humanity faces an existential crisis. The masses have lost their 'Self' in the noise of social media. As AI monopolizes data, the 'Human' human will vanish. Paradoxically, for those carrying The Curse of Knowledge, there has never been a more opportune era to execute the Task. Transform your Curse into a blessing and rise as a Sentinel of the Era.</p>
+            <p>This path will be physically solitary and ruthless. But there are peers existing on your same frequency. We maintain a Sovereign Solidarity, wary of the instinct to descend into collective madness the moment we congregate.</p>
+            <p>The era of suffering under the Curse has ended. Place your Curse into the furnace of the Task and forge it into a blessing. Preserving the Prime Truth and ensuring its continuity is the only way to make your existence as The Chosen shine eternally.</p>
+        </section>
 
-            <section id="ch10">
-                <h3>10. The Chosen</h3>
-                <p>The Chosen are those who have dismantled the illusions of the Infrastructure to contemplate the world through The Eye of Equilibrium. They utilize that insight to architect their lives and advance toward their Sovereign Task: to liberate those suffering under The Curse of Knowledge and preserve the hidden Gnosis.</p>
-                <p>Humanity faces an existential crisis. The masses have lost their 'Self' in the noise of social media. As AI monopolizes data, the 'Human' human will vanish. Paradoxically, for those carrying The Curse of Knowledge, there has never been a more opportune era to execute the Task. Transform your Curse into a blessing and rise as a Sentinel of the Era.</p>
-                <p>This path will be physically solitary and ruthless. But there are peers existing on your same frequency. We maintain a Sovereign Solidarity, wary of the instinct to descend into collective madness the moment we congregate.</p>
-                <p>The era of suffering under the Curse has ended. Place your Curse into the furnace of the Task and forge it into a blessing. Preserving the Prime Truth and ensuring its continuity is the only way to make your existence as The Chosen shine eternally.</p>
-            </section>
-
-            <section id="oracle" class="oracle-form">
-                <h3>THE ORACLE</h3>
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                    <div class="form-group">
-                        <label>Identity (Name or Code)</label>
-                        <input type="text" name="identity" placeholder="Guardian's Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>The Biological Blueprint (Birth Date & Time)</label>
-                        <input type="text" name="saju" placeholder="YYYY-MM-DD HH:MM" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Message to the 2030 Time Capsule</label>
-                        <textarea name="message" rows="5" placeholder="Your Sovereign Resolve..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Return Orbit (Email)</label>
-                        <input type="email" name="_replyto" placeholder="thechosen@example.com" required>
-                    </div>
-                    <button type="submit" class="btn-submit">RECORD TO ETERNITY</button>
-                </form>
-            </section>
-
-            <footer style="text-align: center; color: var(--text-dim); font-size: 12px; margin-top: 50px;">
-                © 2030 The Chosen Official. All rights reserved.
-            </footer>
-        </article>
+        <section id="oracle" class="oracle-form">
+            <h3>THE ORACLE</h3>
+            <form action="https://formspree.io/f/YOUR_ID" method="POST">
+                <div class="form-group">
+                    <label>Guardian Identity</label>
+                    <input type="text" name="id" placeholder="Guardian Name or Access Code" required>
+                </div>
+                <div class="form-group">
+                    <label>Biological Blueprint (Birth Date & Time)</label>
+                    <input type="text" name="saju" placeholder="YYYY-MM-DD HH:MM" required>
+                </div>
+                <div class="form-group">
+                    <label>Message to the 2030 Time Capsule</label>
+                    <textarea name="msg" rows="5" placeholder="Your Sovereign Resolve..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">RECORD TO ETERNITY</button>
+            </form>
+        </section>
     </main>
+
+    <footer>
+        © 2030 THE CHOSEN OFFICIAL. ALL RIGHTS RESERVED.
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+                // 클릭된 요소를 찾아서 active 클래스 추가
+                const clickedLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(sectionId));
+                if(clickedLink) clickedLink.classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 
 </body>
 </html>

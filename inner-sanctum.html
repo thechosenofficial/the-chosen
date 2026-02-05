@@ -26,123 +26,210 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        nav a, header h1, .proclamation, section h3, .btn-submit {
+        /* 폰트 적용: 헤더, 선포문, 카테고리, 섹션 제목, 버튼 */
+        nav a, header h1, .proclamation, section h3, .btn-submit, footer {
             font-family: 'Caesar Dressing', cursive !important;
         }
 
+        /* 헤더 영역 */
         header {
-            margin: 80px 0 50px 0;
+            margin: 60px 0 30px 0;
             text-align: center;
-            max-width: 800px;
+            max-width: 90%;
             padding: 0 20px;
+            box-sizing: border-box;
         }
 
-        header h1 { font-size: 42px; letter-spacing: 6px; margin-bottom: 25px; }
+        header h1 {
+            font-size: 36px;
+            letter-spacing: 5px;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+        }
         
+        /* 선포문 스타일 */
         .proclamation {
-            font-size: 17px;
+            font-size: 15px;
             letter-spacing: 2px;
             color: var(--accent);
-            line-height: 1.8;
-            margin-bottom: 50px;
+            line-height: 1.6;
             text-transform: uppercase;
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
-            padding: 30px 20px;
+            padding: 20px 10px;
+            margin-bottom: 30px;
         }
 
+        /* 카테고리 내비게이션 */
         nav {
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 80px;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 40px;
+            box-sizing: border-box;
         }
 
         nav ul {
             list-style: none;
             padding: 0;
+            margin: 0;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 12px;
+            gap: 10px; /* 버튼 사이 간격 */
         }
 
         nav li a {
             color: var(--text-dim);
             text-decoration: none;
-            font-size: 12px;
-            padding: 10px 16px;
+            font-size: 13px;
+            padding: 8px 12px;
             border: 1px solid var(--border);
-            border-radius: 25px;
-            transition: 0.3s;
+            border-radius: 20px;
+            transition: all 0.3s ease;
             display: inline-block;
             letter-spacing: 1px;
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
         }
 
         nav li a:hover, nav li a.active {
             color: var(--accent);
             border-color: var(--accent);
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
+        /* 특별 강조 카테고리 (Oracle) */
+        nav li a.highlight {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* 메인 콘텐츠 영역 */
         main {
             width: 90%;
-            max-width: 720px;
-            min-height: 600px;
-            margin-bottom: 150px;
+            max-width: 700px;
+            flex-grow: 1; /* 남은 공간 채우기 */
+            margin-bottom: 60px;
+            box-sizing: border-box;
         }
 
+        /* 섹션 기본 숨김 및 애니메이션 */
         section {
             display: none;
-            line-height: 2.0;
-            animation: fadeIn 0.7s ease-out;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        section.active { display: block; }
+        section.active {
+            display: block;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         section h3 {
-            font-size: 30px;
+            font-size: 24px;
             color: var(--accent);
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
-        section p { font-size: 17px; margin-bottom: 30px; white-space: pre-wrap; color: var(--text-main); }
+        section p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            white-space: pre-wrap; /* 줄바꿈 유지 */
+            color: var(--text-main);
+        }
 
+        /* 오라클 폼 스타일 */
         .oracle-form {
             background-color: var(--sidebar-bg);
-            padding: 50px;
-            border-radius: 24px;
+            padding: 30px;
+            border-radius: 15px;
             border: 1px solid var(--border);
         }
 
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Caesar Dressing', cursive;
+        }
         
         input, textarea {
-            width: 100%; padding: 18px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 12px; color: #fff; font-size: 15px; box-sizing: border-box; outline: none;
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
             font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
         }
 
         .btn-submit {
-            width: 100%; padding: 20px; background: #fff; color: #000; border: none;
-            border-radius: 15px; font-size: 20px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            width: 100%;
+            padding: 15px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
         }
 
-        footer { padding-bottom: 100px; color: var(--text-dim); font-size: 12px; letter-spacing: 1px; }
+        .btn-submit:hover {
+            background-color: #d0d0d0;
+        }
 
+        /* 푸터 */
+        footer {
+            padding: 30px 0;
+            color: var(--text-dim);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* 모바일 반응형 스타일 */
         @media (max-width: 600px) {
-            header h1 { font-size: 32px; }
-            .proclamation { font-size: 13px; }
+            header { margin-top: 40px; }
+            header h1 { font-size: 28px; }
+            .proclamation { font-size: 13px; padding: 15px 5px; }
+            
+            nav { margin-bottom: 30px; }
+            nav ul { gap: 8px; }
+            nav li a { font-size: 11px; padding: 6px 10px; }
+
+            section h3 { font-size: 20px; margin-bottom: 20px; }
+            section p { font-size: 14px; }
+
+            .oracle-form { padding: 20px; }
         }
     </style>
 </head>
@@ -170,7 +257,7 @@
             <li><a href="javascript:void(0)" onclick="showSection('ch8')" class="nav-link">08. Law</a></li>
             <li><a href="javascript:void(0)" onclick="showSection('ch9')" class="nav-link">09. Curse</a></li>
             <li><a href="javascript:void(0)" onclick="showSection('ch10')" class="nav-link">10. Sentinel</a></li>
-            <li><a href="javascript:void(0)" onclick="showSection('oracle')" class="nav-link" style="color:#fff; border-color:#fff;">Submit Oracle</a></li>
+            <li><a href="javascript:void(0)" onclick="showSection('oracle')" class="nav-link highlight">Submit Oracle</a></li>
         </ul>
     </nav>
 
@@ -285,20 +372,21 @@
 
     <script>
         function showSection(sectionId) {
+            // 모든 섹션 숨기기
             const sections = document.querySelectorAll('section');
             sections.forEach(sec => sec.classList.remove('active'));
 
+            // 모든 내비게이션 링크 비활성화
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => link.classList.remove('active'));
 
-            const targetSection = document.getElementById(sectionId);
-            if(targetSection) {
-                targetSection.classList.add('active');
-                // 클릭된 요소를 찾아서 active 클래스 추가
-                const clickedLink = Array.from(navLinks).find(link => link.getAttribute('onclick').includes(sectionId));
-                if(clickedLink) clickedLink.classList.add('active');
-            }
+            // 선택된 섹션 활성화
+            document.getElementById(sectionId).classList.add('active');
+
+            // 클릭된 링크 활성화 (this를 통해 전달받음)
+            event.currentTarget.classList.add('active');
             
+            // 화면 상단으로 부드럽게 스크롤
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>

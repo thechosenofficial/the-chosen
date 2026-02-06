@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Skyblue Silver Warp - Stable Ver.</title>
+    <title>Skyblue Silver Warp - High Speed</title>
     <style>
         :root {
             --silver-light: #FFFFFF;
@@ -17,8 +17,7 @@
             border: 1px solid var(--silver-mid); font-size: 1.1rem; font-weight: 300; cursor: pointer; letter-spacing: 6px;
             transition: all 0.3s ease-out; text-transform: uppercase; backdrop-filter: blur(8px); border-radius: 4px; user-select: none;
         }
-        @media (hover: hover) { #enter-btn:hover { background: rgba(165, 201, 225, 0.25); box-shadow: 0 0 30px rgba(165, 201, 225, 0.4); letter-spacing: 10px; } }
-        #enter-btn:active { transform: scale(0.96); }
+        #enter-btn:active { transform: scale(0.96); background: rgba(165, 201, 225, 0.2); }
     </style>
 </head>
 <body>
@@ -32,13 +31,14 @@
         const btn = document.getElementById('enter-btn');
 
         let width, height, stars = [];
-        let lastTime = 0; // 델타 타임 계산용
+        let lastTime = 0;
         
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const count = isMobile ? 250 : 500; 
+        const count = isMobile ? 300 : 600; 
 
-        const baseSpeed = 0.02;  
-        const warpSpeed = 6.0;   
+        // 🏎️ 속도 설정 상향
+        const baseSpeed = 0.08;  // 평상시에도 흐르는 느낌이 나도록 상향
+        const warpSpeed = 12.0;  // 워프 시 훨씬 더 빠르게 (기존 6.0의 2배)
         let speed = baseSpeed;
         let targetSpeed = baseSpeed;
 
@@ -51,37 +51,36 @@
                 this.x = (Math.random() - 0.5) * width * 2;
                 this.y = (Math.random() - 0.5) * height * 2;
                 this.z = isInitial ? Math.random() * width : width;
-                // pz를 z보다 약간 뒤로 설정해 안정적인 초기 선 생성
-                this.pz = this.z + 50; 
+                // 속도가 빠를 때 선이 끊겨 보이지 않도록 pz 간격 조절
+                this.pz = this.z + 60; 
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.size = Math.random() * 1.5 + 0.5;
+                this.size = Math.random() * 1.8 + 0.5;
             }
 
             update(dt) {
-                // 프레임 독립적 이동 (dt를 곱함)
-                const moveStep = speed * dt * 0.2;
+                // dt 보정값에 속도 배율을 높임
+                const moveStep = speed * dt * 0.5; 
                 this.z -= moveStep;
 
-                // 스파이크 방지: z가 너무 작아지기 전(화면 끝 도달 전)에 리셋
-                if (this.z < 20) {
+                if (this.z < 25) { // 스파이크 방지 임계값 유지
                     this.reset();
                 }
             }
 
             show() {
-                // 원근 투영 계산
                 let sx = (this.x / this.z) * (width / 2) + width / 2;
                 let sy = (this.y / this.z) * (height / 2) + height / 2;
                 let px = (this.x / this.pz) * (width / 2) + width / 2;
                 let py = (this.y / this.pz) * (height / 2) + height / 2;
 
-                // 화면 밖으로 너무 멀리 나간 좌표는 그리지 않음 (스파이크 방지)
-                if (sx < -100 || sx > width + 100 || sy < -100 || sy > height + 100) return;
+                // 스파이크 방지: 비정상적인 좌표값 렌더링 차단
+                if (sx < -width || sx > width * 2 || sy < -height || sy > height * 2) return;
 
                 ctx.beginPath();
                 ctx.moveTo(px, py);
                 ctx.lineTo(sx, sy);
                 ctx.strokeStyle = this.color;
+                // 속도에 따라 선이 더 가늘고 날카로워 보이도록 처리
                 ctx.lineWidth = this.size * (1 - this.z / width);
                 ctx.lineCap = 'round';
                 ctx.stroke();
@@ -102,16 +101,15 @@
         }
 
         function draw(timestamp) {
-            // 델타 타임(dt) 계산: 프레임 간의 시간 간격 (약 16.6ms)
-            const dt = timestamp - lastTime;
+            const dt = timestamp - lastTime || 16;
             lastTime = timestamp;
 
-            // 잔상 농도를 미세하게 조정
-            ctx.fillStyle = 'rgba(5, 8, 10, 0.35)'; 
+            // 잔상 농도를 낮춰서 선이 더 길고 선명하게 남도록 조절
+            ctx.fillStyle = 'rgba(5, 8, 10, 0.25)'; 
             ctx.fillRect(0, 0, width, height);
             
-            // 속도 전환을 더 부드럽게 (가속도 최적화)
-            speed += (targetSpeed - speed) * (dt * 0.003);
+            // 가속도를 더 민감하게 설정 (dt * 0.005)
+            speed += (targetSpeed - speed) * (dt * 0.005);
 
             stars.forEach(star => {
                 star.update(dt);
@@ -130,9 +128,8 @@
         btn.addEventListener('touchend', stopWarp);
 
         window.addEventListener('resize', init);
-
         init();
-        requestAnimationFrame(draw); // 첫 프레임 시작
+        requestAnimationFrame(draw);
     </script>
 </body>
 </html>

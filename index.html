@@ -23,45 +23,44 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* ✨ 구글 스타일: 중앙 정렬 대신 상단 여백 부여 */
             justify-content: flex-start; 
             height: 100vh;
             -webkit-font-smoothing: antialiased;
+            overflow: hidden; /* 애니메이션 시 스크롤 방지 */
         }
 
         .container {
             text-align: center;
             width: 90%;
             max-width: 400px;
-            /* ✨ 상단에서 약 20% 지점에 위치하게 설정 */
             margin-top: 18vh; 
+            transition: opacity 0.5s;
         }
 
-        /* 🏛️ 타이틀: 대소문자 + 실버 그라데이션 */
+        /* ✨ 1. 소용돌이(Vortex) 애니메이션 정의 */
+        @keyframes vortexSuck {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(0) rotate(1080deg); opacity: 0; filter: blur(20px); }
+        }
+
+        /* 애니메이션 실행 시 부여할 클래스 */
+        .vortex-out {
+            animation: vortexSuck 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+            pointer-events: none; /* 클릭 중복 방지 */
+        }
+
         h1 {
             font-size: 52px;
             font-weight: normal;
             margin-bottom: 40px;
             letter-spacing: 2px;
-            background: linear-gradient(
-                to bottom,
-                var(--silver-light) 0%,
-                var(--silver-mid) 45%,
-                var(--silver-dark) 50%,
-                var(--silver-mid) 55%,
-                var(--silver-light) 100%
-            );
+            background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.3));
         }
 
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; }
 
         input {
             width: 100%;
@@ -84,43 +83,21 @@
         }
 
         .arrow-login {
-            position: absolute;
-            right: 10px;
-            width: 36px;
-            height: 36px;
-            background-color: var(--silver-mid);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
+            position: absolute; right: 10px; width: 36px; height: 36px;
+            background-color: var(--silver-mid); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none; transition: 0.3s;
         }
 
-        .arrow-login:hover { 
-            background-color: var(--silver-light);
-            transform: scale(1.05); 
-        }
-        
+        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.05); }
         .arrow-login svg { width: 20px; height: 20px; fill: var(--gemini-bg); }
 
         .buy-ticket {
-            display: inline-block;
-            text-decoration: none;
-            font-size: 18px;
-            letter-spacing: 2px;
-            color: var(--silver-mid);
-            opacity: 0.5;
-            transition: 0.3s;
-            font-family: 'Pirata One', cursive;
+            display: inline-block; text-decoration: none; font-size: 18px;
+            letter-spacing: 2px; color: var(--silver-mid); opacity: 0.5;
+            transition: 0.3s; font-family: 'Pirata One', cursive;
         }
-
-        .buy-ticket:hover { 
-            opacity: 1; 
-            text-decoration: underline; 
-            color: var(--silver-light); 
-        }
+        .buy-ticket:hover { opacity: 1; text-decoration: underline; color: var(--silver-light); }
     </style>
 </head>
 <body>
@@ -137,28 +114,27 @@
     </div>
 
     <script>
-    // 1. 페이지 로드 시 로그인 상태 확인 (자동 리다이렉트)
-    window.onload = function() {
-        if (localStorage.getItem('chosen_access') === 'granted') {
-            window.location.href = "inner-sanctum.html";
+        // 자동 로그인 확인
+        window.onload = function() {
+            if (localStorage.getItem('chosen_access') === 'granted') {
+                window.location.replace("inner-sanctum.html");
+            }
+        };
+
+        async function digestMessage(message) {
+            const msgUint8 = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-    };
 
-    async function digestMessage(message) {
-        const msgUint8 = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+        async function login() {
+            const input = document.getElementById('accessCode').value.trim().toUpperCase();
+            if (!input) return;
 
-    async function login() {
-        const input = document.getElementById('accessCode').value.trim().toUpperCase();
-        if (!input) return;
-
-        const inputHash = await digestMessage(input);
-        
-      
-          
+            const inputHash = await digestMessage(input);
+            
+           
           // 🏛️ 수호자들의 지문(Hash) 저장소
             const secureHashes = [
                 "4d649dedf7297574c249e02ca505259a76dc952b7d49d318e8bfbf914daf1b96",// TC1-A8K2-F9N3-X7P1 의 지문
@@ -974,11 +950,22 @@
                   
 
         if (secureHashes.includes(inputHash)) {
-            // ✨ 성공 시 로그인 상태 저장
-            localStorage.setItem('chosen_access', 'granted');
-            window.location.href = "inner-sanctum.html";
-        } else {
-            alert("ACCESS DENIED: Untrusted Frequency.");
+                localStorage.setItem('chosen_access', 'granted');
+                
+                // ✨ 2. 소용돌이 이펙트 실행
+                document.querySelector('.container').classList.add('vortex-out');
+                
+                // 1.5초 후(애니메이션 종료 시점) 페이지 이동
+                setTimeout(() => {
+                    window.location.href = "inner-sanctum.html";
+                }, 1500);
+                
+            } else {
+                alert("ACCESS DENIED: Untrusted Frequency.");
+                document.getElementById('accessCode').value = "";
+                document.getElementById('accessCode').focus();
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>

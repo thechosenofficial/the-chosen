@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Chosen - Access Portal</title>
+    <title>The Chosen - Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
     <style>
-        /* ✨ 스카이블루 실버 광택 팔레트 & 기본 설정 */
         :root {
             --bg-dark: #020406;
             --silver-light: #FFFFFF;
             --silver-mid: #A5C9E1;
             --silver-dark: #708090;
-            --box-bg: rgba(10, 15, 20, 0.75); /* 반투명 검은 박스 배경 */
+            --box-bg: rgba(5, 8, 10, 0.85); /* 더 불투명한 검은 상자 */
         }
 
         body {
@@ -26,68 +25,61 @@
             height: 100vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
-            /* 페이드 아웃 효과를 위한 트랜지션 */
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
 
-        /* 페이드 아웃 클래스 */
-        body.fade-out {
-            opacity: 0;
-        }
+        body.fade-out { opacity: 0; }
 
-        /* 배경 워프 캔버스 */
+        /* 🚀 워프 배경 캔버스 */
         canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* 컨텐츠 뒤로 배치 */
+            z-index: 1; /* 컨텐츠(5)보다 낮게 설정 */
         }
 
-        /* ⬛ 블랙 박스 컨테이너 */
-        .login-container {
+        /* ⬛ 통합된 블랙 박스 컨테이너 */
+        .main-portal {
             position: relative;
-            z-index: 10;
+            z-index: 5;
             text-align: center;
             width: 90%;
-            max-width: 420px;
-            padding: 50px 40px;
+            max-width: 400px;
+            padding: 60px 40px;
             background: var(--box-bg);
-            /* 스카이블루 실버 테두리 및 광채 효과 */
-            border: 2px solid var(--silver-mid);
-            box-shadow: 0 0 30px rgba(165, 201, 225, 0.2), inset 0 0 20px rgba(165, 201, 225, 0.05);
-            backdrop-filter: blur(15px); /* 배경 블러 */
-            border-radius: 8px;
+            /* ✨ 스카이블루 실버 테두리 */
+            border: 1px solid var(--silver-mid);
+            box-shadow: 0 0 40px rgba(165, 201, 225, 0.15), inset 0 0 15px rgba(165, 201, 225, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
         }
 
-        /* 🏛️ 타이틀 스타일 */
         h1 {
-            font-size: 48px;
-            font-weight: normal;
-            margin: 0 0 50px 0;
-            letter-spacing: 6px;
+            font-size: 52px;
+            margin: 0 0 45px 0;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light));
+            background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.5));
+            filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.4));
         }
 
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 45px;
         }
 
-        /* 입력창 스타일 */
         input {
             width: 100%;
-            padding: 15px 60px 15px 25px;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 14px 55px 14px 20px;
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--silver-dark);
-            border-radius: 40px;
+            border-radius: 30px;
             color: var(--silver-light);
             font-size: 18px;
             font-family: 'Pirata One', cursive;
@@ -96,65 +88,52 @@
             letter-spacing: 3px;
         }
 
-        input::placeholder { color: rgba(165, 201, 225, 0.5); }
         input:focus {
             border-color: var(--silver-mid);
-            box-shadow: 0 0 20px rgba(165, 201, 225, 0.3);
-            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(165, 201, 225, 0.2);
         }
 
-        /* 로그인 버튼 (화살표) 스타일 */
         .arrow-login {
             position: absolute;
-            right: 10px;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--silver-mid), var(--silver-dark));
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            background-color: var(--silver-mid);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border: none;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 15px rgba(165, 201, 225, 0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 10px rgba(165, 201, 225, 0.3);
         }
 
         .arrow-login:hover { 
-            transform: scale(1.15) rotate(90deg); 
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
-            background: var(--silver-light);
+            background-color: var(--silver-light);
+            transform: scale(1.1) rotate(90deg);
         }
         
-        .arrow-login svg { width: 22px; height: 22px; fill: var(--bg-dark); transition: fill 0.3s; }
-        .arrow-login:hover svg { fill: #000; }
+        .arrow-login svg { width: 20px; height: 20px; fill: var(--bg-dark); }
 
-        /* 하단 링크 스타일 */
         .decide-future {
-            display: inline-block;
+            display: block;
             text-decoration: none;
             font-size: 16px;
             letter-spacing: 3px;
             color: var(--silver-mid);
-            opacity: 0.7;
+            opacity: 0.6;
             transition: 0.4s;
-            padding-bottom: 5px;
-            border-bottom: 1px solid transparent;
         }
 
-        .decide-future:hover { 
-            opacity: 1; 
-            color: var(--silver-light);
-            border-bottom-color: var(--silver-mid);
-            text-shadow: 0 0 10px var(--silver-mid);
-        }
+        .decide-future:hover { opacity: 1; text-shadow: 0 0 8px var(--silver-light); }
     </style>
 </head>
 <body>
 
     <canvas id="warpCanvas"></canvas>
 
-    <div class="login-container">
+    <div class="main-portal">
         <h1>The Chosen</h1>
         <div class="input-wrapper">
             <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" onkeypress="if(event.keyCode==13) login()">
@@ -166,54 +145,41 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. 🚀 워프 이펙트 스크립트 (부드러운 가속 적용)
-        // ==========================================
+        // 1. 🚀 워프 애니메이션 로직
         const canvas = document.getElementById('warpCanvas');
         const ctx = canvas.getContext('2d');
-        // 로그인 버튼과 입력창 요소 가져오기 (이벤트 연결용)
-        const loginBtn = document.getElementById('loginBtn');
-        const accessInput = document.getElementById('accessCode');
-
         let width, height, stars = [];
         let lastTime = 0;
         
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const count = isMobile ? 350 : 700; 
+        const count = isMobile ? 400 : 800; 
 
-        // 속도 설정
-        const baseSpeed = 0.5;    
-        const warpMax = 20.0;     
-        let speed = baseSpeed;
-        let targetSpeed = baseSpeed;
-
-        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE', '#FFFFFF'];
+        let speed = 0.5;
+        let targetSpeed = 0.5;
+        const baseSpeed = 0.5;
+        const warpMax = 25.0; 
 
         class Star {
-            constructor() { this.reset(true); }
+            constructor(initial = false) { this.reset(initial); }
             reset(initial = false) {
                 this.x = (Math.random() - 0.5) * 2000;
                 this.y = (Math.random() - 0.5) * 2000;
                 this.z = initial ? Math.random() * 2000 : 2000;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.color = ['#FFFFFF', '#A5C9E1', '#E1F5FE'][Math.floor(Math.random()*3)];
                 this.size = Math.random() * 2 + 0.5;
             }
             update(dt) {
-                // 부드러운 프레임 보정
-                const move = speed * dt * 0.5;
-                this.z -= move;
+                this.z -= speed * dt * 0.5;
                 if (this.z < 50) this.reset();
             }
             show() {
                 let k = 800 / this.z;
                 let sx = this.x * k + width / 2;
                 let sy = this.y * k + height / 2;
-                // 속도에 비례한 선 길이 (끊김 방지)
-                let lengthScale = speed * 2.5; 
-                let px = this.x * (800 / (this.z + lengthScale)) + width / 2;
-                let py = this.y * (800 / (this.z + lengthScale)) + height / 2;
+                let px = this.x * (800 / (this.z + speed * 2.5)) + width / 2;
+                let py = this.y * (800 / (this.z + speed * 2.5)) + height / 2;
 
-                if (sx < -width || sx > width * 2 || sy < -height || sy > height * 2) return;
+                if (sx < -100 || sx > width + 100 || sy < -100 || sy > height + 100) return;
 
                 ctx.beginPath();
                 ctx.lineWidth = this.size * k * 0.5;
@@ -232,52 +198,24 @@
             canvas.width = width * dpr;
             canvas.height = height * dpr;
             ctx.scale(dpr, dpr);
-            stars = [];
-            for (let i = 0; i < count; i++) stars.push(new Star());
+            stars = Array.from({length: count}, () => new Star(true));
         }
 
         function draw(timestamp) {
             const dt = Math.min(timestamp - lastTime, 32) || 16;
             lastTime = timestamp;
 
-            // 배경 잔상 효과
             ctx.fillStyle = 'rgba(2, 4, 6, 0.2)'; 
             ctx.fillRect(0, 0, width, height);
             
-            // ✨ 핵심: Easing을 이용한 아주 부드러운 가속/감속
-            // (targetSpeed - speed)의 5%씩 매 프레임 접근 -> 끊김 없이 자연스러움
+            // 부드러운 가속 (끊김 방지)
             speed += (targetSpeed - speed) * (dt * 0.005);
 
-            ctx.shadowBlur = speed > 5 ? 15 : 0;
-            ctx.shadowColor = '#A5C9E1';
-
-            stars.forEach(star => { star.update(dt); star.show(); });
+            stars.forEach(s => { s.update(dt); s.show(); });
             requestAnimationFrame(draw);
         }
 
-        // 워프 속도 조절 함수
-        const startWarp = () => targetSpeed = warpMax;
-        const stopWarp = () => targetSpeed = baseSpeed;
-
-        // 버튼 및 입력창에 이벤트 연결 (입력 중에도 엔터 누르면 빨라지게)
-        [loginBtn, accessInput].forEach(el => {
-            el.addEventListener('mousedown', startWarp);
-            el.addEventListener('mouseup', stopWarp);
-            el.addEventListener('touchstart', (e) => { startWarp(); }, { passive: true });
-            el.addEventListener('touchend', stopWarp);
-            // 엔터키 입력 시점에도 적용
-            el.addEventListener('keydown', (e) => { if(e.key === 'Enter') startWarp(); });
-            el.addEventListener('keyup', (e) => { if(e.key === 'Enter') stopWarp(); });
-        });
-        
-        window.addEventListener('resize', init);
-        init();
-        requestAnimationFrame(draw);
-
-
-        // ==========================================
-        // 2. 🔐 로그인 및 페이지 전환 스크립트
-        // ==========================================
+        // 2. 🔐 로그인 및 전환 로직
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -285,20 +223,15 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        let isLoggingIn = false; // 중복 로그인 방지
-
         async function login() {
-            if (isLoggingIn) return;
-            
             const input = document.getElementById('accessCode').value.trim().toUpperCase();
             if (!input) return;
 
-            isLoggingIn = true;
-            // 로그인 시도 시 워프 속도 최대로
-            startWarp(); 
+            // 시각적 효과: 로그인 시도 시 가속 시작
+            targetSpeed = warpMax;
 
             const inputHash = await digestMessage(input);
-            // 테스트용 해시 (실제 운영 시엔 서버에서 검증 권장)
+            
             
 
             // 🏛️ 수호자들의 지문(Hash) 저장소
@@ -1114,21 +1047,20 @@ const secureHashes = [
 "4bfce36b0e8f4db10a8596005dfa9cb289285368c07973195ec2b59e72cbeb51",
 "56866eed443fd9dc67dd4bf4"]; // 예: "TEST"의 해시
 
-            if (secureHashes.includes(inputHash)) {
-                // ✅ 로그인 성공 시: 부드러운 전환 효과 시작
+                   if (secureHashes.includes(inputHash)) {
                 document.body.classList.add('fade-out');
-                
-                // 1.5초 뒤 페이지 이동 (페이드 아웃 시간과 맞춤)
-                setTimeout(() => {
-                    window.location.href = "inner-sanctum.html"; 
-                }, 1500);
+                setTimeout(() => { window.location.href = "inner-sanctum.html"; }, 1200);
             } else {
-                // ❌ 로그인 실패 시
-                alert("ACCESS DENIED: Untrusted Frequency.");
-                stopWarp(); // 속도 원상복구
-                isLoggingIn = false;
+                setTimeout(() => {
+                    alert("ACCESS DENIED: Untrusted Frequency.");
+                    targetSpeed = baseSpeed; // 실패 시 속도 복구
+                }, 500);
             }
         }
+
+        window.addEventListener('resize', init);
+        init();
+        requestAnimationFrame(draw);
     </script>
 </body>
 </html>

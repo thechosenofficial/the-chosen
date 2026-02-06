@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Chosen | Binary Galaxy</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #000; overflow: hidden; height: 100vh; }
-        canvas { position: absolute; top: 0; left: 0; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* 심연의 검은색 */
+            overflow: hidden;
+            height: 100vh;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 <body>
@@ -29,11 +39,11 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // 🎨 오리엔트 스카이블루 실버 팔레트
-        const colors = ['#D1E8F7', '#A5C9E1', '#87CEEB', '#4682B4'];
+        // 🎨 색상 설정: 스카이블루 실버 광택
+        const colors = ['#D1E8F7', '#A5C9E1', '#87CEEB', '#FFFFFF'];
         const binChars = ['0', '1'];
         const particles = [];
-        const particleCount = 1500; // 빼곡한 밀도감을 위해 입자 수 증폭
+        const particleCount = 2500; // 빼곡한 밀도감을 위해 입자 수 대폭 증가
 
         class Particle {
             constructor() {
@@ -41,45 +51,62 @@
             }
 
             init() {
-                // 우주의 성단처럼 보이기 위해 중심에서 바깥까지 고르게 분포
-                this.dist = Math.random() * Math.max(width, height) * 0.6; 
+                // 태양계/은하수 구조를 위해 중심에서 바깥까지 거리 분산
+                this.dist = Math.random() * Math.max(width, height) * 0.7;
                 this.angle = Math.random() * Math.PI * 2;
-                // 아주 천천히 도는 자전 속도 (움직임을 느낄 수 있는 정도)
-                this.rotationSpeed = (Math.random() * 0.0005) + 0.0002; 
+                
+                // 아주 천천히 움직임을 느낄 수 있는 정도의 자전 속도
+                this.rotationSpeed = (Math.random() * 0.0003) + 0.0001; 
+                
                 this.char = binChars[Math.floor(Math.random() * binChars.length)];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.size = Math.random() * 8 + 4;
-                this.opacity = Math.random() * 0.5 + 0.2;
+                
+                // 원근감을 위해 크기 다양화
+                this.size = Math.random() * 6 + 2; 
+                this.opacity = Math.random() * 0.6 + 0.2;
+                
+                // 궤적 효과를 위한 이전 위치 저장
+                this.history = [];
+                this.maxHistory = Math.floor(Math.random() * 8) + 4;
             }
 
             update() {
-                // 서서히 회전
-                this.angle += this.rotationSpeed;
-                
-                // 중심부가 일렁이는 효과를 위해 거리를 미세하게 진동
-                this.currentX = centerX + Math.cos(this.angle) * this.dist;
-                this.currentY = centerY + Math.sin(this.angle) * this.dist;
+                // 현재 위치 저장 (궤적용)
+                this.history.unshift({
+                    x: centerX + Math.cos(this.angle) * this.dist,
+                    y: centerY + Math.sin(this.angle) * this.dist
+                });
 
-                // 랜덤하게 숫자 바꾸기 (디지털 생동감)
-                if (Math.random() > 0.98) {
+                if (this.history.length > this.maxHistory) {
+                    this.history.pop();
+                }
+
+                // 느린 회전
+                this.angle += this.rotationSpeed;
+
+                // 실시간으로 0과 1이 교차하는 디지털 생동감
+                if (Math.random() > 0.99) {
                     this.char = binChars[Math.floor(Math.random() * binChars.length)];
                 }
             }
 
             draw() {
-                ctx.font = `${this.size}px monospace`;
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.opacity;
-                
-                // 중심에 가까울수록 더 밝게 빛나는 효과
-                if (this.dist < 150) {
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = this.color;
-                } else {
-                    ctx.shadowBlur = 0;
-                }
-                
-                ctx.fillText(this.char, this.currentX, this.currentY);
+                this.history.forEach((pos, i) => {
+                    const trailAlpha = (this.opacity * (1 - i / this.history.length));
+                    ctx.font = `${this.size}px monospace`;
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = trailAlpha;
+
+                    // 중심부(코어)는 더 밝게 빛나는 글로우 효과
+                    if (this.dist < 200 && i === 0) {
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = this.color;
+                    } else {
+                        ctx.shadowBlur = 0;
+                    }
+
+                    ctx.fillText(this.char, pos.x, pos.y);
+                });
             }
         }
 
@@ -89,8 +116,8 @@
         }
 
         function animate() {
-            // 잔상 효과를 최소화하여 선명한 은하수 느낌 강조
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            // 잔상 효과를 최소화하여 선명한 성단 느낌 강조
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
             ctx.fillRect(0, 0, width, height);
 
             particles.forEach(p => {

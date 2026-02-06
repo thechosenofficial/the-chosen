@@ -8,10 +8,12 @@
     <style>
         :root {
             --gemini-bg: #131314;
-            --input-border: #444746;
+            --input-border: #333;
             --text-main: #e3e3e3;
-            --text-white: #ffffff;
-            --apple-gray: #8e8e93;
+            /* ✨ 스카이블루 실버 팔레트 */
+            --silver-light: #FFFFFF;
+            --silver-mid: #A5C9E1;
+            --silver-dark: #708090;
         }
 
         body {
@@ -32,12 +34,26 @@
             max-width: 400px;
         }
 
+        /* 🏛️ 타이틀: 실버 광택 효과 */
         h1 {
-            font-size: 20px;
+            font-size: 28px;
             font-weight: normal;
             margin-bottom: 60px;
-            letter-spacing: 2px;
-            color: var(--text-main);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            
+            /* 그라데이션 광택 입히기 */
+            background: linear-gradient(
+                to bottom,
+                var(--silver-light) 0%,
+                var(--silver-mid) 45%,
+                var(--silver-dark) 50%,
+                var(--silver-mid) 55%,
+                var(--silver-light) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(165, 201, 225, 0.3));
         }
 
         .input-wrapper {
@@ -53,15 +69,17 @@
             background: transparent;
             border: 1px solid var(--input-border);
             border-radius: 30px;
-            color: var(--text-white);
-            font-size: 16px;
+            color: var(--silver-mid);
+            font-size: 14px;
             font-family: 'Courier New', monospace;
             outline: none;
-            transition: border-color 0.3s;
+            transition: 0.3s;
+            letter-spacing: 2px;
         }
 
         input:focus {
-            border-color: var(--text-white);
+            border-color: var(--silver-mid);
+            box-shadow: 0 0 10px rgba(165, 201, 225, 0.2);
         }
 
         .arrow-login {
@@ -69,27 +87,34 @@
             right: 8px;
             width: 32px;
             height: 32px;
-            background-color: var(--text-white);
+            background-color: var(--silver-mid);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border: none;
-            transition: transform 0.2s;
+            transition: 0.3s;
         }
 
-        .arrow-login:hover { transform: scale(1.1); }
+        .arrow-login:hover { 
+            background-color: var(--silver-light);
+            transform: scale(1.1); 
+        }
+        
         .arrow-login svg { width: 18px; height: 18px; fill: var(--gemini-bg); }
 
+        /* 🏛️ 하단 버튼: 은은한 실버 */
         .buy-ticket {
             display: block;
-            color: var(--text-white);
             text-decoration: none;
-            font-size: 14px;
-            letter-spacing: 1px;
-            opacity: 0.8;
-            transition: opacity 0.3s;
+            font-size: 12px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--silver-mid), var(--silver-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.7;
+            transition: 0.3s;
         }
 
         .buy-ticket:hover { opacity: 1; text-decoration: underline; }
@@ -100,16 +125,15 @@
     <div class="container">
         <h1>The Chosen</h1>
         <div class="input-wrapper">
-            <input type="password" id="accessCode" placeholder="Access Code" onkeypress="if(event.keyCode==13) login()">
+            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" onkeypress="if(event.keyCode==13) login()">
             <button class="arrow-login" onclick="login()">
                 <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
         </div>
-        <a href="https://opensea.io/" target="_blank" class="buy-ticket">BUY TICKET</a>
+        <a href="https://opensea.io/" target="_blank" class="buy-ticket" class="caesar">BUY TICKET</a>
     </div>
 
     <script>
-        // SHA-256 암호화 함수
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -122,6 +146,7 @@
             if (!input) return;
 
             const inputHash = await digestMessage(input);
+           
 
             // 🏛️ 수호자들의 지문(Hash) 저장소
             const secureHashes = [
@@ -937,6 +962,7 @@ const secureHashes = [
 "56866eed443fd9dc67dd4bf4"
             ];
 
+           
             if (secureHashes.includes(inputHash)) {
                 window.location.href = "inner-sanctum.html";
             } else {

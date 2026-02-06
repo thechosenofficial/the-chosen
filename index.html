@@ -2,68 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Chosen - Access Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Chosen</title>
     <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #020406;
+            --gemini-bg: #131314;
+            --input-border: #333;
+            --text-main: #e3e3e3;
+            /* ✨ 스카이블루 실버 광택 팔레트 */
             --silver-light: #FFFFFF;
             --silver-mid: #A5C9E1;
             --silver-dark: #708090;
         }
 
-        /* 1. 배경 설정: 캔버스가 보일 수 있도록 body 배경을 투명하게 하거나 캔버스 뒤로 숨김 */
         body {
-            margin: 0;
-            background-color: var(--bg-dark);
-            color: var(--silver-mid);
-            font-family: 'Pirata One', cursive;
+            background-color: var(--gemini-bg);
+            color: var(--text-main);
+            font-family: 'Pirata One', system-ui;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            overflow: hidden;
-            transition: opacity 1.5s ease;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
 
-        body.fade-out { opacity: 0; }
-
-        /* 2. 캔버스 최적화: pointer-events를 none으로 설정하여 입력을 방해하지 않게 함 */
-        #warpCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0; /* 배경 레이어 */
-            pointer-events: none;
-        }
-
-        /* 3. 메인 박스: 캔버스보다 위에 오도록 z-index 설정 */
-        .main-portal {
-            position: relative;
-            z-index: 10; /* 캔버스(0)보다 위 */
+        .container {
             text-align: center;
             width: 90%;
             max-width: 400px;
-            padding: 60px 40px;
-            background: rgba(5, 8, 10, 0.8); /* 반투명 블랙 */
-            border: 1px solid var(--silver-mid);
-            box-shadow: 0 0 40px rgba(165, 201, 225, 0.2);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
         }
 
+        /* 🏛️ 타이틀: 대소문자 허용 및 실버 그라데이션 */
         h1 {
-            font-size: 52px;
-            margin: 0 0 45px 0;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-dark));
+            font-size: 48px; /* 대소문자 혼용 시 시각적 균형을 위해 살짝 키움 */
+            font-weight: normal;
+            margin-bottom: 50px;
+            letter-spacing: 2px;
+            /* text-transform: uppercase; <- 이 줄을 삭제하여 대소문자를 허용합니다 */
+            
+            background: linear-gradient(
+                to bottom,
+                var(--silver-light) 0%,
+                var(--silver-mid) 45%,
+                var(--silver-dark) 50%,
+                var(--silver-mid) 55%,
+                var(--silver-light) 100%
+            );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.5));
+            filter: drop-shadow(0 0 8px rgba(165, 201, 225, 0.4));
         }
 
         .input-wrapper {
@@ -75,24 +64,28 @@
 
         input {
             width: 100%;
-            padding: 15px 60px 15px 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--silver-dark);
-            border-radius: 40px;
-            color: var(--silver-light);
-            font-size: 18px;
+            padding: 12px 50px 12px 20px;
+            background: transparent;
+            border: 1px solid var(--input-border);
+            border-radius: 30px;
+            color: var(--silver-mid);
+            font-size: 16px;
             font-family: 'Pirata One', cursive;
             outline: none;
-            letter-spacing: 4px;
+            transition: 0.3s;
+            letter-spacing: 2px;
         }
 
-        input:focus { border-color: var(--silver-mid); box-shadow: 0 0 15px rgba(165, 201, 225, 0.3); }
+        input:focus {
+            border-color: var(--silver-mid);
+            box-shadow: 0 0 15px rgba(165, 201, 225, 0.15);
+        }
 
         .arrow-login {
             position: absolute;
-            right: 10px;
-            width: 40px;
-            height: 40px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
             background-color: var(--silver-mid);
             border-radius: 50%;
             display: flex;
@@ -100,109 +93,57 @@
             justify-content: center;
             cursor: pointer;
             border: none;
-            transition: 0.3s ease;
+            transition: 0.3s;
         }
 
-        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.1); }
-        .arrow-login svg { width: 22px; height: 22px; fill: var(--bg-dark); }
+        .arrow-login:hover { 
+            background-color: var(--silver-light);
+            transform: scale(1.1); 
+        }
+        
+        .arrow-login svg { width: 18px; height: 18px; fill: var(--gemini-bg); }
 
-        .decide-future {
+        .buy-ticket {
+            display: block;
             text-decoration: none;
             font-size: 16px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: var(--silver-mid);
             opacity: 0.6;
             transition: 0.3s;
+            font-family: 'Pirata One', cursive;
         }
-        .decide-future:hover { opacity: 1; color: var(--silver-light); }
+
+        .buy-ticket:hover { opacity: 1; text-decoration: underline; color: var(--silver-light); }
     </style>
 </head>
 <body>
 
-    <canvas id="warpCanvas"></canvas>
-
-    <div class="main-portal">
+    <div class="container">
         <h1>The Chosen</h1>
         <div class="input-wrapper">
-            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" autocomplete="off">
-            <button class="arrow-login" id="loginBtn">
+            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" onkeypress="if(event.keyCode==13) login()">
+            <button class="arrow-login" onclick="login()">
                 <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
         </div>
-        <a href="https://opensea.io/" target="_blank" class="decide-future">DECIDE YOUR FUTURE</a>
+        <a href="https://opensea.io/" target="_blank" class="buy-ticket">BUY TICKET</a>
     </div>
 
     <script>
-        // --- 1. 워프 애니메이션 로직 (광속 모드) ---
-        const canvas = document.getElementById('warpCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, stars = [];
-        let speed = 0.5, targetSpeed = 0.5, lastTime = 0;
-
-        class Star {
-            constructor(initPos = false) { this.reset(initPos); }
-            reset(initPos = false) {
-                this.x = (Math.random() - 0.5) * 2000;
-                this.y = (Math.random() - 0.5) * 2000;
-                this.z = initPos ? Math.random() * 2000 : 2000;
-                this.color = ['#FFFFFF', '#A5C9E1', '#E1F5FE'][Math.floor(Math.random()*3)];
-                this.size = Math.random() * 2 + 0.8;
-            }
-            update(dt) {
-                this.z -= speed * dt * 0.6;
-                if (this.z < 50) this.reset();
-            }
-            show() {
-                let k = 800 / this.z;
-                let sx = this.x * k + width / 2, sy = this.y * k + height / 2;
-                let px = this.x * (800 / (this.z + speed * 3)) + width / 2;
-                let py = this.y * (800 / (this.z + speed * 3)) + height / 2;
-                if (sx < -100 || sx > width + 100) return;
-                ctx.beginPath();
-                ctx.lineWidth = this.size * k * 0.5;
-                ctx.strokeStyle = this.color;
-                ctx.moveTo(px, py); ctx.lineTo(sx, sy);
-                ctx.stroke();
-            }
+        async function digestMessage(message) {
+            const msgUint8 = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            stars = Array.from({length: 600}, () => new Star(true));
-        }
-
-        function draw(timestamp) {
-            const dt = Math.min(timestamp - lastTime, 32) || 16;
-            lastTime = timestamp;
-            ctx.fillStyle = 'rgba(2, 4, 6, 0.25)'; // 잔상 조절
-            ctx.fillRect(0, 0, width, height);
-            speed += (targetSpeed - speed) * (dt * 0.006);
-            stars.forEach(s => { s.update(dt); s.show(); });
-            requestAnimationFrame(draw);
-        }
-
-        // --- 2. 로그인 및 보안 로직 ---
         async function login() {
-            const inputEl = document.getElementById('accessCode');
-            const code = inputEl.value.trim().toUpperCase();
-            if (!code) return;
+            const input = document.getElementById('accessCode').value.trim().toUpperCase();
+            if (!input) return;
 
-            targetSpeed = 25.0; // 워프 속도 가속
+            const inputHash = await digestMessage(input);
 
-            try {
-                // SHA-256 해시 생성
-                const msgBuffer = new TextEncoder().encode(code);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-                // 디버깅용: 콘솔에서 입력된 값의 해시 확인 가능
-                console.log("Current Hash:", inputHash);
-
-                
-            
-            
 
             // 🏛️ 수호자들의 지문(Hash) 저장소
             const secureHashes = [
@@ -1018,28 +959,13 @@ const secureHashes = [
 "56866eed443fd9dc67dd4bf4"]; // 예: "TEST"의 해시
 
                   
-                if (secureHashes.includes(inputHash)) {
-                    document.body.classList.add('fade-out');
-                    setTimeout(() => { window.location.href = "inner-sanctum.html"; }, 1500);
-                } else {
-                    setTimeout(() => {
-                        alert("ACCESS DENIED: Untrusted Frequency.");
-                        targetSpeed = 0.5;
-                    }, 500);
-                }
-            } catch (e) {
-                alert("Security Error: " + e.message);
-                targetSpeed = 0.5;
+                
+            if (secureHashes.includes(inputHash)) {
+                window.location.href = "inner-sanctum.html";
+            } else {
+                alert("ACCESS DENIED: Untrusted Frequency.");
             }
         }
-
-        // 이벤트 연결
-        document.getElementById('loginBtn').onclick = login;
-        document.getElementById('accessCode').onkeypress = (e) => { if(e.key === 'Enter') login(); };
-        
-        window.addEventListener('resize', init);
-        init();
-        requestAnimationFrame(draw);
     </script>
 </body>
 </html>

@@ -137,18 +137,22 @@
     </div>
 
     <script>
-        async function digestMessage(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+    // SHA-256 암호화 함수
+    async function digestMessage(message) {
+        const msgUint8 = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-        async function login() {
-            const input = document.getElementById('accessCode').value.trim().toUpperCase();
-            if (!input) return;
+    async function login() {
+        const input = document.getElementById('accessCode').value.trim().toUpperCase();
+        if (!input) return;
 
-            const inputHash = await digestMessage(input);
+        const inputHash = await digestMessage(input);
+
+        // 🏛️ 수호자들의 정확한 지문(Hash) 저장소
+          
           // 🏛️ 수호자들의 지문(Hash) 저장소
             const secureHashes = [
                 "4d649dedf7297574c249e02ca505259a76dc952b7d49d318e8bfbf914daf1b96"// TC1-A8K2-F9N3-X7P1 의 지문
@@ -962,14 +966,11 @@
 "56866eed443fd9dc67dd4bf4"]; // 예: "TEST"의 해시
 
                   
-        
-            
-            if (secureHashes.includes(inputHash)) {
-                window.location.href = "inner-sanctum.html";
-            } else {
-                alert("ACCESS DENIED: Untrusted Frequency.");
-            }
+
+        if (secureHashes.includes(inputHash)) {
+            window.location.href = "inner-sanctum.html";
+        } else {
+            alert("ACCESS DENIED: Untrusted Frequency.");
         }
-    </script>
-</body>
-</html>
+    }
+</script>

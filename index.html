@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Chosen - Portal</title>
+    <title>The Chosen - Access Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,9 +11,9 @@
             --silver-light: #FFFFFF;
             --silver-mid: #A5C9E1;
             --silver-dark: #708090;
-            --box-bg: rgba(5, 8, 10, 0.85); /* 더 불투명한 검은 상자 */
         }
 
+        /* 1. 배경 설정: 캔버스가 보일 수 있도록 body 배경을 투명하게 하거나 캔버스 뒤로 숨김 */
         body {
             margin: 0;
             background-color: var(--bg-dark);
@@ -24,35 +24,34 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-            transition: opacity 1.2s ease-in-out;
+            transition: opacity 1.5s ease;
         }
 
         body.fade-out { opacity: 0; }
 
-        /* 🚀 워프 배경 캔버스 */
-        canvas {
+        /* 2. 캔버스 최적화: pointer-events를 none으로 설정하여 입력을 방해하지 않게 함 */
+        #warpCanvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1; /* 컨텐츠(5)보다 낮게 설정 */
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* 배경 레이어 */
+            pointer-events: none;
         }
 
-        /* ⬛ 통합된 블랙 박스 컨테이너 */
+        /* 3. 메인 박스: 캔버스보다 위에 오도록 z-index 설정 */
         .main-portal {
             position: relative;
-            z-index: 5;
+            z-index: 10; /* 캔버스(0)보다 위 */
             text-align: center;
             width: 90%;
             max-width: 400px;
             padding: 60px 40px;
-            background: var(--box-bg);
-            /* ✨ 스카이블루 실버 테두리 */
+            background: rgba(5, 8, 10, 0.8); /* 반투명 블랙 */
             border: 1px solid var(--silver-mid);
-            box-shadow: 0 0 40px rgba(165, 201, 225, 0.15), inset 0 0 15px rgba(165, 201, 225, 0.1);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(165, 201, 225, 0.2);
+            backdrop-filter: blur(15px);
             border-radius: 12px;
         }
 
@@ -64,40 +63,36 @@
             background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.4));
+            filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.5));
         }
 
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
-            margin-bottom: 45px;
+            margin-bottom: 40px;
         }
 
         input {
             width: 100%;
-            padding: 14px 55px 14px 20px;
-            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 60px 15px 25px;
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--silver-dark);
-            border-radius: 30px;
+            border-radius: 40px;
             color: var(--silver-light);
             font-size: 18px;
             font-family: 'Pirata One', cursive;
             outline: none;
-            transition: 0.3s;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
         }
 
-        input:focus {
-            border-color: var(--silver-mid);
-            box-shadow: 0 0 20px rgba(165, 201, 225, 0.2);
-        }
+        input:focus { border-color: var(--silver-mid); box-shadow: 0 0 15px rgba(165, 201, 225, 0.3); }
 
         .arrow-login {
             position: absolute;
-            right: 8px;
-            width: 36px;
-            height: 36px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
             background-color: var(--silver-mid);
             border-radius: 50%;
             display: flex;
@@ -105,28 +100,21 @@
             justify-content: center;
             cursor: pointer;
             border: none;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 10px rgba(165, 201, 225, 0.3);
+            transition: 0.3s ease;
         }
 
-        .arrow-login:hover { 
-            background-color: var(--silver-light);
-            transform: scale(1.1) rotate(90deg);
-        }
-        
-        .arrow-login svg { width: 20px; height: 20px; fill: var(--bg-dark); }
+        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.1); }
+        .arrow-login svg { width: 22px; height: 22px; fill: var(--bg-dark); }
 
         .decide-future {
-            display: block;
             text-decoration: none;
             font-size: 16px;
             letter-spacing: 3px;
             color: var(--silver-mid);
             opacity: 0.6;
-            transition: 0.4s;
+            transition: 0.3s;
         }
-
-        .decide-future:hover { opacity: 1; text-shadow: 0 0 8px var(--silver-light); }
+        .decide-future:hover { opacity: 1; color: var(--silver-light); }
     </style>
 </head>
 <body>
@@ -136,8 +124,8 @@
     <div class="main-portal">
         <h1>The Chosen</h1>
         <div class="input-wrapper">
-            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" onkeypress="if(event.keyCode==13) login()">
-            <button class="arrow-login" id="loginBtn" onclick="login()">
+            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" autocomplete="off">
+            <button class="arrow-login" id="loginBtn">
                 <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
         </div>
@@ -145,92 +133,74 @@
     </div>
 
     <script>
-        // 1. 🚀 워프 애니메이션 로직
+        // --- 1. 워프 애니메이션 로직 (광속 모드) ---
         const canvas = document.getElementById('warpCanvas');
         const ctx = canvas.getContext('2d');
         let width, height, stars = [];
-        let lastTime = 0;
-        
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const count = isMobile ? 400 : 800; 
-
-        let speed = 0.5;
-        let targetSpeed = 0.5;
-        const baseSpeed = 0.5;
-        const warpMax = 25.0; 
+        let speed = 0.5, targetSpeed = 0.5, lastTime = 0;
 
         class Star {
-            constructor(initial = false) { this.reset(initial); }
-            reset(initial = false) {
+            constructor(initPos = false) { this.reset(initPos); }
+            reset(initPos = false) {
                 this.x = (Math.random() - 0.5) * 2000;
                 this.y = (Math.random() - 0.5) * 2000;
-                this.z = initial ? Math.random() * 2000 : 2000;
+                this.z = initPos ? Math.random() * 2000 : 2000;
                 this.color = ['#FFFFFF', '#A5C9E1', '#E1F5FE'][Math.floor(Math.random()*3)];
-                this.size = Math.random() * 2 + 0.5;
+                this.size = Math.random() * 2 + 0.8;
             }
             update(dt) {
-                this.z -= speed * dt * 0.5;
+                this.z -= speed * dt * 0.6;
                 if (this.z < 50) this.reset();
             }
             show() {
                 let k = 800 / this.z;
-                let sx = this.x * k + width / 2;
-                let sy = this.y * k + height / 2;
-                let px = this.x * (800 / (this.z + speed * 2.5)) + width / 2;
-                let py = this.y * (800 / (this.z + speed * 2.5)) + height / 2;
-
-                if (sx < -100 || sx > width + 100 || sy < -100 || sy > height + 100) return;
-
+                let sx = this.x * k + width / 2, sy = this.y * k + height / 2;
+                let px = this.x * (800 / (this.z + speed * 3)) + width / 2;
+                let py = this.y * (800 / (this.z + speed * 3)) + height / 2;
+                if (sx < -100 || sx > width + 100) return;
                 ctx.beginPath();
                 ctx.lineWidth = this.size * k * 0.5;
-                ctx.lineCap = 'round';
                 ctx.strokeStyle = this.color;
-                ctx.moveTo(px, py);
-                ctx.lineTo(sx, sy);
+                ctx.moveTo(px, py); ctx.lineTo(sx, sy);
                 ctx.stroke();
             }
         }
 
         function init() {
-            const dpr = window.devicePixelRatio || 1;
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            ctx.scale(dpr, dpr);
-            stars = Array.from({length: count}, () => new Star(true));
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = Array.from({length: 600}, () => new Star(true));
         }
 
         function draw(timestamp) {
             const dt = Math.min(timestamp - lastTime, 32) || 16;
             lastTime = timestamp;
-
-            ctx.fillStyle = 'rgba(2, 4, 6, 0.2)'; 
+            ctx.fillStyle = 'rgba(2, 4, 6, 0.25)'; // 잔상 조절
             ctx.fillRect(0, 0, width, height);
-            
-            // 부드러운 가속 (끊김 방지)
-            speed += (targetSpeed - speed) * (dt * 0.005);
-
+            speed += (targetSpeed - speed) * (dt * 0.006);
             stars.forEach(s => { s.update(dt); s.show(); });
             requestAnimationFrame(draw);
         }
 
-        // 2. 🔐 로그인 및 전환 로직
-        async function digestMessage(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
+        // --- 2. 로그인 및 보안 로직 ---
         async function login() {
-            const input = document.getElementById('accessCode').value.trim().toUpperCase();
-            if (!input) return;
+            const inputEl = document.getElementById('accessCode');
+            const code = inputEl.value.trim().toUpperCase();
+            if (!code) return;
 
-            // 시각적 효과: 로그인 시도 시 가속 시작
-            targetSpeed = warpMax;
+            targetSpeed = 25.0; // 워프 속도 가속
 
-            const inputHash = await digestMessage(input);
+            try {
+                // SHA-256 해시 생성
+                const msgBuffer = new TextEncoder().encode(code);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+                // 디버깅용: 콘솔에서 입력된 값의 해시 확인 가능
+                console.log("Current Hash:", inputHash);
+
+                
             
             
 
@@ -1047,17 +1017,26 @@ const secureHashes = [
 "4bfce36b0e8f4db10a8596005dfa9cb289285368c07973195ec2b59e72cbeb51",
 "56866eed443fd9dc67dd4bf4"]; // 예: "TEST"의 해시
 
-                   if (secureHashes.includes(inputHash)) {
-                document.body.classList.add('fade-out');
-                setTimeout(() => { window.location.href = "inner-sanctum.html"; }, 1200);
-            } else {
-                setTimeout(() => {
-                    alert("ACCESS DENIED: Untrusted Frequency.");
-                    targetSpeed = baseSpeed; // 실패 시 속도 복구
-                }, 500);
+                  
+                if (secureHashes.includes(inputHash)) {
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => { window.location.href = "inner-sanctum.html"; }, 1500);
+                } else {
+                    setTimeout(() => {
+                        alert("ACCESS DENIED: Untrusted Frequency.");
+                        targetSpeed = 0.5;
+                    }, 500);
+                }
+            } catch (e) {
+                alert("Security Error: " + e.message);
+                targetSpeed = 0.5;
             }
         }
 
+        // 이벤트 연결
+        document.getElementById('loginBtn').onclick = login;
+        document.getElementById('accessCode').onkeypress = (e) => { if(e.key === 'Enter') login(); };
+        
         window.addEventListener('resize', init);
         init();
         requestAnimationFrame(draw);

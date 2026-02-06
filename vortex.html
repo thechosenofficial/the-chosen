@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Skyblue Silver Warp - High Speed</title>
+    <title>Interstellar Warp - The Chosen One</title>
     <style>
         :root {
             --silver-light: #FFFFFF;
             --silver-mid: #A5C9E1;
-            --bg-dark: #05080a;
+            --bg-dark: #020406; /* 더 깊은 심연의 블랙 */
         }
         body { margin: 0; background-color: var(--bg-dark); overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; -webkit-tap-highlight-color: transparent; }
         canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         #enter-btn {
-            position: relative; z-index: 10; padding: 18px 60px; background: rgba(165, 201, 225, 0.08); color: var(--silver-light);
-            border: 1px solid var(--silver-mid); font-size: 1.1rem; font-weight: 300; cursor: pointer; letter-spacing: 6px;
-            transition: all 0.3s ease-out; text-transform: uppercase; backdrop-filter: blur(8px); border-radius: 4px; user-select: none;
+            position: relative; z-index: 10; padding: 20px 70px; background: rgba(165, 201, 225, 0.05); color: var(--silver-light);
+            border: 1px solid var(--silver-mid); font-size: 1.2rem; font-weight: 200; cursor: pointer; letter-spacing: 10px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-transform: uppercase; backdrop-filter: blur(15px); border-radius: 2px; user-select: none;
         }
-        #enter-btn:active { transform: scale(0.96); background: rgba(165, 201, 225, 0.2); }
+        #enter-btn:hover { background: rgba(255, 255, 255, 0.15); box-shadow: 0 0 50px rgba(165, 201, 225, 0.5); letter-spacing: 14px; }
+        #enter-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <button id="enter-btn">CONNECT</button>
+    <button id="enter-btn">WARP DRIVE</button>
     <canvas id="warpCanvas"></canvas>
 
     <script>
@@ -34,58 +35,60 @@
         let lastTime = 0;
         
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const count = isMobile ? 300 : 600; 
+        const count = isMobile ? 400 : 800; // 입자 수를 늘려 더 빽빽하게
 
-        // 🏎️ 속도 설정 상향
-        const baseSpeed = 0.08;  // 평상시에도 흐르는 느낌이 나도록 상향
-        const warpSpeed = 12.0;  // 워프 시 훨씬 더 빠르게 (기존 6.0의 2배)
+        // 🏎️ 실제 '광속' 느낌을 위한 속도 설정
+        const baseSpeed = 0.5;    // 평상시에도 빠르게 흐름
+        const warpMax = 25.0;     // 워프 시 압도적인 속도 (기존 대비 대폭 상향)
         let speed = baseSpeed;
         let targetSpeed = baseSpeed;
 
-        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE'];
+        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE', '#FFFFFF'];
 
         class Star {
-            constructor(isInitial = false) { this.reset(isInitial); }
+            constructor() { this.reset(true); }
 
-            reset(isInitial = false) {
-                this.x = (Math.random() - 0.5) * width * 2;
-                this.y = (Math.random() - 0.5) * height * 2;
-                this.z = isInitial ? Math.random() * width : width;
-                // 속도가 빠를 때 선이 끊겨 보이지 않도록 pz 간격 조절
-                this.pz = this.z + 60; 
+            reset(initial = false) {
+                // 화면 중앙에서 바깥으로 뻗어나가는 구조
+                this.x = (Math.random() - 0.5) * 2000;
+                this.y = (Math.random() - 0.5) * 2000;
+                this.z = initial ? Math.random() * 2000 : 2000;
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.size = Math.random() * 1.8 + 0.5;
+                this.size = Math.random() * 2 + 0.5;
             }
 
             update(dt) {
-                // dt 보정값에 속도 배율을 높임
-                const moveStep = speed * dt * 0.5; 
-                this.z -= moveStep;
+                // 속도에 프레임 보정 적용
+                const move = speed * dt * 0.5;
+                this.z -= move;
 
-                if (this.z < 25) { // 스파이크 방지 임계값 유지
+                // 스파이크 방지: 눈앞에 오기 전에 미리 리셋 (임계값 50)
+                if (this.z < 50) {
                     this.reset();
                 }
             }
 
             show() {
-                let sx = (this.x / this.z) * (width / 2) + width / 2;
-                let sy = (this.y / this.z) * (height / 2) + height / 2;
-                let px = (this.x / this.pz) * (width / 2) + width / 2;
-                let py = (this.y / this.pz) * (height / 2) + height / 2;
+                // 원근 투영
+                let k = 800 / this.z;
+                let sx = this.x * k + width / 2;
+                let sy = this.y * k + height / 2;
 
-                // 스파이크 방지: 비정상적인 좌표값 렌더링 차단
+                // 선의 길이를 속도에 비례하게 설정 (이게 워프 느낌의 핵심)
+                let lengthScale = speed * 2; 
+                let px = this.x * (800 / (this.z + lengthScale)) + width / 2;
+                let py = this.y * (800 / (this.z + lengthScale)) + height / 2;
+
+                // 화면 밖 무한대 좌표 방지 (스파이크 원천 차단)
                 if (sx < -width || sx > width * 2 || sy < -height || sy > height * 2) return;
 
                 ctx.beginPath();
+                ctx.lineWidth = this.size * k * 0.5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = this.color;
                 ctx.moveTo(px, py);
                 ctx.lineTo(sx, sy);
-                ctx.strokeStyle = this.color;
-                // 속도에 따라 선이 더 가늘고 날카로워 보이도록 처리
-                ctx.lineWidth = this.size * (1 - this.z / width);
-                ctx.lineCap = 'round';
                 ctx.stroke();
-
-                this.pz = this.z;
             }
         }
 
@@ -97,19 +100,23 @@
             canvas.height = height * dpr;
             ctx.scale(dpr, dpr);
             stars = [];
-            for (let i = 0; i < count; i++) stars.push(new Star(true));
+            for (let i = 0; i < count; i++) stars.push(new Star());
         }
 
         function draw(timestamp) {
-            const dt = timestamp - lastTime || 16;
+            const dt = Math.min(timestamp - lastTime, 32) || 16;
             lastTime = timestamp;
 
-            // 잔상 농도를 낮춰서 선이 더 길고 선명하게 남도록 조절
-            ctx.fillStyle = 'rgba(5, 8, 10, 0.25)'; 
+            // 잔상을 아주 길게 남겨서 선이 이어지는 느낌 부여 (0.15)
+            ctx.fillStyle = 'rgba(2, 4, 6, 0.15)'; 
             ctx.fillRect(0, 0, width, height);
             
-            // 가속도를 더 민감하게 설정 (dt * 0.005)
-            speed += (targetSpeed - speed) * (dt * 0.005);
+            // 가속 반응 속도 상향
+            speed += (targetSpeed - speed) * (dt * 0.008);
+
+            // 빛의 굴절 효과(Glow) 살짝 추가
+            ctx.shadowBlur = speed > 5 ? 10 : 0;
+            ctx.shadowColor = '#A5C9E1';
 
             stars.forEach(star => {
                 star.update(dt);
@@ -118,16 +125,15 @@
             requestAnimationFrame(draw);
         }
 
-        const startWarp = () => targetSpeed = warpSpeed;
+        const startWarp = () => targetSpeed = warpMax;
         const stopWarp = () => targetSpeed = baseSpeed;
 
         btn.addEventListener('mousedown', startWarp);
         btn.addEventListener('mouseup', stopWarp);
-        btn.addEventListener('mouseleave', stopWarp);
         btn.addEventListener('touchstart', (e) => { e.preventDefault(); startWarp(); }, { passive: false });
         btn.addEventListener('touchend', stopWarp);
-
         window.addEventListener('resize', init);
+
         init();
         requestAnimationFrame(draw);
     </script>

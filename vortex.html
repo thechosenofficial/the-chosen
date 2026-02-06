@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Warp Drive Portal</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            overflow: hidden; /* 스크롤 방지 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+        }
+        /* 중앙의 버튼 - '접속' 느낌을 주기 위함 */
+        #enter-btn {
+            position: absolute;
+            z-index: 10;
+            padding: 15px 40px;
+            background: transparent;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            font-size: 1.2rem;
+            cursor: pointer;
+            letter-spacing: 5px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        #enter-btn:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="enter-btn">ENTER SYSTEM</button>
+    <canvas id="warpCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('warpCanvas');
+        const ctx = canvas.getContext('2d');
+        const btn = document.getElementById('enter-btn');
+
+        let width, height, stars = [];
+        const count = 400; // 입자 개수
+        let speed = 0.05;  // 기본 속도
+        let targetSpeed = 0.05;
+
+        // 입자 객체 생성
+        class Star {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * width;
+                this.y = (Math.random() - 0.5) * height;
+                this.z = width; // 초기 깊이
+                this.pz = this.z; // 이전 깊이 (선을 그리기 위함)
+            }
+            update() {
+                this.z -= speed * 50; // 속도에 따라 앞으로 이동
+                if (this.z < 1) {
+                    this.reset();
+                }
+            }
+            show() {
+                ctx.strokeStyle = '#00ff41'; // 네온 그린 색상
+                ctx.lineWidth = 2;
+                
+                // 3D 좌표를 2D 화면 좌표로 투영
+                let sx = (this.x / this.z) * (width / 2) + width / 2;
+                let sy = (this.y / this.z) * (height / 2) + height / 2;
+                let px = (this.x / this.pz) * (width / 2) + width / 2;
+                let py = (this.y / this.pz) * (height / 2) + height / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.lineTo(sx, sy);
+                ctx.stroke();
+
+                this.pz = this.z;
+            }
+        }
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < count; i++) stars.push(new Star());
+        }
+
+        function draw() {
+            // 잔상 효과를 위해 배경을 반투명하게 덮음
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+            
+            // 속도 가속 연출
+            speed += (targetSpeed - speed) * 0.05;
+
+            stars.forEach(star => {
+                star.update();
+                star.show();
+            });
+            requestAnimationFrame(draw);
+        }
+
+        // 버튼 클릭 시 가속 모션
+        btn.addEventListener('mousedown', () => targetSpeed = 0.8);
+        btn.addEventListener('mouseup', () => targetSpeed = 0.05);
+        
+        // 반응형 리사이즈
+        window.addEventListener('resize', init);
+
+        init();
+        draw();
+    </script>
+</body>
+</html>

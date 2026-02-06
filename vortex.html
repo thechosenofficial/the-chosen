@@ -1,136 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Chosen | Pure Light Starfield</title>
+    <title>The Chosen | Sky-Blue Silver Rain</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #000; /* 심연의 검은색 */
-            overflow: hidden;
+            background-color: #000; /* 깊은 검은색 배경 */
+            overflow: hidden; /* 스크롤바 숨김 */
             height: 100vh;
         }
         canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
+            display: block; /* 캔버스 하단 공백 제거 */
         }
     </style>
 </head>
 <body>
 
-    <canvas id="starfieldCanvas"></canvas>
+<canvas id="digitalRain"></canvas>
 
-    <script>
-        const canvas = document.getElementById('starfieldCanvas');
-        const ctx = canvas.getContext('2d');
+<script>
+    const canvas = document.getElementById('digitalRain');
+    const ctx = canvas.getContext('2d');
 
-        let width, height, centerX, centerY;
+    // 캔버스 크기를 화면 전체로 설정하는 함수
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            centerX = width / 2;
-            centerY = height / 2;
-        }
+    // 초기 캔버스 크기 설정 및 화면 크기 변경 시 대응
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-        window.addEventListener('resize', resize);
-        resize();
+    // 디지털 레인 설정
+    const characters = '01'; // 이진법 숫자
+    const fontSize = 14; // 글자 크기 (모바일에 적합하게 조정)
+    let columns = canvas.width / fontSize; // 화면 너비에 따른 열의 수 계산
+    const drops = []; // 각 열의 현재 위치(y좌표)를 저장할 배열
 
-        // 🎨 색상 설정: 스카이블루 실버 광택 유지
-        const colors = ['#D1E8F7', '#A5C9E1', '#87CEEB', '#FFFFFF', '#B0E0E6'];
-        const particles = [];
-        const particleCount = 2000; // 빛 입자의 밀도
+    // 초기 위치 설정 (모두 화면 위에서 시작)
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+    }
 
-        class LightParticle {
-            constructor() {
-                this.init();
+    // 색상 팔레트 (은은한 스카이블루 실버)
+    const colors = [
+        'rgba(135, 206, 235, 0.7)', // 부드러운 스카이블루
+        'rgba(176, 196, 222, 0.7)', // 라이트 스틸 블루
+        'rgba(192, 192, 192, 0.6)'  // 은은한 실버
+    ];
+
+    // 애니메이션 그리기 함수
+    function draw() {
+        // 이전 프레임의 잔상을 남기기 위해 반투명한 검은색으로 덮음
+        // 투명도(0.05)를 조절하여 잔상의 길이를 변경할 수 있습니다.
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = fontSize + 'px monospace'; // 고정폭 글꼴 사용
+
+        // 각 열에 대해 글자 그리기
+        for (let i = 0; i < drops.length; i++) {
+            // 랜덤한 숫자 선택
+            const text = characters.charAt(Math.floor(Math.random() * characters.length));
+            
+            // 랜덤한 색상 선택 (너무 반짝이지 않게 투명도 조절됨)
+            ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 글자 그리기 (x좌표: 열 인덱스 * 글자 크기, y좌표: 현재 위치 * 글자 크기)
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            // 글자가 화면 아래로 내려가고 랜덤한 조건이 맞으면 위치를 맨 위로 초기화
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
             }
 
-            init() {
-                const maxDist = Math.max(width, height) * 0.8;
-                
-                // ✨ 핵심 변경: 중앙 밀집 제거 및 고른 분포
-                // Math.sqrt(Math.random())을 사용하여 원형 영역 전체에 균일하게 퍼뜨림
-                this.dist = maxDist * Math.sqrt(Math.random());
-                this.angle = Math.random() * Math.PI * 2;
-                
-                // 아주 느리고 장엄한 자전 속도
-                this.rotationSpeed = (Math.random() * 0.0002) + 0.00005; 
-                
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                
-                // 빛의 크기 다양화 (숫자보다 약간 작게 설정하여 은하수 느낌 강조)
-                this.size = Math.random() * 3 + 0.5; 
-                this.baseOpacity = Math.random() * 0.5 + 0.3;
-                
-                // 궤적용 기록
-                this.history = [];
-                this.maxHistory = Math.floor(Math.random() * 5) + 2; // 궤적을 짧게 하여 깔끔하게
-            }
-
-            update() {
-                // 현재 위치 저장
-                this.history.unshift({
-                    x: centerX + Math.cos(this.angle) * this.dist,
-                    y: centerY + Math.sin(this.angle) * this.dist
-                });
-
-                if (this.history.length > this.maxHistory) {
-                    this.history.pop();
-                }
-
-                // 느린 회전
-                this.angle += this.rotationSpeed;
-            }
-
-            draw() {
-                // ✨ 핵심 변경: 텍스트(숫자) 대신 빛나는 원 그리기
-                this.history.forEach((pos, i) => {
-                    const trailFactor = 1 - (i / this.history.length);
-                    const currentOpacity = this.baseOpacity * trailFactor;
-
-                    ctx.beginPath();
-                    ctx.arc(pos.x, pos.y, this.size * trailFactor, 0, Math.PI * 2);
-                    ctx.fillStyle = this.color;
-                    ctx.globalAlpha = currentOpacity;
-
-                    // 모든 입자에 은은한 빛 번짐 효과 적용 (중앙 집중 제거)
-                    ctx.shadowBlur = this.size * 3; 
-                    ctx.shadowColor = this.color;
-
-                    ctx.fill();
-                });
-            }
+            // 다음 글자를 위해 위치를 아래로 이동
+            drops[i]++;
         }
+    }
 
-        // 초기 입자 생성
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new LightParticle());
-        }
+    // 50ms마다 draw 함수 실행 (애니메이션 속도 조절)
+    setInterval(draw, 50);
 
-        function animate() {
-            // 부드러운 잔상을 위한 배경 처리
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-            ctx.fillRect(0, 0, width, height);
+</script>
 
-            // 빛 효과를 극대화하기 위한 블렌딩 모드 설정
-            ctx.globalCompositeOperation = 'lighter';
-
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            // 다음 프레임을 위해 블렌딩 모드 초기화
-            ctx.globalCompositeOperation = 'source-over';
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-    </script>
 </body>
 </html>

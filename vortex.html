@@ -1,160 +1,82 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Silver Sky Warp Portal</title>
-    <style>
-        :root {
-            --silver-light: #FFFFFF;
-            --silver-mid: #A5C9E1;
-            --bg-dark: #05080a; /* 더 깊은 블랙으로 대비감 향상 */
+<script>
+    const canvas = document.getElementById('warpCanvas');
+    const ctx = canvas.getContext('2d');
+    const btn = document.getElementById('enter-btn');
+
+    let width, height, stars = [];
+    // 모바일은 사양이 낮을 수 있으므로 입자 수를 기기 사양에 맞춤
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const count = isMobile ? 300 : 600; 
+
+    const baseSpeed = 0.05;  // 더 천천히 다가오게 수정 (어지러움 방지)
+    const warpSpeed = 8.0;   
+    let speed = baseSpeed;
+    let targetSpeed = baseSpeed;
+
+    const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE'];
+
+    class Star {
+        constructor(isInitial = false) { this.reset(isInitial); }
+        reset(isInitial = false) {
+            this.x = (Math.random() - 0.5) * width;
+            this.y = (Math.random() - 0.5) * height;
+            this.z = isInitial ? Math.random() * width : width;
+            this.pz = this.z + 40; 
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.size = Math.random() * 1.2 + 0.3;
         }
-
-        body {
-            margin: 0;
-            background-color: var(--bg-dark);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Inter', sans-serif;
+        update() {
+            this.z -= speed * 70;
+            if (this.z < 1) this.reset();
         }
+        show() {
+            let sx = (this.x / this.z) * (width / 2) + width / 2;
+            let sy = (this.y / this.z) * (height / 2) + height / 2;
+            let px = (this.x / this.pz) * (width / 2) + width / 2;
+            let py = (this.y / this.pz) * (height / 2) + height / 2;
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(sx, sy);
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = this.size * (1 - this.z / width);
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            this.pz = this.z;
         }
+    }
 
-        #enter-btn {
-            position: relative;
-            z-index: 10;
-            padding: 18px 60px;
-            background: rgba(165, 201, 225, 0.05);
-            color: var(--silver-light);
-            border: 1px solid var(--silver-mid);
-            font-size: 1.1rem;
-            font-weight: 300;
-            cursor: pointer;
-            letter-spacing: 8px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            backdrop-filter: blur(10px);
-        }
+    function init() {
+        const dpr = window.devicePixelRatio || 1;
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.scale(dpr, dpr);
+        stars = [];
+        for (let i = 0; i < count; i++) stars.push(new Star(true));
+    }
 
-        #enter-btn:hover {
-            background: rgba(165, 201, 225, 0.2);
-            box-shadow: 0 0 40px rgba(165, 201, 225, 0.3);
-            letter-spacing: 12px;
-            padding: 18px 70px;
-        }
-    </style>
-</head>
-<body>
+    function draw() {
+        // 배경 투명도를 조절해 모바일 잔상 최적화
+        ctx.fillStyle = 'rgba(5, 8, 10, 0.3)';
+        ctx.fillRect(0, 0, width, height);
+        speed += (targetSpeed - speed) * 0.04;
+        stars.forEach(star => { star.update(); star.show(); });
+        requestAnimationFrame(draw);
+    }
 
-    <button id="enter-btn">CONNECT</button>
-    <canvas id="warpCanvas"></canvas>
+    const startWarp = () => targetSpeed = warpSpeed;
+    const stopWarp = () => targetSpeed = baseSpeed;
 
-    <script>
-        const canvas = document.getElementById('warpCanvas');
-        const ctx = canvas.getContext('2d');
-        const btn = document.getElementById('enter-btn');
+    btn.addEventListener('mousedown', startWarp);
+    btn.addEventListener('mouseup', stopWarp);
+    btn.addEventListener('touchstart', (e) => { e.preventDefault(); startWarp(); });
+    btn.addEventListener('touchend', stopWarp);
+    window.addEventListener('resize', init);
 
-        let width, height, stars = [];
-        const count = 600; // 풍성한 라인을 위해 개수 유지
-
-        // 속도 설정: 어지럽지 않게 평상시 속도를 대폭 낮춤
-        const baseSpeed = 0.08;  
-        const warpSpeed = 7.0;   // 접속 시 속도는 더 강력하게
-        let speed = baseSpeed;
-        let targetSpeed = baseSpeed;
-
-        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE'];
-
-        class Star {
-            constructor(isInitial = false) {
-                this.reset(isInitial);
-            }
-
-            reset(isInitial = false) {
-                this.x = (Math.random() - 0.5) * width;
-                this.y = (Math.random() - 0.5) * height;
-                
-                // 처음 시작할 때 이미 화면 곳곳에 배치되도록 함
-                this.z = isInitial ? Math.random() * width : width;
-                
-                // 궤적을 위해 이전 위치(pz)를 현재 위치보다 뒤에 배치하여 즉시 선으로 보이게 함
-                this.pz = this.z + 50; 
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.size = Math.random() * 1.5 + 0.5;
-            }
-
-            update() {
-                this.z -= speed * 80;
-                if (this.z < 1) {
-                    this.reset();
-                }
-            }
-
-            show() {
-                let sx = (this.x / this.z) * (width / 2) + width / 2;
-                let sy = (this.y / this.z) * (height / 2) + height / 2;
-                let px = (this.x / this.pz) * (width / 2) + width / 2;
-                let py = (this.y / this.pz) * (height / 2) + height / 2;
-
-                ctx.beginPath();
-                ctx.moveTo(px, py);
-                ctx.lineTo(sx, sy);
-                
-                ctx.strokeStyle = this.color;
-                // 속도가 빠를수록 선이 더 얇고 날카롭게 보이도록 설정
-                ctx.lineWidth = this.size * (1 - this.z / width);
-                ctx.lineCap = 'round';
-                ctx.stroke();
-
-                this.pz = this.z;
-            }
-        }
-
-        function init() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            stars = [];
-            // 초기 생성 시 isInitial을 true로 주어 이미 선이 있는 상태로 시작
-            for (let i = 0; i < count; i++) stars.push(new Star(true));
-        }
-
-        function draw() {
-            // 잔상이 너무 겹치지 않게 투명도 조절
-            ctx.fillStyle = 'rgba(5, 8, 10, 0.25)';
-            ctx.fillRect(0, 0, width, height);
-            
-            // 가속/감속을 부드럽게 (어지러움 방지)
-            speed += (targetSpeed - speed) * 0.04;
-
-            stars.forEach(star => {
-                star.update();
-                star.show();
-            });
-            requestAnimationFrame(draw);
-        }
-
-        // 마우스/터치 이벤트: 누르는 동안 가속
-        const startWarp = () => targetSpeed = warpSpeed;
-        const stopWarp = () => targetSpeed = baseSpeed;
-
-        btn.addEventListener('mousedown', startWarp);
-        btn.addEventListener('mouseup', stopWarp);
-        btn.addEventListener('mouseleave', stopWarp);
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); startWarp(); });
-        btn.addEventListener('touchend', stopWarp);
-
-        window.addEventListener('resize', init);
-        init();
-        draw();
-    </script>
-</body>
-</html>
+    init();
+    draw();
+</script>

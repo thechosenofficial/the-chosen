@@ -3,65 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skyblue Silver Warp</title>
+    <title>Silver Sky Warp Portal</title>
     <style>
-        /* ✨ 스카이블루 실버 팔레트 변수 정의 (참고용) */
         :root {
             --silver-light: #FFFFFF;
             --silver-mid: #A5C9E1;
-            --silver-dark: #708090;
-            --bg-color: #0a0f14; /* 아주 어두운 남색/회색 배경 */
+            --bg-dark: #05080a; /* 더 깊은 블랙으로 대비감 향상 */
         }
 
         body {
             margin: 0;
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            font-family: 'Inter', sans-serif;
         }
+
         canvas {
-            display: block;
             position: absolute;
             top: 0;
             left: 0;
             z-index: 1;
         }
-        
-        /* 중앙 버튼 스타일링 (팔레트 적용) */
+
         #enter-btn {
             position: relative;
             z-index: 10;
-            padding: 15px 50px;
-            background: rgba(165, 201, 225, 0.1); /* silver-mid 투명하게 */
+            padding: 18px 60px;
+            background: rgba(165, 201, 225, 0.05);
             color: var(--silver-light);
-            border: 2px solid var(--silver-mid);
-            font-size: 1.3rem;
-            font-weight: bold;
+            border: 1px solid var(--silver-mid);
+            font-size: 1.1rem;
+            font-weight: 300;
             cursor: pointer;
-            letter-spacing: 4px;
-            transition: all 0.4s ease;
+            letter-spacing: 8px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
-            backdrop-filter: blur(5px);
-            border-radius: 4px;
+            backdrop-filter: blur(10px);
         }
+
         #enter-btn:hover {
-            background: var(--silver-mid);
-            color: #000;
-            box-shadow: 0 0 30px var(--silver-mid), inset 0 0 10px var(--silver-light);
-            border-color: var(--silver-light);
-        }
-        /* 클릭(터치) 중일 때 효과 */
-        #enter-btn:active {
-             transform: scale(0.95);
+            background: rgba(165, 201, 225, 0.2);
+            box-shadow: 0 0 40px rgba(165, 201, 225, 0.3);
+            letter-spacing: 12px;
+            padding: 18px 70px;
         }
     </style>
 </head>
 <body>
 
-    <button id="enter-btn">WARP START</button>
+    <button id="enter-btn">CONNECT</button>
     <canvas id="warpCanvas"></canvas>
 
     <script>
@@ -70,46 +64,44 @@
         const btn = document.getElementById('enter-btn');
 
         let width, height, stars = [];
-        const count = 500; // 입자 개수 약간 증가
+        const count = 600; // 풍성한 라인을 위해 개수 유지
 
-        // 속도 설정 (이전보다 훨씬 빠르게 설정)
-        const baseSpeed = 0.3;  // 기본 순항 속도
-        const warpSpeed = 5.0;  // 클릭 시 워프 속도 (매우 빠름!)
+        // 속도 설정: 어지럽지 않게 평상시 속도를 대폭 낮춤
+        const baseSpeed = 0.08;  
+        const warpSpeed = 7.0;   // 접속 시 속도는 더 강력하게
         let speed = baseSpeed;
         let targetSpeed = baseSpeed;
 
-        // 요청하신 컬러 팔레트
-        const colors = ['#FFFFFF', '#A5C9E1']; // light 와 mid 컬러
+        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE'];
 
         class Star {
-            constructor() {
-                this.reset();
+            constructor(isInitial = false) {
+                this.reset(isInitial);
             }
-            reset() {
+
+            reset(isInitial = false) {
                 this.x = (Math.random() - 0.5) * width;
                 this.y = (Math.random() - 0.5) * height;
-                this.z = width; 
-                this.pz = this.z;
-                // 생성될 때 화이트 또는 스카이블루 중 랜덤 색상 부여
+                
+                // 처음 시작할 때 이미 화면 곳곳에 배치되도록 함
+                this.z = isInitial ? Math.random() * width : width;
+                
+                // 궤적을 위해 이전 위치(pz)를 현재 위치보다 뒤에 배치하여 즉시 선으로 보이게 함
+                this.pz = this.z + 50; 
                 this.color = colors[Math.floor(Math.random() * colors.length)];
-                // 선의 두께 랜덤 부여 (깊이감 표현)
-                this.sizeBase = Math.random() * 2 + 0.5;
+                this.size = Math.random() * 1.5 + 0.5;
             }
+
             update() {
-                // 속도에 비례하여 z축(깊이) 이동 속도 증가
-                this.z -= speed * 100; 
+                this.z -= speed * 80;
                 if (this.z < 1) {
                     this.reset();
-                    this.z = width;
-                    this.pz = this.z;
                 }
             }
+
             show() {
-                // 현재 위치 계산
                 let sx = (this.x / this.z) * (width / 2) + width / 2;
                 let sy = (this.y / this.z) * (height / 2) + height / 2;
-                
-                // 과거 위치 계산 (속도가 빠를수록 현재와 과거의 차이가 커져 선이 길어짐)
                 let px = (this.x / this.pz) * (width / 2) + width / 2;
                 let py = (this.y / this.pz) * (height / 2) + height / 2;
 
@@ -118,12 +110,12 @@
                 ctx.lineTo(sx, sy);
                 
                 ctx.strokeStyle = this.color;
-                // 가까이 올수록 선이 약간 두꺼워지게 처리
-                ctx.lineWidth = this.sizeBase * (1 - this.z / width);
-                ctx.lineCap = 'round'; // 선 끝을 둥글게
+                // 속도가 빠를수록 선이 더 얇고 날카롭게 보이도록 설정
+                ctx.lineWidth = this.size * (1 - this.z / width);
+                ctx.lineCap = 'round';
                 ctx.stroke();
 
-                this.pz = this.z; // 현재 위치를 과거 위치로 저장
+                this.pz = this.z;
             }
         }
 
@@ -131,18 +123,17 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             stars = [];
-            for (let i = 0; i < count; i++) stars.push(new Star());
+            // 초기 생성 시 isInitial을 true로 주어 이미 선이 있는 상태로 시작
+            for (let i = 0; i < count; i++) stars.push(new Star(true));
         }
 
         function draw() {
-            // 배경 잔상 효과: --silver-dark 색상에 높은 투명도를 주어 덮어씀
-            // rgba(112, 128, 144, 0.15) -> 슬레이트 그레이
-            // 투명도(0.15)가 낮을수록 잔상이 길게 남습니다.
-            ctx.fillStyle = 'rgba(10, 15, 20, 0.2)'; // 아주 깊은 우주색으로 덮기
+            // 잔상이 너무 겹치지 않게 투명도 조절
+            ctx.fillStyle = 'rgba(5, 8, 10, 0.25)';
             ctx.fillRect(0, 0, width, height);
             
-            // 속도를 부드럽게 목표 속도까지 가속/감속
-            speed += (targetSpeed - speed) * 0.07;
+            // 가속/감속을 부드럽게 (어지러움 방지)
+            speed += (targetSpeed - speed) * 0.04;
 
             stars.forEach(star => {
                 star.update();
@@ -151,20 +142,17 @@
             requestAnimationFrame(draw);
         }
 
-        // 마우스 누를 때 가속
-        btn.addEventListener('mousedown', () => targetSpeed = warpSpeed);
-        btn.addEventListener('mouseup', () => targetSpeed = baseSpeed);
-        btn.addEventListener('mouseleave', () => targetSpeed = baseSpeed);
+        // 마우스/터치 이벤트: 누르는 동안 가속
+        const startWarp = () => targetSpeed = warpSpeed;
+        const stopWarp = () => targetSpeed = baseSpeed;
 
-        // 모바일 터치 지원
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // 터치 시 스크롤 등 기본 동작 방지
-            targetSpeed = warpSpeed;
-        });
-        btn.addEventListener('touchend', () => targetSpeed = baseSpeed);
+        btn.addEventListener('mousedown', startWarp);
+        btn.addEventListener('mouseup', stopWarp);
+        btn.addEventListener('mouseleave', stopWarp);
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); startWarp(); });
+        btn.addEventListener('touchend', stopWarp);
 
         window.addEventListener('resize', init);
-
         init();
         draw();
     </script>

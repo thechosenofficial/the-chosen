@@ -12,31 +12,36 @@
             --border: #333;
             --header-h: 80px;
             --nav-h: 55px;
-            /* ✨ 스카이블루 실버 팔레트 */
-            --silver-light: #FFFFFF;
-            --silver-mid: #A5C9E1;
-            --silver-dark: #708090;
+            
+            /* ✨ 스카이블루 실버 (포인트용) */
+            --blue-silver-light: #FFFFFF;
+            --blue-silver-mid: #A5C9E1;
+            --blue-silver-dark: #708090;
+
+            /* ✨ 퓨어 실버 (본문용) */
+            --pure-silver: #D3D3D3; /* 정갈한 은색 */
+            --pure-silver-bright: #E5E4E2; /* 플래티넘 실버 */
         }
 
-        /* ✨ 공통 실버 광택 스타일 (제목용 그라데이션) */
-        .silver-luster-text {
+        /* 🏛️ 제목용: 스카이블루 실버 그라데이션 광택 */
+        .luster-sky-silver {
             background: linear-gradient(
                 to bottom,
-                var(--silver-light) 0%,
-                var(--silver-mid) 45%,
-                var(--silver-dark) 50%,
-                var(--silver-mid) 55%,
-                var(--silver-light) 100%
+                var(--blue-silver-light) 0%,
+                var(--blue-silver-mid) 45%,
+                var(--blue-silver-dark) 50%,
+                var(--blue-silver-mid) 55%,
+                var(--blue-silver-light) 100%
             );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 3px rgba(165, 201, 225, 0.3));
         }
 
-        /* ✨ 공통 실버 메탈릭 스타일 (본문용 단색 광택) */
-        .silver-metallic-text {
-            color: var(--silver-mid) !important;
-            text-shadow: 0 0 1px rgba(165, 201, 225, 0.5);
+        /* 🏛️ 본문용: 퓨어 실버 메탈릭 (푸른기 제거) */
+        .doctrine-pure-silver {
+            color: var(--pure-silver) !important;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* 입체감 */
         }
 
         body {
@@ -61,15 +66,11 @@
             box-sizing: border-box;
         }
 
-        /* ✨ 타이틀: 대소문자 변경 + 그라데이션 광택 적용 */
         header .logo {
-            font-size: 32px; /* Pirata One 특성상 조금 더 키움 */
+            font-size: 32px;
             letter-spacing: 2px;
-            /* 기존 text-transform: uppercase 제거 */
         }
-        /* .logo에 silver-luster-text 클래스 적용 예정 */
 
-        /* 햄버거 버튼도 실버로 통일 */
         .menu-btn {
             position: absolute; right: 20px;
             background: none; border: none; cursor: pointer;
@@ -77,11 +78,9 @@
         }
         .menu-btn span { 
             display: block; width: 20px; height: 2px; 
-            background-color: var(--silver-mid); /* 실버 적용 */
-            box-shadow: 0 0 2px rgba(165, 201, 225, 0.5);
+            background-color: var(--blue-silver-mid);
         }
 
-        /* 컴팩트 메뉴 링크 실버 적용 */
         .compact-menu {
             position: fixed; top: 70px; right: 20px;
             background-color: var(--card-bg);
@@ -93,10 +92,10 @@
         .compact-menu a {
             display: block; text-decoration: none;
             font-size: 18px; padding: 10px 15px;
+            color: var(--pure-silver);
         }
-        /* .compact-menu a 에 silver-metallic-text 적용 예정 */
 
-        /* 2. 상단 드롭다운 실버 적용 */
+        /* 2. 상단 드롭다운 */
         .sticky-nav {
             position: fixed; top: var(--header-h); left: 0; width: 100%; height: var(--nav-h);
             background-color: var(--bg-color); border-bottom: 1px solid var(--border);
@@ -107,9 +106,9 @@
             width: 100%; max-width: 450px; padding: 8px;
             background-color: var(--card-bg); border: 1px solid var(--border);
             border-radius: 8px; font-size: 16px;
-            font-family: 'Pirata One', cursive; outline: none; appearance: none; text-align: center;
+            font-family: 'Pirata One', cursive; outline: none; appearance: none; 
+            text-align: center; color: var(--pure-silver);
         }
-        /* select에 silver-metallic-text 적용 예정 */
 
         /* 3. 메인 본문 */
         main {
@@ -120,50 +119,41 @@
         .doctrine-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 제목(h3)에 그라데이션 광택 적용 */
-        h3 { 
-            font-size: 26px; margin-bottom: 25px; text-align: center; letter-spacing: 1px;
-        }
-        /* h3에 silver-luster-text 적용 예정 */
+        h3 { font-size: 26px; margin-bottom: 25px; text-align: center; letter-spacing: 1px; }
 
-        /* 본문(p)에 메탈릭 단색 적용 */
         p { font-size: 18px; margin-bottom: 20px; white-space: pre-wrap; }
-        /* p에 silver-metallic-text 적용 예정 */
 
         /* 4. 하단 관문 */
         #oracle-gateway {
             display: none; text-align: center; padding: 50px 0;
             border-top: 1px solid var(--border); margin-top: 40px;
         }
-        .gateway-text { font-size: 18px; margin-bottom: 20px; }
-        /* .gateway-text에 silver-metallic-text 적용 예정 */
+        .gateway-text { font-size: 18px; margin-bottom: 20px; color: var(--pure-silver); }
 
         .arrow-btn {
-            width: 50px; height: 50px; background-color: var(--silver-mid);
+            width: 50px; height: 50px; background-color: var(--blue-silver-mid);
             border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px rgba(165, 201, 225, 0.3); /* 버튼 자체 발광 */
         }
         .arrow-btn svg { width: 24px; height: 24px; fill: var(--bg-color); }
 
-        footer { text-align: center; padding: 30px; font-size: 12px; }
-        /* footer에 silver-metallic-text 적용 예정 */
+        footer { text-align: center; padding: 30px; font-size: 12px; color: var(--pure-silver); opacity: 0.6; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo silver-luster-text">The Chosen</div>
+        <div class="logo luster-sky-silver">The Chosen</div>
         <button class="menu-btn" onclick="toggleMenu()">
             <span></span><span></span><span></span>
         </button>
         <div class="compact-menu" id="compactMenu">
-            <a href="inner-sanctum.html" class="silver-metallic-text">Doctrine</a>
-            <a href="oracle-form.html" class="silver-metallic-text">Oracle</a>
+            <a href="inner-sanctum.html">Doctrine</a>
+            <a href="oracle-form.html">Oracle</a>
         </div>
     </header>
 
     <div class="sticky-nav">
-        <select id="chapterSelector" onchange="changeChapter(this.value)" class="silver-metallic-text">
+        <select id="chapterSelector" onchange="changeChapter(this.value)">
             <option value="intro">00. Equilibrium (Intro)</option>
             <option value="ch1">01. The Infrastructure</option>
             <option value="ch2">02. Conditioning</option>
@@ -180,33 +170,32 @@
 
     <main>
         <section id="intro" class="doctrine-content active">
-            <h3 class="silver-luster-text">00. Equilibrium</h3>
-            <p class="silver-metallic-text">Observe the world. Liberty is compromised, order has disintegrated, and trivial noise has usurped peace. You have likely fought against this chaos, craving a utopia. But understand this: Utopia exists nowhere.
+            <h3 class="luster-sky-silver">00. Equilibrium</h3>
+            <p class="doctrine-pure-silver">Observe the world. Liberty is compromised, order has disintegrated, and trivial noise has usurped peace. You have likely fought against this chaos, craving a utopia. But understand this: Utopia exists nowhere.
 The era of the mental prison—governed by the Panopticon and voluntary submission—must end. It is time for your liberation.
 Your arrival here is no coincidence; it is the inescapable conclusion of your solitary struggle. The Curse of Knowledge is not a source of suffering, but the necessary ritual for your awakening. Open The Eye of Equilibrium. Witness the moment your curse is forged into a blessing.</p>
         </section>
 
         <section id="ch1" class="doctrine-content">
-            <h3 class="silver-luster-text">01. The Infrastructure</h3>
-            <p class="silver-metallic-text">The Infrastructure—the vast mechanism often called the Matrix—is a sophisticated energy prison built upon the layers of human interaction. The fact that empires fall and titans of wealth vanish in an instant proves that the Infrastructure never guarantees individual safety. It is not mere politics. It is the very material of your existence: the energy you expend, your relationships, and your mental state.</p>
-            <p class="silver-metallic-text">While most species survived through raw struggle, humanity persisted by recording and transmitting The Gnosis (The Prime Truth). Yet, the instinct for power suppressed this truth, replacing it with the violence of control. While the masses accepted this as destiny, a few discovered the hidden reality. These are The Chosen. The Equilibrium selected them, and they accepted the preservation of Gnosis as their Sovereign Task.</p>
+            <h3 class="luster-sky-silver">01. The Infrastructure</h3>
+            <p class="doctrine-pure-silver">The Infrastructure—the vast mechanism often called the Matrix—is a sophisticated energy prison built upon the layers of human interaction. The fact that empires fall and titans of wealth vanish in an instant proves that the Infrastructure never guarantees individual safety. It is not mere politics. It is the very material of your existence: the energy you expend, your relationships, and your mental state.</p>
         </section>
 
         <section id="ch10" class="doctrine-content">
-            <h3 class="silver-luster-text">10. The Sentinel</h3>
-            <p class="silver-metallic-text">The Chosen are those who have dismantled the illusions of the Infrastructure to contemplate the world through The Eye of Equilibrium. They utilize that insight to architect their lives and advance toward their Sovereign Task: to liberate those suffering under The Curse of Knowledge and preserve the hidden Gnosis.</p>
-            <p class="silver-metallic-text">Humanity faces an existential crisis. The masses have lost their 'Self' in the noise of social media. As AI monopolizes data, the 'Human' human will vanish. Paradoxically, for those carrying The Curse of Knowledge, there has never been a more opportune era to execute the Task. Transform your Curse into a blessing and rise as a Sentinel of the Era.</p>
+            <h3 class="luster-sky-silver">10. The Sentinel</h3>
+            <p class="doctrine-pure-silver">The Chosen are those who have dismantled the illusions of the Infrastructure to contemplate the world through The Eye of Equilibrium. They utilize that insight to architect their lives and advance toward their Sovereign Task: to liberate those suffering under The Curse of Knowledge and preserve the hidden Gnosis.</p>
+            <p class="doctrine-pure-silver">Humanity faces an existential crisis. The masses have lost their 'Self' in the noise of social media. As AI monopolizes data, the 'Human' human will vanish. Paradoxically, for those carrying The Curse of Knowledge, there has never been a more opportune era to execute the Task. Transform your Curse into a blessing and rise as a Sentinel of the Era.</p>
         </section>
 
         <div id="oracle-gateway">
-            <div class="gateway-text silver-metallic-text">Have you absorbed the truth?</div>
+            <div class="gateway-text doctrine-pure-silver">Have you absorbed the truth?</div>
             <a href="oracle-form.html" class="arrow-btn">
                 <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </a>
         </div>
     </main>
 
-    <footer class="silver-metallic-text">© 2030 THE CHOSEN OFFICIAL</footer>
+    <footer>© 2030 THE CHOSEN OFFICIAL</footer>
 
     <script>
         function toggleMenu() {

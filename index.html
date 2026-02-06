@@ -137,7 +137,13 @@
     </div>
 
     <script>
-    // SHA-256 암호화 함수
+    // 1. 페이지 로드 시 로그인 상태 확인 (자동 리다이렉트)
+    window.onload = function() {
+        if (localStorage.getItem('chosen_access') === 'granted') {
+            window.location.href = "inner-sanctum.html";
+        }
+    };
+
     async function digestMessage(message) {
         const msgUint8 = new TextEncoder().encode(message);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -150,8 +156,8 @@
         if (!input) return;
 
         const inputHash = await digestMessage(input);
-
-        // 🏛️ 수호자들의 정확한 지문(Hash) 저장소
+        
+      
           
           // 🏛️ 수호자들의 지문(Hash) 저장소
             const secureHashes = [
@@ -968,6 +974,8 @@
                   
 
         if (secureHashes.includes(inputHash)) {
+            // ✨ 성공 시 로그인 상태 저장
+            localStorage.setItem('chosen_access', 'granted');
             window.location.href = "inner-sanctum.html";
         } else {
             alert("ACCESS DENIED: Untrusted Frequency.");

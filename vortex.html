@@ -2,140 +2,60 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Interstellar Warp - The Chosen One</title>
+    <title>Digital Sphere Rain</title>
     <style>
-        :root {
-            --silver-light: #FFFFFF;
-            --silver-mid: #A5C9E1;
-            --bg-dark: #020406; /* 더 깊은 심연의 블랙 */
-        }
-        body { margin: 0; background-color: var(--bg-dark); overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; -webkit-tap-highlight-color: transparent; }
-        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        #enter-btn {
-            position: relative; z-index: 10; padding: 20px 70px; background: rgba(165, 201, 225, 0.05); color: var(--silver-light);
-            border: 1px solid var(--silver-mid); font-size: 1.2rem; font-weight: 200; cursor: pointer; letter-spacing: 10px;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-transform: uppercase; backdrop-filter: blur(15px); border-radius: 2px; user-select: none;
-        }
-        #enter-btn:hover { background: rgba(255, 255, 255, 0.15); box-shadow: 0 0 50px rgba(165, 201, 225, 0.5); letter-spacing: 14px; }
-        #enter-btn:active { transform: scale(0.95); }
+        body { margin: 0; overflow: hidden; background: #000; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
 
-    <button id="enter-btn">WARP DRIVE</button>
-    <canvas id="warpCanvas"></canvas>
+<canvas id="canvas"></canvas>
 
-    <script>
-        const canvas = document.getElementById('warpCanvas');
-        const ctx = canvas.getContext('2d');
-        const btn = document.getElementById('enter-btn');
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
-        let width, height, stars = [];
-        let lastTime = 0;
-        
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const count = isMobile ? 400 : 800; // 입자 수를 늘려 더 빽빽하게
+    // 화면 꽉 채우기
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-        // 🏎️ 실제 '광속' 느낌을 위한 속도 설정
-        const baseSpeed = 0.5;    // 평상시에도 빠르게 흐름
-        const warpMax = 25.0;     // 워프 시 압도적인 속도 (기존 대비 대폭 상향)
-        let speed = baseSpeed;
-        let targetSpeed = baseSpeed;
+    // 설정: 문자열과 폰트 크기
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$+-*/=<>".split("");
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-        const colors = ['#FFFFFF', '#A5C9E1', '#E1F5FE', '#FFFFFF'];
+    function draw() {
+        // 배경을 아주 투명한 검정색으로 덮어 잔상 효과(Motion Blur) 생성
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        class Star {
-            constructor() { this.reset(true); }
+        // 글자 색상 및 폰트 설정
+        ctx.fillStyle = "#0F0"; // 매트릭스 그린
+        ctx.font = fontSize + "px monospace";
 
-            reset(initial = false) {
-                // 화면 중앙에서 바깥으로 뻗어나가는 구조
-                this.x = (Math.random() - 0.5) * 2000;
-                this.y = (Math.random() - 0.5) * 2000;
-                this.z = initial ? Math.random() * 2000 : 2000;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.size = Math.random() * 2 + 0.5;
-            }
-
-            update(dt) {
-                // 속도에 프레임 보정 적용
-                const move = speed * dt * 0.5;
-                this.z -= move;
-
-                // 스파이크 방지: 눈앞에 오기 전에 미리 리셋 (임계값 50)
-                if (this.z < 50) {
-                    this.reset();
-                }
-            }
-
-            show() {
-                // 원근 투영
-                let k = 800 / this.z;
-                let sx = this.x * k + width / 2;
-                let sy = this.y * k + height / 2;
-
-                // 선의 길이를 속도에 비례하게 설정 (이게 워프 느낌의 핵심)
-                let lengthScale = speed * 2; 
-                let px = this.x * (800 / (this.z + lengthScale)) + width / 2;
-                let py = this.y * (800 / (this.z + lengthScale)) + height / 2;
-
-                // 화면 밖 무한대 좌표 방지 (스파이크 원천 차단)
-                if (sx < -width || sx > width * 2 || sy < -height || sy > height * 2) return;
-
-                ctx.beginPath();
-                ctx.lineWidth = this.size * k * 0.5;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = this.color;
-                ctx.moveTo(px, py);
-                ctx.lineTo(sx, sy);
-                ctx.stroke();
-            }
-        }
-
-        function init() {
-            const dpr = window.devicePixelRatio || 1;
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            ctx.scale(dpr, dpr);
-            stars = [];
-            for (let i = 0; i < count; i++) stars.push(new Star());
-        }
-
-        function draw(timestamp) {
-            const dt = Math.min(timestamp - lastTime, 32) || 16;
-            lastTime = timestamp;
-
-            // 잔상을 아주 길게 남겨서 선이 이어지는 느낌 부여 (0.15)
-            ctx.fillStyle = 'rgba(2, 4, 6, 0.15)'; 
-            ctx.fillRect(0, 0, width, height);
+        for (let i = 0; i < drops.length; i++) {
+            // 랜덤 문자 선택
+            const text = chars[Math.floor(Math.random() * chars.length)];
             
-            // 가속 반응 속도 상향
-            speed += (targetSpeed - speed) * (dt * 0.008);
+            // 이미지처럼 '원근감'을 주기 위해 위치에 따라 밝기 조절 (선택 사항)
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-            // 빛의 굴절 효과(Glow) 살짝 추가
-            ctx.shadowBlur = speed > 5 ? 10 : 0;
-            ctx.shadowColor = '#A5C9E1';
-
-            stars.forEach(star => {
-                star.update(dt);
-                star.show();
-            });
-            requestAnimationFrame(draw);
+            // 화면 끝에 도달하면 랜덤하게 다시 위로 (밀도 조절)
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
         }
+    }
 
-        const startWarp = () => targetSpeed = warpMax;
-        const stopWarp = () => targetSpeed = baseSpeed;
-
-        btn.addEventListener('mousedown', startWarp);
-        btn.addEventListener('mouseup', stopWarp);
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); startWarp(); }, { passive: false });
-        btn.addEventListener('touchend', stopWarp);
-        window.addEventListener('resize', init);
-
-        init();
-        requestAnimationFrame(draw);
-    </script>
+    // 초당 약 30~60프레임으로 실행
+    setInterval(draw, 33);
+</script>
 </body>
 </html>

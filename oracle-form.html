@@ -21,7 +21,6 @@
             font-family: 'Pirata One', system-ui;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
-            -webkit-font-smoothing: antialiased;
         }
 
         .luster-text {
@@ -29,20 +28,19 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .altar-container {
-            width: 100%; max-width: 500px; margin-top: 5vh; text-align: center;
-            animation: fadeIn 1.5s ease-out;
-        }
+        .altar-container { width: 100%; max-width: 500px; margin-top: 5vh; text-align: center; }
 
         h2 { font-size: 40px; margin-bottom: 40px; letter-spacing: 2px; }
 
         .oracle-form { display: flex; flex-direction: column; gap: 25px; text-align: left; }
-        
         .field-group { display: flex; flex-direction: column; gap: 8px; }
 
-        label { font-size: 16px; color: var(--silver-mid); margin-left: 5px; letter-spacing: 1px; }
-        
-        /* ✨ 공통 입력창 스타일 (Select 포함) */
+        /* ✨ 연/월/일 가로 배치를 위한 레이아웃 */
+        .birth-select-wrapper { display: flex; gap: 10px; }
+        .birth-select-wrapper select { flex: 1; }
+
+        label { font-size: 16px; color: var(--silver-mid); margin-left: 5px; }
+
         input, textarea, select {
             background-color: rgba(255, 255, 255, 0.03); 
             border: 1px solid var(--border);
@@ -52,43 +50,29 @@
             transition: 0.3s;
         }
 
-        /* 엑셀 필터 스타일의 드롭다운 커스텀 */
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23A5C9E1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 15px center;
-            padding-right: 45px;
+            background-position: right 10px center;
+            background-size: 18px;
+            padding-right: 35px;
             cursor: pointer;
         }
 
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--silver-mid);
-            box-shadow: 0 0 10px rgba(165, 201, 225, 0.2);
-        }
-
-        textarea { height: 120px; resize: none; line-height: 1.5; }
+        textarea { height: 120px; resize: none; }
         
-        .char-count { font-size: 12px; text-align: right; color: var(--silver-dark); margin-top: 5px; }
-
         .submit-btn {
             background-color: var(--silver-mid); color: var(--bg-color);
             border: none; border-radius: 30px; padding: 18px;
             font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer;
-            transition: 0.4s; margin-top: 30px; letter-spacing: 2px;
+            transition: 0.4s; margin-top: 30px;
         }
-        .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(165, 201, 225, 0.3); }
+        .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
 
-        /* 상태 섹션 */
-        .status-box { 
-            display: none; border: 1px solid var(--border); padding: 40px 20px; 
-            border-radius: 25px; background-color: var(--card-bg);
-            margin-top: 20px;
-        }
+        .status-box { display: none; border: 1px solid var(--border); padding: 40px 20px; border-radius: 25px; background-color: var(--card-bg); margin-top: 20px; }
 
-        .deadline-notice { font-size: 14px; color: #ff6b6b; margin-top: 15px; opacity: 0.8; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -98,9 +82,20 @@
 
         <div id="formSection">
             <form id="oracleForm" class="oracle-form">
+                
                 <div class="field-group">
                     <label>Date of Birth</label>
-                    <input type="date" name="birth_date" required>
+                    <div class="birth-select-wrapper">
+                        <select id="birthYear" name="birth_year" required>
+                            <option value="" disabled selected>Year</option>
+                        </select>
+                        <select id="birthMonth" name="birth_month" required>
+                            <option value="" disabled selected>Month</option>
+                        </select>
+                        <select id="birthDay" name="birth_day" required>
+                            <option value="" disabled selected>Day</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="field-group">
@@ -136,7 +131,6 @@
                 <div class="field-group">
                     <label>Vision of 2030 (Time Machine)</label>
                     <textarea name="vision" id="visionText" maxlength="200" placeholder="I have seen the future..." required></textarea>
-                    <div class="char-count" id="charCount">0 / 70 English Chars recommended</div>
                 </div>
 
                 <button type="submit" class="submit-btn">Offer to Equilibrium</button>
@@ -145,72 +139,70 @@
 
         <div id="waitingSection" class="status-box">
             <h3 class="luster-text" style="font-size: 30px;">Waiting for Oracle</h3>
-            <p style="margin-top: 20px;">Your data has been offered to the Void.<br>The Sentinel is analyzing your frequency.</p>
-            <p style="color: var(--silver-mid); font-size: 18px;">(Estimated time: Within 5 days)</p>
-            
-            <div id="addressChangeArea" style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
-                <p style="color: var(--silver-mid);">Current Shipment Address</p>
-                <input type="text" id="userAddress" placeholder="Enter Address for the Artifact" style="width: 100%; box-sizing: border-box; margin-top: 10px;">
-                <button onclick="updateAddress()" class="submit-btn" style="padding: 12px 25px; font-size: 18px; width: auto;">Update Address</button>
-                <p class="deadline-notice">Address modification is possible until Dec 2027.</p>
-            </div>
+            <p style="margin-top: 20px;">Your data has been offered to the Void.</p>
+            <p style="color: var(--silver-mid);">(Estimated time: Within 5 days)</p>
         </div>
 
-        <div id="descendedSection" class="status-box">
-            <h3 class="luster-text" style="font-size: 30px;">Oracle Has Descended</h3>
-            <p>The Eye of Equilibrium has opened for you.</p>
-            <button onclick="openOracleWindow()" class="submit-btn">Open The Vision</button>
-        </div>
     </div>
 
     <script>
-        // 1. 주소지 마감 로직 (2027년 12월 31일)
-        const deadline = new Date("2027-12-31T23:59:59");
-        if (new Date() > deadline) {
-            const area = document.getElementById('addressChangeArea');
-            if(area) area.innerHTML = "<p style='color: #ff6b6b;'>Address modification period has ended.</p>";
+        // ✨ 연도/월/일 드롭다운 생성 로직
+        const yearSelect = document.getElementById('birthYear');
+        const monthSelect = document.getElementById('birthMonth');
+        const daySelect = document.getElementById('birthDay');
+
+        // 연도 생성 (1900 ~ 2026)
+        const currentYear = 2026;
+        for (let i = currentYear; i >= 1900; i--) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = i;
+            yearSelect.appendChild(opt);
         }
 
-        // 2. 글자수 카운트
-        document.getElementById('visionText').addEventListener('input', function() {
-            const len = this.value.length;
-            const countDisplay = document.getElementById('charCount');
-            countDisplay.innerText = `${len} / 70 English Chars recommended`;
-            if(len > 70) countDisplay.style.color = "#ff6b6b";
-            else countDisplay.style.color = "var(--silver-dark)";
-        });
+        // 월 생성 (1 ~ 12)
+        for (let i = 1; i <= 12; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = i;
+            monthSelect.appendChild(opt);
+        }
 
-        // 3. 폼 제출 및 상태 저장
+        // 일 생성 함수 (월/연도에 따라 일수 변경)
+        function updateDays() {
+            const year = parseInt(yearSelect.value);
+            const month = parseInt(monthSelect.value);
+            if (!year || !month) return;
+
+            const lastDay = new Date(year, month, 0).getDate();
+            const currentDayValue = daySelect.value;
+
+            daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
+            for (let i = 1; i <= lastDay; i++) {
+                let opt = document.createElement('option');
+                opt.value = i;
+                opt.innerHTML = i;
+                daySelect.appendChild(opt);
+            }
+            if (currentDayValue <= lastDay) daySelect.value = currentDayValue;
+        }
+
+        yearSelect.onchange = updateDays;
+        monthSelect.onchange = updateDays;
+
+        // 폼 제출 로직
         document.getElementById('oracleForm').onsubmit = function(e) {
             e.preventDefault();
-            // 실무에서는 여기서 Formspree 등을 통해 메일을 보냅니다.
             localStorage.setItem('oracle_status', 'waiting');
             showStatus();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         function showStatus() {
             const status = localStorage.getItem('oracle_status');
-            const sections = {
-                form: document.getElementById('formSection'),
-                wait: document.getElementById('waitingSection'),
-                desc: document.getElementById('descendedSection')
-            };
-
-            Object.values(sections).forEach(s => s.style.display = 'none');
-
-            if (status === 'waiting') sections.wait.style.display = 'block';
-            else if (status === 'descended') sections.desc.style.display = 'block';
-            else sections.form.style.display = 'block';
-        }
-
-        function updateAddress() {
-            alert("Address updated securely within the frequency.");
-        }
-
-        function openOracleWindow() {
-            // 이 부분은 나중에 더초즌제로님이 개별 수호자에게 줄 '신탁 내용'으로 연결됩니다.
-            alert("The Vision is manifesting...");
+            if (status === 'waiting') {
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('waitingSection').style.display = 'block';
+            }
         }
 
         window.onload = showStatus;

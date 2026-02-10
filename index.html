@@ -22,9 +22,8 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center; 
-            /* height: 100vh; -> 제거하여 자연스러운 스크롤 허용 (필요시) */
             min-height: 100vh;
-            overflow-x: hidden; /* 가로 스크롤만 막음 */
+            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             position: relative;
         }
@@ -36,7 +35,7 @@
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
-            margin-top: 20vh; /* 상단 여백 약간 축소 */
+            margin-top: 20vh; /* 위치 유지 */
         }
 
         h1 {
@@ -90,20 +89,17 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
 
-        /* ✨ 타임머신 타이머 박스 (최종 수정) */
+        /* 타임머신 타이머 박스 (디자인 유지) */
         .timer-box {
-            /* position: absolute; bottom: 50px; -> 제거 (자연스러운 배치를 위해) */
-            margin-top: 60px; /* 상단 요소와 간격 띄우기 */
+            margin-top: 60px;
             width: auto;
             min-width: 220px;
             padding: 20px 30px;
-            border: 1px solid var(--input-border); /* 테두리 색상을 입력창과 통일 */
+            border: 1px solid var(--input-border);
             border-radius: 15px;
-            background: transparent; /* ✨ 배경 투명하게 (외부와 동일) */
-            /* backdrop-filter: blur(5px); -> 제거 */
+            background: transparent; /* 배경 투명 */
             text-align: center;
             display: flex; flex-direction: column; gap: 8px;
-            /* box-shadow: 0 0 20px rgba(0,0,0,0.7); -> 제거 (깔끔하게) */
         }
 
         .timer-header {
@@ -132,24 +128,30 @@
             letter-spacing: 3px; margin-top: 3px; font-family: 'Pirata One', monospace;
         }
 
-        /* 소용돌이 애니메이션 */
-        @keyframes vortexSuck {
-            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
-            100% { transform: scale(0) rotate(720deg); opacity: 0; filter: blur(20px); }
-        }
-        .vortex-out {
-            animation: vortexSuck 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-            pointer-events: none;
+        /* ✨ 연기처럼 사라지는 애니메이션 (Smoke Dissolve) */
+        @keyframes smokeFade {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.05) translateY(-20px); /* 살짝 커지며 위로 증발 */
+                filter: blur(15px); /* 뿌옇게 흐려짐 */
+            }
         }
 
-        /* 모바일 최적화 (최종) */
+        .smoke-out {
+            animation: smokeFade 1.5s ease-out forwards;
+            pointer-events: none; /* 클릭 방지 */
+        }
+
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             h1 { font-size: 48px; margin-bottom: 30px; }
-            .container { margin-top: 15vh; } /* 모바일 상단 여백 */
-            .timer-box { 
-                margin-top: 40px; /* 모바일 간격 조정 */
-                padding: 15px 20px; min-width: 180px;
-            }
+            .container { margin-top: 15vh; }
+            .timer-box { margin-top: 40px; padding: 15px 20px; min-width: 180px; }
             .timer-header { font-size: 26px; }
             .timer-days { font-size: 20px; }
             .timer-hms { font-size: 18px; }
@@ -201,7 +203,6 @@
             document.getElementById("d-day").innerText = daysStr;
             document.getElementById("d-time").innerText = timeStr;
         }
-
         setInterval(updateTimer, 1000);
         updateTimer();
     </script>
@@ -255,8 +256,9 @@
                     localStorage.setItem('guardian_id', data.no);
                     localStorage.setItem('user_code', input);
 
-                    document.querySelector('.container').classList.add('vortex-out');
-                    document.querySelector('.timer-box').classList.add('vortex-out');
+                    // ✨ 연기처럼 사라지는 효과 적용 (smoke-out)
+                    document.querySelector('.container').classList.add('smoke-out');
+                    document.querySelector('.timer-box').classList.add('smoke-out');
                     
                     setTimeout(() => window.location.href = "inner-sanctum.html", 1500);
                 } else {

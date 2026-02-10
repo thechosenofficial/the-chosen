@@ -13,6 +13,7 @@
             --silver-mid: #A5C9E1;
             --silver-light: #FFFFFF;
             --pure-silver: #D3D3D3;
+            --warning: #ff6b6b;
         }
 
         body {
@@ -21,21 +22,30 @@
             font-family: 'Pirata One', system-ui;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
 
         .luster-text {
             background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center;
         }
 
-        .altar-container { width: 100%; max-width: 500px; margin-top: 5vh; text-align: center; }
+        .altar-container { width: 100%; max-width: 500px; margin-top: 5vh; position: relative; }
 
-        h2 { font-size: 40px; margin-bottom: 40px; letter-spacing: 2px; }
+        h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; }
 
-        .oracle-form { display: flex; flex-direction: column; gap: 25px; text-align: left; }
+        /* ✨ 경고 문구 스타일 */
+        .warning-text {
+            color: var(--warning); font-size: 16px; text-align: center;
+            margin-bottom: 30px; letter-spacing: 1px;
+            border: 1px solid var(--warning); padding: 10px; border-radius: 8px;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .oracle-form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .field-group { display: flex; flex-direction: column; gap: 8px; }
 
-        /* ✨ 연/월/일 가로 배치를 위한 레이아웃 */
         .birth-select-wrapper { display: flex; gap: 10px; }
         .birth-select-wrapper select { flex: 1; }
 
@@ -47,32 +57,76 @@
             border-radius: 12px; padding: 15px; 
             color: var(--pure-silver);
             font-family: 'Pirata One', cursive; font-size: 18px; outline: none;
-            transition: 0.3s;
+            transition: 0.3s; width: 100%; box-sizing: border-box;
         }
 
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23A5C9E1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 18px;
-            padding-right: 35px;
-            cursor: pointer;
-        }
+        input:focus, textarea:focus, select:focus { border-color: var(--silver-mid); background: rgba(255, 255, 255, 0.05); }
 
-        textarea { height: 120px; resize: none; }
+        textarea { height: 100px; resize: none; }
         
         .submit-btn {
             background-color: var(--silver-mid); color: var(--bg-color);
             border: none; border-radius: 30px; padding: 18px;
             font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer;
-            transition: 0.4s; margin-top: 30px;
+            transition: 0.4s; margin-top: 20px; width: 100%;
         }
         .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
 
-        .status-box { display: none; border: 1px solid var(--border); padding: 40px 20px; border-radius: 25px; background-color: var(--card-bg); margin-top: 20px; }
+        /* ✨ 상태별 섹션 (Waiting, Result) */
+        .status-section { 
+            display: none; /* 기본 숨김 */
+            text-align: center; 
+            border: 1px solid var(--border); 
+            padding: 40px 20px; 
+            border-radius: 20px; 
+            background: var(--card-bg);
+            animation: fadeIn 1s;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .reveal-btn {
+            background: transparent; border: 1px solid var(--silver-mid);
+            color: var(--silver-mid); padding: 15px 30px; font-size: 20px;
+            border-radius: 30px; cursor: pointer; margin-top: 20px;
+            font-family: 'Pirata One'; transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+        .reveal-btn:hover { background: var(--silver-mid); color: #000; box-shadow: 0 0 20px var(--silver-mid); }
+
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(165, 201, 225, 0);} 100% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0);} }
+
+        /* ✨ 주소 수정 섹션 (하단) */
+        .address-update-box {
+            margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;
+            display: none; /* 필요시 JS로 표시 */
+        }
+        .small-btn {
+            background: #333; color: #ccc; border: none; padding: 10px 20px;
+            border-radius: 20px; cursor: pointer; font-family: 'Pirata One'; margin-top: 10px;
+        }
+
+        /* ✨ 팝업 모달 (Oracle Message) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .modal-content {
+            background: #111; border: 1px solid var(--silver-mid);
+            padding: 40px; border-radius: 15px; max-width: 80%; text-align: center;
+            box-shadow: 0 0 30px rgba(165, 201, 225, 0.2);
+            position: relative;
+        }
+        .oracle-text {
+            font-size: 24px; line-height: 1.6; color: var(--silver-light);
+            margin: 20px 0; white-space: pre-wrap;
+        }
+        .close-modal {
+            position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666;
+        }
+        .close-modal:hover { color: #fff; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -81,131 +135,255 @@
         <h2 class="luster-text">The Oracle Altar</h2>
 
         <div id="formSection">
+            <div class="warning-text">
+                ⚠️ WARNING: Once offered, your destiny (Birth, Task, Vision) cannot be altered. Only your physical location (Address) remains mutable until 2029.
+            </div>
+
             <form id="oracleForm" class="oracle-form">
-                
                 <div class="field-group">
                     <label>Date of Birth</label>
                     <div class="birth-select-wrapper">
-                        <select id="birthYear" name="birth_year" required>
-                            <option value="" disabled selected>Year</option>
-                        </select>
-                        <select id="birthMonth" name="birth_month" required>
-                            <option value="" disabled selected>Month</option>
-                        </select>
-                        <select id="birthDay" name="birth_day" required>
-                            <option value="" disabled selected>Day</option>
-                        </select>
+                        <select id="birthYear" name="year" required><option value="" disabled selected>Year</option></select>
+                        <select id="birthMonth" name="month" required><option value="" disabled selected>Month</option></select>
+                        <select id="birthDay" name="day" required><option value="" disabled selected>Day</option></select>
                     </div>
                 </div>
                 
                 <div class="field-group">
                     <label>Time of Birth</label>
-                    <select name="birth_time" required>
-                        <option value="" disabled selected>Select your time</option>
-                        <option value="unknown">(시간 모름)</option>
-                        <option value="23:00-00:59">23:00 ~ 00:59</option>
-                        <option value="01:00-02:59">01:00 ~ 02:59</option>
-                        <option value="03:00-04:59">03:00 ~ 04:59</option>
-                        <option value="05:00-06:59">05:00 ~ 06:59</option>
-                        <option value="07:00-08:59">07:00 ~ 08:59</option>
-                        <option value="09:00-10:59">09:00 ~ 10:59</option>
-                        <option value="11:00-12:59">11:00 ~ 12:59</option>
-                        <option value="13:00-14:59">13:00 ~ 14:59</option>
-                        <option value="15:00-16:59">15:00 ~ 16:59</option>
-                        <option value="17:00-18:59">17:00 ~ 18:59</option>
-                        <option value="19:00-20:59">19:00 ~ 20:59</option>
-                        <option value="21:00-22:59">21:00 ~ 22:59</option>
+                    <select id="birthTime" required>
+                        <option value="" disabled selected>Select Time</option>
+                        <option value="unknown">Unknown</option>
+                        <option value="23:00-00:59">23:00 ~ 00:59 (Rat)</option>
+                        <option value="01:00-02:59">01:00 ~ 02:59 (Ox)</option>
+                        <option value="03:00-04:59">03:00 ~ 04:59 (Tiger)</option>
+                        <option value="05:00-06:59">05:00 ~ 06:59 (Rabbit)</option>
+                        <option value="07:00-08:59">07:00 ~ 08:59 (Dragon)</option>
+                        <option value="09:00-10:59">09:00 ~ 10:59 (Snake)</option>
+                        <option value="11:00-12:59">11:00 ~ 12:59 (Horse)</option>
+                        <option value="13:00-14:59">13:00 ~ 14:59 (Sheep)</option>
+                        <option value="15:00-16:59">15:00 ~ 16:59 (Monkey)</option>
+                        <option value="17:00-18:59">17:00 ~ 18:59 (Rooster)</option>
+                        <option value="19:00-20:59">19:00 ~ 20:59 (Dog)</option>
+                        <option value="21:00-22:59">21:00 ~ 22:59 (Pig)</option>
                     </select>
                 </div>
-                
+
                 <div class="field-group">
                     <label>Nationality</label>
-                    <input type="text" name="nationality" placeholder="Your Origin" required>
+                    <input type="text" id="nationality" placeholder="Your Origin" required>
                 </div>
-                
+
                 <div class="field-group">
                     <label>Sovereign Task</label>
-                    <textarea name="task" placeholder="Describe your purpose in this world..." required></textarea>
+                    <textarea id="sovereignTask" placeholder="Describe your purpose in this world..." required></textarea>
                 </div>
-                
+
                 <div class="field-group">
-                    <label>Vision of 2030 (Time Machine)</label>
-                    <textarea name="vision" id="visionText" maxlength="200" placeholder="I have seen the future..." required></textarea>
+                    <label>Vision of 2030</label>
+                    <textarea id="vision" maxlength="200" placeholder="I have seen the future..." required></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label style="color: var(--silver-light);">Physical Address (Mailable)</label>
+                    <input type="text" id="address" placeholder="Full address for the Ma-Pae (Postal Code included)" required style="border-color: var(--silver-mid);">
                 </div>
 
                 <button type="submit" class="submit-btn">Offer to Equilibrium</button>
             </form>
         </div>
 
-        <div id="waitingSection" class="status-box">
-            <h3 class="luster-text" style="font-size: 30px;">Waiting for Oracle</h3>
-            <p style="margin-top: 20px;">Your data has been offered to the Void.</p>
-            <p style="color: var(--silver-mid);">(Estimated time: Within 5 days)</p>
+        <div id="waitingSection" class="status-section">
+            <h3 class="luster-text">The Offering is Made.</h3>
+            <p>Your frequency is being analyzed by the Void.</p>
+            <p style="color: var(--silver-mid); margin-top: 20px;">Estimated Waiting Time: Within 7 Days</p>
+            <br>
+            <p style="font-size: 14px; color: #666;">(You can close this window and return later.)</p>
         </div>
 
+        <div id="grantedSection" class="status-section">
+            <h3 class="luster-text" style="font-size: 32px;">The Oracle has Spoken.</h3>
+            <p>The Equilibrium has responded to your frequency.</p>
+            <button class="reveal-btn" onclick="openModal()">Reveal the Prophecy</button>
+        </div>
+
+        <div id="addressUpdateSection" class="address-update-box">
+            <label>Update Physical Address (Until Sep. 2029)</label>
+            <input type="text" id="updateAddressInput" placeholder="New Address">
+            <button class="small-btn" onclick="updateAddress()">Update Address</button>
+        </div>
     </div>
 
-    <script>
-        // ✨ 연도/월/일 드롭다운 생성 로직
-        const yearSelect = document.getElementById('birthYear');
-        const monthSelect = document.getElementById('birthMonth');
-        const daySelect = document.getElementById('birthDay');
+    <div id="oracleModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 class="luster-text">Prophecy</h3>
+            <div id="oracleContent" class="oracle-text"></div>
+            <div style="font-size: 14px; color: #555; margin-top: 30px;">The Chosen Oracle</div>
+        </div>
+    </div>
 
-        // 연도 생성 (1900 ~ 2026)
-        const currentYear = 2026;
-        for (let i = currentYear; i >= 1900; i--) {
-            let opt = document.createElement('option');
-            opt.value = i;
-            opt.innerHTML = i;
-            yearSelect.appendChild(opt);
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 월 생성 (1 ~ 12)
-        for (let i = 1; i <= 12; i++) {
-            let opt = document.createElement('option');
-            opt.value = i;
-            opt.innerHTML = i;
-            monthSelect.appendChild(opt);
-        }
-
-        // 일 생성 함수 (월/연도에 따라 일수 변경)
-        function updateDays() {
-            const year = parseInt(yearSelect.value);
-            const month = parseInt(monthSelect.value);
-            if (!year || !month) return;
-
-            const lastDay = new Date(year, month, 0).getDate();
-            const currentDayValue = daySelect.value;
-
-            daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
-            for (let i = 1; i <= lastDay; i++) {
-                let opt = document.createElement('option');
-                opt.value = i;
-                opt.innerHTML = i;
-                daySelect.appendChild(opt);
-            }
-            if (currentDayValue <= lastDay) daySelect.value = currentDayValue;
-        }
-
-        yearSelect.onchange = updateDays;
-        monthSelect.onchange = updateDays;
-
-        // 폼 제출 로직
-        document.getElementById('oracleForm').onsubmit = function(e) {
-            e.preventDefault();
-            localStorage.setItem('oracle_status', 'waiting');
-            showStatus();
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
+            authDomain: "thechosenoracle-61638.firebaseapp.com",
+            projectId: "thechosenoracle-61638",
+            storageBucket: "thechosenoracle-61638.firebasestorage.app",
+            messagingSenderId: "835239100275",
+            appId: "1:835239100275:web:77544f3a191d33e8dd0f06"
         };
 
-        function showStatus() {
-            const status = localStorage.getItem('oracle_status');
-            if (status === 'waiting') {
-                document.getElementById('formSection').style.display = 'none';
-                document.getElementById('waitingSection').style.display = 'block';
-            }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 문서 ID (해시값) 가져오기
+        const userHash = localStorage.getItem('user_code') ? await digestMessage(localStorage.getItem('user_code')) : null;
+
+        // 해시 함수 (로그인 때와 동일)
+        async function digestMessage(message) {
+            const msgUint8 = new TextEncoder().encode(message.toUpperCase()); // 대문자 통일 중요
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        window.onload = showStatus;
+        // 초기화
+        window.onload = async function() {
+            if (localStorage.getItem('chosen_access') !== 'granted' || !userHash) {
+                alert("Unauthorized Access.");
+                window.location.replace("index.html");
+                return;
+            }
+
+            initDateSelects(); // 날짜 드롭다운 생성
+            checkOracleStatus(); // 파이어베이스 상태 확인
+        };
+
+        // 🔥 파이어베이스 상태 실시간 확인
+        function checkOracleStatus() {
+            const docRef = doc(db, "oracle_requests", userHash);
+
+            // 실시간 리스너 (onSnapshot) 사용 -> 관리자가 승인하면 즉시 화면 바뀜
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // 1. 이미 제출한 경우 -> 폼 숨김
+                    document.getElementById('formSection').style.display = 'none';
+                    document.getElementById('addressUpdateSection').style.display = 'block';
+                    document.getElementById('updateAddressInput').value = data.address; // 기존 주소 표시
+
+                    // 2. 상태에 따라 화면 분기
+                    if (data.status === 'granted' && data.oracle_message) {
+                        // 신탁 도착
+                        document.getElementById('waitingSection').style.display = 'none';
+                        document.getElementById('grantedSection').style.display = 'block';
+                        document.getElementById('oracleContent').innerText = data.oracle_message; // 모달에 내용 주입
+                    } else {
+                        // 대기 중
+                        document.getElementById('waitingSection').style.display = 'block';
+                        document.getElementById('grantedSection').style.display = 'none';
+                    }
+                } else {
+                    // 3. 제출 안 함 -> 폼 표시
+                    document.getElementById('formSection').style.display = 'block';
+                }
+            });
+        }
+
+        // 📝 폼 제출 (최초 1회)
+        window.submitForm = async function(e) {
+            e.preventDefault();
+            const btn = document.querySelector('.submit-btn');
+            btn.innerText = "Offering...";
+            btn.disabled = true;
+
+            const formData = {
+                birth_date: {
+                    year: document.getElementById('birthYear').value,
+                    month: document.getElementById('birthMonth').value,
+                    day: document.getElementById('birthDay').value
+                },
+                birth_time: document.getElementById('birthTime').value,
+                nationality: document.getElementById('nationality').value,
+                sovereign_task: document.getElementById('sovereignTask').value,
+                vision_2030: document.getElementById('vision').value,
+                address: document.getElementById('address').value,
+                status: 'pending', // 초기 상태
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // 문서 ID를 사용자 해시값과 동일하게 생성 (1:1 매칭)
+                await setDoc(doc(db, "oracle_requests", userHash), formData);
+                // 제출 후 화면은 onSnapshot이 감지해서 자동으로 바꿈
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Connection Error. Please try again.");
+                btn.innerText = "Offer to Equilibrium";
+                btn.disabled = false;
+            }
+        };
+
+        document.getElementById('oracleForm').addEventListener('submit', window.submitForm);
+
+        // 🏠 주소 수정 기능
+        window.updateAddress = async function() {
+            const newAddr = document.getElementById('updateAddressInput').value;
+            if(!newAddr) return alert("Please enter an address.");
+
+            const confirmUpdate = confirm("Update your physical address?");
+            if(confirmUpdate) {
+                try {
+                    const docRef = doc(db, "oracle_requests", userHash);
+                    await updateDoc(docRef, { address: newAddr });
+                    alert("Address Updated.");
+                } catch(e) {
+                    alert("Update Failed.");
+                }
+            }
+        };
+
+        // 모달 제어
+        window.openModal = function() {
+            const modal = document.getElementById('oracleModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.style.opacity = 1, 10);
+        }
+        window.closeModal = function() {
+            const modal = document.getElementById('oracleModal');
+            modal.style.opacity = 0;
+            setTimeout(() => modal.style.display = 'none', 500);
+        }
+
+        // 날짜 선택기 초기화 (기존 로직)
+        function initDateSelects() {
+            const yearSelect = document.getElementById('birthYear');
+            const monthSelect = document.getElementById('birthMonth');
+            const daySelect = document.getElementById('birthDay');
+            
+            for (let i = 2026; i >= 1900; i--) {
+                let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; yearSelect.appendChild(opt);
+            }
+            for (let i = 1; i <= 12; i++) {
+                let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; monthSelect.appendChild(opt);
+            }
+            
+            function updateDays() {
+                const year = parseInt(yearSelect.value);
+                const month = parseInt(monthSelect.value);
+                if (!year || !month) return;
+                const lastDay = new Date(year, month, 0).getDate();
+                daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
+                for (let i = 1; i <= lastDay; i++) {
+                    let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; daySelect.appendChild(opt);
+                }
+            }
+            yearSelect.onchange = updateDays;
+            monthSelect.onchange = updateDays;
+        }
     </script>
 </body>
 </html>

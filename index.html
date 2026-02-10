@@ -21,10 +21,12 @@
             font-family: 'Pirata One', system-ui;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            align-items: center; justify-content: center; /* 정중앙 정렬 */
+            align-items: center; 
+            /* justify-content: center; -> 제거하고 상단 여백으로 조절 */
             height: 100vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
+            position: relative; /* 하단 타이머 절대 위치 기준 */
         }
 
         .container {
@@ -33,10 +35,12 @@
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
+            /* ✨ 입력창 위치를 위로 올림 (화면의 30% 지점) */
+            margin-top: 30vh; 
         }
 
         h1 {
-            font-size: 60px; /* 로고 더 크게 */
+            font-size: 60px;
             font-weight: normal; margin-bottom: 50px; letter-spacing: 4px;
             background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -53,13 +57,13 @@
 
         input {
             width: 100%; padding: 16px 55px 16px 25px;
-            background: rgba(255, 255, 255, 0.03); /* 아주 투명하게 */
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--input-border);
             border-radius: 30px;
             color: var(--silver-mid); font-size: 18px;
             font-family: 'Pirata One', cursive; outline: none; transition: 0.3s;
             letter-spacing: 3px; backdrop-filter: blur(5px); box-sizing: border-box;
-            text-align: center; /* 입력값 중앙 정렬 */
+            text-align: center;
         }
 
         input:focus {
@@ -82,9 +86,47 @@
             display: inline-block; text-decoration: none; font-size: 16px;
             letter-spacing: 2px; color: var(--silver-dark); opacity: 0.6;
             transition: 0.3s; font-family: 'Pirata One', cursive;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
+
+        /* ✨ 하단 타이머 박스 스타일 */
+        .timer-box {
+            position: absolute;
+            bottom: 40px; /* 바닥에서 띄움 */
+            width: auto;
+            min-width: 200px;
+            padding: 15px 25px;
+            border: 1px solid #333;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            text-align: center;
+            display: flex; flex-direction: column; gap: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .timer-date {
+            font-size: 14px;
+            color: var(--silver-dark);
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
+        .timer-title {
+            font-size: 20px;
+            color: var(--silver-light);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px rgba(165, 201, 225, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .timer-counter {
+            font-size: 18px;
+            color: var(--silver-mid);
+            letter-spacing: 2px;
+        }
 
         @keyframes vortexSuck {
             0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
@@ -93,6 +135,13 @@
         .vortex-out {
             animation: vortexSuck 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
             pointer-events: none;
+        }
+        
+        /* 모바일 대응: 높이가 작을 경우 겹침 방지 */
+        @media (max-height: 600px) {
+            .container { margin-top: 15vh; }
+            .timer-box { bottom: 20px; padding: 10px 20px; }
+            h1 { font-size: 50px; margin-bottom: 30px; }
         }
     </style>
 </head>
@@ -107,6 +156,38 @@
         </div>
         <a href="https://opensea.io/" target="_blank" class="buy-ticket">Decide Your Future</a>
     </div>
+
+    <div class="timer-box">
+        <div class="timer-date">2030.1.1</div>
+        <div class="timer-title">time-machine</div>
+        <div class="timer-counter" id="countdown">Loading...</div>
+    </div>
+
+    <script>
+        function updateTimer() {
+            const targetDate = new Date("Jan 1, 2030 00:00:00").getTime();
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference < 0) {
+                document.getElementById("countdown").innerText = "THE TIME HAS COME";
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+            // 0000days 00hours 포맷 맞추기 (padStart 사용)
+            const daysStr = String(days).padStart(4, '0');
+            const hoursStr = String(hours).padStart(2, '0');
+
+            document.getElementById("countdown").innerText = `${daysStr}days ${hoursStr}hours`;
+        }
+
+        // 1초마다 업데이트
+        setInterval(updateTimer, 1000);
+        updateTimer(); // 로드 시 즉시 실행
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -125,6 +206,7 @@
         const db = getFirestore(app);
 
         window.onload = function() {
+            // 타이머는 별도로 돌고, 로그인 체크는 여기서
             if (localStorage.getItem('chosen_access') === 'granted') {
                 window.location.replace("inner-sanctum.html");
             }
@@ -157,6 +239,10 @@
                     localStorage.setItem('user_code', input);
 
                     document.querySelector('.container').classList.add('vortex-out');
+                    // 타이머도 같이 빨려들어가게 하려면 body 전체에 효과를 주거나
+                    // timer-box에도 vortex-out 클래스를 추가하면 됩니다.
+                    document.querySelector('.timer-box').classList.add('vortex-out');
+                    
                     setTimeout(() => window.location.href = "inner-sanctum.html", 1500);
                 } else {
                     alert("ACCESS DENIED: Untrusted Frequency.");

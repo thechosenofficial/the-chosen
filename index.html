@@ -11,7 +11,7 @@
             --input-border: #333;
             --text-main: #e3e3e3;
             --silver-light: #FFFFFF;
-            --silver-mid: #A5C9E1;
+            --silver-mid: #A5C9E1; /* Sky Silver Blue */
             --silver-dark: #708090;
         }
 
@@ -22,21 +22,20 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center; 
-            /* justify-content: center; -> 제거하고 상단 여백으로 조절 */
             height: 100vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
-            position: relative; /* 하단 타이머 절대 위치 기준 */
+            position: relative;
         }
 
+        /* 입력창 컨테이너 (상단 배치) */
         .container {
             text-align: center;
             width: 90%; max-width: 400px;
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
-            /* ✨ 입력창 위치를 위로 올림 (화면의 30% 지점) */
-            margin-top: 30vh; 
+            margin-top: 25vh; /* 화면의 1/4 지점 */
         }
 
         h1 {
@@ -53,7 +52,7 @@
             to { filter: drop-shadow(0 0 25px rgba(165, 201, 225, 0.6)); }
         }
 
-        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 40px; width: 100%; }
+        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; width: 100%; }
 
         input {
             width: 100%; padding: 16px 55px 16px 25px;
@@ -90,44 +89,64 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
 
-        /* ✨ 하단 타이머 박스 스타일 */
+        /* ✨ 타임머신 타이머 박스 (디자인 업그레이드) */
         .timer-box {
             position: absolute;
-            bottom: 40px; /* 바닥에서 띄움 */
+            bottom: 50px; /* 바닥 여백 */
             width: auto;
-            min-width: 200px;
-            padding: 15px 25px;
-            border: 1px solid #333;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(3px);
+            min-width: 220px;
+            padding: 20px 30px;
+            border: 1px solid #444;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             text-align: center;
-            display: flex; flex-direction: column; gap: 5px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
         }
 
-        .timer-date {
+        /* ✨ 2030.01.01 (가장 밝고 크게) */
+        .timer-header {
+            font-size: 32px; /* 사이즈 대폭 키움 */
+            font-weight: bold;
+            color: var(--silver-mid); /* 스카이 실버 블루 */
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(165, 201, 225, 0.8); /* 강한 글로우 */
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(165, 201, 225, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .timer-sub {
             font-size: 14px;
             color: var(--silver-dark);
-            letter-spacing: 2px;
-            opacity: 0.8;
-        }
-
-        .timer-title {
-            font-size: 20px;
-            color: var(--silver-light);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            text-shadow: 0 0 5px rgba(165, 201, 225, 0.5);
             margin-bottom: 5px;
         }
 
-        .timer-counter {
-            font-size: 18px;
-            color: var(--silver-mid);
+        /* ✨ 날짜와 시간 분리 */
+        .timer-row {
+            display: block;
+            width: 100%;
+        }
+
+        .timer-days {
+            font-size: 24px;
+            color: var(--silver-light);
             letter-spacing: 2px;
         }
 
+        .timer-hms {
+            font-size: 20px;
+            color: var(--silver-mid);
+            opacity: 0.9;
+            letter-spacing: 3px;
+            margin-top: 3px;
+            font-family: 'Pirata One', monospace; /* 숫자가 안 흔들리게 */
+        }
+
+        /* 소용돌이 애니메이션 */
         @keyframes vortexSuck {
             0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
             100% { transform: scale(0) rotate(720deg); opacity: 0; filter: blur(20px); }
@@ -136,12 +155,15 @@
             animation: vortexSuck 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
             pointer-events: none;
         }
-        
-        /* 모바일 대응: 높이가 작을 경우 겹침 방지 */
-        @media (max-height: 600px) {
-            .container { margin-top: 15vh; }
-            .timer-box { bottom: 20px; padding: 10px 20px; }
-            h1 { font-size: 50px; margin-bottom: 30px; }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            h1 { font-size: 48px; margin-bottom: 30px; }
+            .container { margin-top: 20vh; }
+            .timer-box { bottom: 30px; padding: 15px 20px; min-width: 180px; }
+            .timer-header { font-size: 26px; }
+            .timer-days { font-size: 20px; }
+            .timer-hms { font-size: 18px; }
         }
     </style>
 </head>
@@ -158,9 +180,10 @@
     </div>
 
     <div class="timer-box">
-        <div class="timer-date">2030.1.1</div>
-        <div class="timer-title">time-machine</div>
-        <div class="timer-counter" id="countdown">Loading...</div>
+        <div class="timer-header">2030.01.01</div>
+        <div class="timer-sub">Time Machine</div>
+        <div class="timer-row timer-days" id="d-day">0000 DAYS</div>
+        <div class="timer-row timer-hms" id="d-time">00:00:00</div>
     </div>
 
     <script>
@@ -170,23 +193,29 @@
             const difference = targetDate - now;
 
             if (difference < 0) {
-                document.getElementById("countdown").innerText = "THE TIME HAS COME";
+                document.getElementById("d-day").innerText = "THE TIME HAS COME";
+                document.getElementById("d-time").innerText = "";
                 return;
             }
 
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            // 0000days 00hours 포맷 맞추기 (padStart 사용)
-            const daysStr = String(days).padStart(4, '0');
-            const hoursStr = String(hours).padStart(2, '0');
+            // 포맷팅
+            const daysStr = String(days).padStart(4, '0') + " DAYS";
+            const timeStr = 
+                String(hours).padStart(2, '0') + ":" + 
+                String(minutes).padStart(2, '0') + ":" + 
+                String(seconds).padStart(2, '0');
 
-            document.getElementById("countdown").innerText = `${daysStr}days ${hoursStr}hours`;
+            document.getElementById("d-day").innerText = daysStr;
+            document.getElementById("d-time").innerText = timeStr;
         }
 
-        // 1초마다 업데이트
         setInterval(updateTimer, 1000);
-        updateTimer(); // 로드 시 즉시 실행
+        updateTimer();
     </script>
 
     <script type="module">
@@ -206,10 +235,10 @@
         const db = getFirestore(app);
 
         window.onload = function() {
-            // 타이머는 별도로 돌고, 로그인 체크는 여기서
             if (localStorage.getItem('chosen_access') === 'granted') {
                 window.location.replace("inner-sanctum.html");
             }
+            updateTimer(); // 로드 시 타이머 즉시 실행
         };
 
         async function digestMessage(message) {
@@ -238,9 +267,8 @@
                     localStorage.setItem('guardian_id', data.no);
                     localStorage.setItem('user_code', input);
 
+                    // 소용돌이 애니메이션 (타이머도 포함)
                     document.querySelector('.container').classList.add('vortex-out');
-                    // 타이머도 같이 빨려들어가게 하려면 body 전체에 효과를 주거나
-                    // timer-box에도 vortex-out 클래스를 추가하면 됩니다.
                     document.querySelector('.timer-box').classList.add('vortex-out');
                     
                     setTimeout(() => window.location.href = "inner-sanctum.html", 1500);

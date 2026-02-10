@@ -22,20 +22,21 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center; 
-            height: 100vh;
-            overflow: hidden;
+            /* height: 100vh; -> 제거하여 자연스러운 스크롤 허용 (필요시) */
+            min-height: 100vh;
+            overflow-x: hidden; /* 가로 스크롤만 막음 */
             -webkit-font-smoothing: antialiased;
             position: relative;
         }
 
-        /* 입력창 컨테이너 (상단 배치) */
+        /* 입력창 컨테이너 */
         .container {
             text-align: center;
             width: 90%; max-width: 400px;
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
-            margin-top: 25vh; /* 화면의 1/4 지점 */
+            margin-top: 20vh; /* 상단 여백 약간 축소 */
         }
 
         h1 {
@@ -89,29 +90,28 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
 
-        /* ✨ 타임머신 타이머 박스 (디자인 업그레이드) */
+        /* ✨ 타임머신 타이머 박스 (최종 수정) */
         .timer-box {
-            position: absolute;
-            bottom: 50px; /* 바닥 여백 */
+            /* position: absolute; bottom: 50px; -> 제거 (자연스러운 배치를 위해) */
+            margin-top: 60px; /* 상단 요소와 간격 띄우기 */
             width: auto;
             min-width: 220px;
             padding: 20px 30px;
-            border: 1px solid #444;
+            border: 1px solid var(--input-border); /* 테두리 색상을 입력창과 통일 */
             border-radius: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
+            background: transparent; /* ✨ 배경 투명하게 (외부와 동일) */
+            /* backdrop-filter: blur(5px); -> 제거 */
             text-align: center;
             display: flex; flex-direction: column; gap: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.7);
+            /* box-shadow: 0 0 20px rgba(0,0,0,0.7); -> 제거 (깔끔하게) */
         }
 
-        /* ✨ 2030.01.01 (가장 밝고 크게) */
         .timer-header {
-            font-size: 32px; /* 사이즈 대폭 키움 */
+            font-size: 32px;
             font-weight: bold;
-            color: var(--silver-mid); /* 스카이 실버 블루 */
+            color: var(--silver-mid);
             letter-spacing: 3px;
-            text-shadow: 0 0 15px rgba(165, 201, 225, 0.8); /* 강한 글로우 */
+            text-shadow: 0 0 15px rgba(165, 201, 225, 0.8);
             margin-bottom: 5px;
             border-bottom: 1px solid rgba(165, 201, 225, 0.3);
             padding-bottom: 5px;
@@ -125,25 +125,11 @@
             margin-bottom: 5px;
         }
 
-        /* ✨ 날짜와 시간 분리 */
-        .timer-row {
-            display: block;
-            width: 100%;
-        }
-
-        .timer-days {
-            font-size: 24px;
-            color: var(--silver-light);
-            letter-spacing: 2px;
-        }
-
+        .timer-row { display: block; width: 100%; }
+        .timer-days { font-size: 24px; color: var(--silver-light); letter-spacing: 2px; }
         .timer-hms {
-            font-size: 20px;
-            color: var(--silver-mid);
-            opacity: 0.9;
-            letter-spacing: 3px;
-            margin-top: 3px;
-            font-family: 'Pirata One', monospace; /* 숫자가 안 흔들리게 */
+            font-size: 20px; color: var(--silver-mid); opacity: 0.9;
+            letter-spacing: 3px; margin-top: 3px; font-family: 'Pirata One', monospace;
         }
 
         /* 소용돌이 애니메이션 */
@@ -156,11 +142,14 @@
             pointer-events: none;
         }
 
-        /* 모바일 최적화 */
+        /* 모바일 최적화 (최종) */
         @media (max-width: 768px) {
             h1 { font-size: 48px; margin-bottom: 30px; }
-            .container { margin-top: 20vh; }
-            .timer-box { bottom: 30px; padding: 15px 20px; min-width: 180px; }
+            .container { margin-top: 15vh; } /* 모바일 상단 여백 */
+            .timer-box { 
+                margin-top: 40px; /* 모바일 간격 조정 */
+                padding: 15px 20px; min-width: 180px;
+            }
             .timer-header { font-size: 26px; }
             .timer-days { font-size: 20px; }
             .timer-hms { font-size: 18px; }
@@ -203,7 +192,6 @@
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            // 포맷팅
             const daysStr = String(days).padStart(4, '0') + " DAYS";
             const timeStr = 
                 String(hours).padStart(2, '0') + ":" + 
@@ -238,7 +226,7 @@
             if (localStorage.getItem('chosen_access') === 'granted') {
                 window.location.replace("inner-sanctum.html");
             }
-            updateTimer(); // 로드 시 타이머 즉시 실행
+            updateTimer();
         };
 
         async function digestMessage(message) {
@@ -267,7 +255,6 @@
                     localStorage.setItem('guardian_id', data.no);
                     localStorage.setItem('user_code', input);
 
-                    // 소용돌이 애니메이션 (타이머도 포함)
                     document.querySelector('.container').classList.add('vortex-out');
                     document.querySelector('.timer-box').classList.add('vortex-out');
                     

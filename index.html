@@ -21,130 +21,86 @@
             font-family: 'Pirata One', system-ui;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start;
-            min-height: 100vh; /* height 대신 min-height 사용 */
+            align-items: center; justify-content: center; /* 정중앙 정렬 */
+            height: 100vh;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
-            position: relative; /* 토템 기준점 */
-        }
-
-        /* ✨ 토템 이미지 수정 (무작위 떨림 및 크기 조절) */
-        #totem {
-            position: fixed;
-            bottom: -30px; /* 하단에 고정 */
-            left: 50%;
-            /* 기본적으로 중앙 정렬을 위한 transform 설정 */
-            transform: translateX(-50%);
-            
-            width: auto;
-            max-height: 55vh; /* 데스크탑 기준 높이 제한 */
-            max-width: 85%;
-            z-index: -1;
-            
-            /* 무작위적인 움직임 애니메이션 적용 (15초 주기) */
-            animation: random-drift 15s ease-in-out infinite;
-            filter: brightness(0.7) contrast(1.2);
-        }
-
-        /* ✨ 새 애니메이션: 좌우로 미세하게 떨리다가 멈추는 패턴 */
-        @keyframes random-drift {
-            0%   { transform: translateX(-50%); } /* 중앙 시작 */
-            10%  { transform: translateX(calc(-50% - 4px)); } /* 왼쪽 이동 */
-            20%  { transform: translateX(calc(-50% - 4px)); } /* 멈춤 (왼쪽 유지) */
-            35%  { transform: translateX(calc(-50% + 3px)); } /* 오른쪽 이동 */
-            45%  { transform: translateX(calc(-50% + 3px)); } /* 멈춤 (오른쪽 유지) */
-            60%  { transform: translateX(-50%); } /* 중앙 복귀 */
-            70%  { transform: translateX(calc(-50% - 2px)); } /* 살짝 왼쪽 */
-            85%  { transform: translateX(-50%); } /* 중앙 복귀 */
-            100% { transform: translateX(-50%); } /* 멈춤 (끝) */
         }
 
         .container {
             text-align: center;
             width: 90%; max-width: 400px;
-            margin-top: 15vh;
             z-index: 10;
             transition: opacity 0.5s;
-            /* 하단 링크와 겹치지 않도록 여백 확보 */
             display: flex; flex-direction: column; align-items: center;
         }
 
         h1 {
-            font-size: 52px; font-weight: normal; margin-bottom: 40px; letter-spacing: 2px;
+            font-size: 60px; /* 로고 더 크게 */
+            font-weight: normal; margin-bottom: 50px; letter-spacing: 4px;
             background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(165, 201, 225, 0.4));
+            filter: drop-shadow(0 0 20px rgba(165, 201, 225, 0.3));
+            animation: pulse-glow 3s infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.2)); }
+            to { filter: drop-shadow(0 0 25px rgba(165, 201, 225, 0.6)); }
         }
 
-        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; width: 100%; }
+        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 40px; width: 100%; }
 
         input {
-            width: 100%; padding: 14px 55px 14px 25px;
-            background: rgba(0, 0, 0, 0.6);
+            width: 100%; padding: 16px 55px 16px 25px;
+            background: rgba(255, 255, 255, 0.03); /* 아주 투명하게 */
             border: 1px solid var(--input-border);
             border-radius: 30px;
-            color: var(--silver-mid); font-size: 16px;
+            color: var(--silver-mid); font-size: 18px;
             font-family: 'Pirata One', cursive; outline: none; transition: 0.3s;
-            letter-spacing: 2px; backdrop-filter: blur(5px); box-sizing: border-box;
+            letter-spacing: 3px; backdrop-filter: blur(5px); box-sizing: border-box;
+            text-align: center; /* 입력값 중앙 정렬 */
         }
 
         input:focus {
             border-color: var(--silver-mid);
-            box-shadow: 0 0 15px rgba(165, 201, 225, 0.2);
-            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 20px rgba(165, 201, 225, 0.15);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .arrow-login {
-            position: absolute; right: 10px; width: 36px; height: 36px;
+            position: absolute; right: 10px; width: 40px; height: 40px;
             background-color: var(--silver-mid); border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; border: none; transition: 0.3s;
         }
 
-        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.05); }
-        .arrow-login svg { width: 20px; height: 20px; fill: var(--gemini-bg); }
+        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.1); }
+        .arrow-login svg { width: 22px; height: 22px; fill: var(--gemini-bg); }
 
         .buy-ticket {
-            display: inline-block; text-decoration: none; font-size: 18px;
-            letter-spacing: 2px; color: var(--silver-mid); opacity: 0.5;
+            display: inline-block; text-decoration: none; font-size: 16px;
+            letter-spacing: 2px; color: var(--silver-dark); opacity: 0.6;
             transition: 0.3s; font-family: 'Pirata One', cursive;
-            text-shadow: 0 0 10px black; /* 가독성을 위한 그림자 추가 */
-            margin-bottom: 30px; /* 하단 여백 확보 */
+            margin-top: 20px;
         }
-        .buy-ticket:hover { opacity: 1; text-decoration: underline; color: var(--silver-light); }
+        .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
 
-        /* ✨ 모바일 반응형 스타일 */
-        @media (max-width: 768px) {
-            #totem {
-                max-height: 40vh; /* 모바일에서 이미지 높이 축소 */
-                bottom: -20px;
-            }
-            .container {
-                margin-top: 12vh; /* 컨테이너 상단 여백 조정 */
-            }
-            h1 { font-size: 42px; margin-bottom: 30px; }
-            .buy-ticket { font-size: 16px; margin-bottom: 50px; /* 모바일 하단 여백 더 확보 */ }
-        }
-
-        /* 소용돌이 애니메이션 */
         @keyframes vortexSuck {
             0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
-            100% { transform: scale(0) rotate(1080deg); opacity: 0; filter: blur(20px); }
+            100% { transform: scale(0) rotate(720deg); opacity: 0; filter: blur(20px); }
         }
         .vortex-out {
-            animation: vortexSuck 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+            animation: vortexSuck 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
             pointer-events: none;
         }
     </style>
 </head>
 <body>
-
-    <img src="totem.jpg" id="totem" alt="The Gate of Truth">
-
     <div class="container">
         <h1>The Chosen</h1>
         <div class="input-wrapper">
-            <input type="password" id="accessCode" placeholder="ENTER FREQUENCY" onkeypress="if(event.keyCode==13) login()">
+            <input type="password" id="accessCode" placeholder="FREQUENCY CODE" onkeypress="if(event.keyCode==13) login()">
             <button class="arrow-login" onclick="login()">
                 <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
             </button>
@@ -177,8 +133,7 @@
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         window.login = async function() {
@@ -212,7 +167,7 @@
                 }
             } catch (e) {
                 console.error(e);
-                alert("Connection Unstable. Try again.");
+                alert("Connection Unstable.");
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
             }

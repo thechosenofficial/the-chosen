@@ -22,30 +22,41 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: flex-start;
-            height: 100vh;
+            min-height: 100vh; /* height 대신 min-height 사용 */
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
+            position: relative; /* 토템 기준점 */
         }
 
-        /* ✨ 토템 이미지 (묵직한 흔들바위) */
+        /* ✨ 토템 이미지 수정 (무작위 떨림 및 크기 조절) */
         #totem {
             position: fixed;
-            bottom: -50px;
+            bottom: -30px; /* 하단에 고정 */
             left: 50%;
+            /* 기본적으로 중앙 정렬을 위한 transform 설정 */
+            transform: translateX(-50%);
+            
             width: auto;
-            height: 60vh; /* 화면 높이의 60% */
-            max-width: 90%;
+            max-height: 55vh; /* 데스크탑 기준 높이 제한 */
+            max-width: 85%;
             z-index: -1;
             
-            /* 묵직한 움직임 애니메이션 */
-            transform-origin: bottom center;
-            animation: heavy-sway 8s ease-in-out infinite alternate;
+            /* 무작위적인 움직임 애니메이션 적용 (15초 주기) */
+            animation: random-drift 15s ease-in-out infinite;
             filter: brightness(0.7) contrast(1.2);
         }
 
-        @keyframes heavy-sway {
-            0% { transform: translateX(-50%) rotate(-2deg); }
-            100% { transform: translateX(-50%) rotate(2deg); }
+        /* ✨ 새 애니메이션: 좌우로 미세하게 떨리다가 멈추는 패턴 */
+        @keyframes random-drift {
+            0%   { transform: translateX(-50%); } /* 중앙 시작 */
+            10%  { transform: translateX(calc(-50% - 4px)); } /* 왼쪽 이동 */
+            20%  { transform: translateX(calc(-50% - 4px)); } /* 멈춤 (왼쪽 유지) */
+            35%  { transform: translateX(calc(-50% + 3px)); } /* 오른쪽 이동 */
+            45%  { transform: translateX(calc(-50% + 3px)); } /* 멈춤 (오른쪽 유지) */
+            60%  { transform: translateX(-50%); } /* 중앙 복귀 */
+            70%  { transform: translateX(calc(-50% - 2px)); } /* 살짝 왼쪽 */
+            85%  { transform: translateX(-50%); } /* 중앙 복귀 */
+            100% { transform: translateX(-50%); } /* 멈춤 (끝) */
         }
 
         .container {
@@ -54,6 +65,8 @@
             margin-top: 15vh;
             z-index: 10;
             transition: opacity 0.5s;
+            /* 하단 링크와 겹치지 않도록 여백 확보 */
+            display: flex; flex-direction: column; align-items: center;
         }
 
         h1 {
@@ -63,7 +76,7 @@
             filter: drop-shadow(0 0 15px rgba(165, 201, 225, 0.4));
         }
 
-        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; }
+        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; width: 100%; }
 
         input {
             width: 100%; padding: 14px 55px 14px 25px;
@@ -72,7 +85,7 @@
             border-radius: 30px;
             color: var(--silver-mid); font-size: 16px;
             font-family: 'Pirata One', cursive; outline: none; transition: 0.3s;
-            letter-spacing: 2px; backdrop-filter: blur(5px);
+            letter-spacing: 2px; backdrop-filter: blur(5px); box-sizing: border-box;
         }
 
         input:focus {
@@ -95,9 +108,23 @@
             display: inline-block; text-decoration: none; font-size: 18px;
             letter-spacing: 2px; color: var(--silver-mid); opacity: 0.5;
             transition: 0.3s; font-family: 'Pirata One', cursive;
-            text-shadow: 0 0 10px black;
+            text-shadow: 0 0 10px black; /* 가독성을 위한 그림자 추가 */
+            margin-bottom: 30px; /* 하단 여백 확보 */
         }
         .buy-ticket:hover { opacity: 1; text-decoration: underline; color: var(--silver-light); }
+
+        /* ✨ 모바일 반응형 스타일 */
+        @media (max-width: 768px) {
+            #totem {
+                max-height: 40vh; /* 모바일에서 이미지 높이 축소 */
+                bottom: -20px;
+            }
+            .container {
+                margin-top: 12vh; /* 컨테이너 상단 여백 조정 */
+            }
+            h1 { font-size: 42px; margin-bottom: 30px; }
+            .buy-ticket { font-size: 16px; margin-bottom: 50px; /* 모바일 하단 여백 더 확보 */ }
+        }
 
         /* 소용돌이 애니메이션 */
         @keyframes vortexSuck {
@@ -141,14 +168,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 자동 로그인 확인
         window.onload = function() {
             if (localStorage.getItem('chosen_access') === 'granted') {
                 window.location.replace("inner-sanctum.html");
             }
         };
 
-        // 해시 변환 함수
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -162,30 +187,23 @@
             
             if (!input) return;
 
-            // 로딩 중 버튼 비활성화 (중복 클릭 방지)
             btn.style.opacity = "0.5";
             btn.style.pointerEvents = "none";
 
             try {
-                // 입력값을 즉시 해시로 변환
                 const inputHash = await digestMessage(input);
-
-                // 🔥 파이어베이스 검색
                 const docRef = doc(db, "secret_codes", inputHash);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    // ✅ 정답!
                     const data = docSnap.data();
                     localStorage.setItem('chosen_access', 'granted');
-                    localStorage.setItem('guardian_id', data.no); // guardian_no -> no (필드명 일치 확인)
+                    localStorage.setItem('guardian_id', data.no);
                     localStorage.setItem('user_code', input);
 
-                    // 소용돌이 연출
                     document.querySelector('.container').classList.add('vortex-out');
                     setTimeout(() => window.location.href = "inner-sanctum.html", 1500);
                 } else {
-                    // ❌ 실패
                     alert("ACCESS DENIED: Untrusted Frequency.");
                     document.getElementById('accessCode').value = "";
                     document.getElementById('accessCode').focus();

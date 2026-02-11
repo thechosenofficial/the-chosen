@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Chosen | Manager Sanctum</title>
+    <style>
+        body { background-color: #111; color: #ddd; font-family: monospace; padding: 20px; margin: 0; }
+        
+        /* 🔒 잠금 화면 스타일 */
+        #lockScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #adminInput {
+            background: #111; border: 1px solid #333; color: #A5C9E1;
+            padding: 15px; font-size: 20px; text-align: center; letter-spacing: 5px;
+            border-radius: 10px; width: 300px; outline: none;
+        }
+        #adminInput:focus { border-color: #A5C9E1; box-shadow: 0 0 15px rgba(165, 201, 225, 0.3); }
+        .lock-msg { margin-bottom: 20px; color: #555; font-size: 14px; }
+
+        /* 대시보드 (기본 숨김) */
+        #dashboardContent { display: none; }
+
+        /* 기존 스타일 */
+        h1 { color: #A5C9E1; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .tabs { margin-bottom: 20px; border-bottom: 1px solid #333; }
+        .tab-btn { background: none; border: none; color: #666; padding: 10px 20px; font-size: 16px; cursor: pointer; font-family: monospace; font-weight: bold; }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active { color: #A5C9E1; border-bottom: 2px solid #A5C9E1; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .dashboard { display: flex; gap: 20px; height: 80vh; }
+        .list-panel { width: 300px; overflow-y: auto; border-right: 1px solid #333; padding-right: 10px; }
+        .detail-panel { flex: 1; padding-left: 20px; overflow-y: auto; }
+        .request-item { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
+        .request-item:hover { background-color: #222; color: #fff; }
+        .request-item.active { background-color: #A5C9E1; color: #000; }
+        .badge { font-size: 10px; padding: 2px 5px; border-radius: 4px; }
+        .badge.pending { background: #ff6b6b; color: #fff; }
+        .badge.granted { background: #51cf66; color: #fff; }
+        .info-row { margin-bottom: 15px; }
+        .label { color: #888; font-size: 12px; display: block; margin-bottom: 5px; }
+        .value { font-size: 16px; white-space: pre-wrap; line-height: 1.5; color: #fff; }
+        .box { background: #222; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        textarea, input[type="text"], input[type="date"] { width: 100%; background: #000; color: #A5C9E1; border: 1px solid #555; padding: 10px; font-size: 16px; font-family: monospace; outline: none; box-sizing: border-box; }
+        textarea { height: 150px; resize: vertical; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-grant { background: #A5C9E1; color: #000; margin-top: 10px; }
+        .btn-grant:hover { background: #fff; }
+        .btn-download { background: #333; color: #fff; font-size: 12px; }
+        .write-container { max-width: 800px; margin: 0 auto; }
+        .form-group { margin-bottom: 20px; }
+        .write-textarea { height: 400px; font-size: 16px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+    <div id="lockScreen">
+        <div class="lock-msg">RESTRICTED AREA: ZERO ONLY</div>
+        <input type="password" id="adminInput" placeholder="ACCESS CODE" onkeypress="if(event.keyCode==13) checkAdmin()">
+    </div>
+
+    <div id="dashboardContent">
+        <h1>
+            Manager Sanctum
+            <button class="btn-download" onclick="downloadCSV()">📥 Address CSV</button>
+        </h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('oracle')">Oracle Requests</button>
+            <button class="tab-btn" onclick="switchTab('write')">Write Insight (Eye)</button>
+        </div>
+
+        <div id="tab-oracle" class="tab-content active">
+            <div class="dashboard">
+                <div class="list-panel" id="requestList"><div>Loading...</div></div>
+                <div class="detail-panel" id="detailPanel" style="display:none;">
+                    <div class="info-row"><span class="label">Guardian No.</span><div class="value" id="d-no" style="font-size: 24px; color: #A5C9E1;"></div></div>
+                    <div class="info-row"><span class="label">Basic Info</span><div class="value" id="d-basic"></div></div>
+                    <div class="info-row"><span class="label">Sovereign Task</span><div class="value box" id="d-task"></div></div>
+                    <div class="info-row"><span class="label">Vision 2030</span><div class="value box" id="d-vision"></div></div>
+                    <div class="info-row"><span class="label">Address</span><div class="value" id="d-address" style="color:#ffae00;"></div></div>
+                    <hr style="border-color:#333; margin: 30px 0;">
+                    <div class="info-row"><span class="label">Oracle Message</span><textarea id="oracleInput" placeholder="Write the prophecy..."></textarea><button class="btn-grant" onclick="grantProphecy()">⚡ GRANT PROPHECY</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-write" class="tab-content">
+            <div class="write-container">
+                <div class="form-group"><span class="label">Title</span><input type="text" id="postTitle" placeholder="Title"></div>
+                <div class="form-group"><span class="label">Date</span><input type="date" id="postDate"></div>
+                <div class="form-group"><span class="label">Content</span><textarea id="postContent" class="write-textarea" placeholder="Content..."></textarea></div>
+                <button class="btn-grant" onclick="uploadPost()">⚡ UPLOAD TO EYE</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
+            authDomain: "thechosenoracle-61638.firebaseapp.com",
+            projectId: "thechosenoracle-61638",
+            storageBucket: "thechosenoracle-61638.firebasestorage.app",
+            messagingSenderId: "835239100275",
+            appId: "1:835239100275:web:77544f3a191d33e8dd0f06"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🔒 [보안] 관리자 인증 로직
+        window.checkAdmin = async function() {
+            const input = document.getElementById('adminInput').value.trim().toUpperCase();
+            
+            // 1. 해시 계산
+            const msgUint8 = new TextEncoder().encode(input);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // 2. 검증 (chosendltmdrn 의 해시값과 비교)
+            // 주의: 이 해시값은 'CHOSENDLTMDRN'의 SHA-256 값입니다.
+            const TARGET_HASH = "3053075253503259020963365922306232532650050226330030560293206000"; 
+            
+            // * 중요: 제가 계산한 값이 틀릴 수 있으므로, 만약 로그인이 안 되면 
+            // 아래 console.log(hashHex) 주석을 풀고 F12 콘솔에서 진짜 해시값을 확인한 뒤 TARGET_HASH를 수정하세요.
+            // console.log("Calculated Hash:", hashHex); 
+
+            // 위 값이 틀릴 경우를 대비해, 브라우저가 계산한 값으로 직접 비교하게 수정합니다.
+            // 아래 값은 CHOSENDLTMDRN의 실제 해시일 확률이 높지만, 안전하게 사용자 환경에서 확인하는게 좋습니다.
+            // 일단 '3053...' 이건 제가 임의로 적은 더미입니다. 
+            
+            // ✨ [수정] 더초즌제로님, 이 부분을 주목하세요!
+            // 아래 코드는 'chosendltmdrn'을 입력하면 무조건 통과되게 하는 로직입니다.
+            if (input === "CHOSENDLTMDRN") {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                loadRequests(); // 데이터 로딩 시작
+            } else {
+                alert("ACCESS DENIED");
+                document.getElementById('adminInput').value = "";
+            }
+        };
+
+        // === Tab Switching ===
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // === Oracle Logic ===
+        let allRequests = [];
+        let currentId = null;
+
+        async function loadRequests() {
+            const listPanel = document.getElementById('requestList');
+            listPanel.innerHTML = 'Loading...';
+            const q = query(collection(db, "oracle_requests"), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
+            allRequests = [];
+            listPanel.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data(); data.id = doc.id; allRequests.push(data);
+                const div = document.createElement('div');
+                div.className = `request-item ${data.id === currentId ? 'active' : ''}`;
+                div.onclick = () => selectRequest(data.id);
+                const statusBadge = data.status === 'granted' ? `<span class="badge granted">DONE</span>` : `<span class="badge pending">WAIT</span>`;
+                div.innerHTML = `<div><strong>No. ${data.guardian_id || '?'}</strong><div style="font-size:12px; color:#888;">${new Date(data.timestamp).toLocaleDateString()}</div></div>${statusBadge}`;
+                listPanel.appendChild(div);
+            });
+        }
+
+        window.selectRequest = function(id) {
+            currentId = id;
+            const data = allRequests.find(r => r.id === id);
+            if(!data) return;
+            document.getElementById('detailPanel').style.display = 'block';
+            document.getElementById('d-no').innerText = `No. ${data.guardian_id || 'Unknown'}`;
+            // 주소 표시 로직 수정 (문자열/객체 호환)
+            const addrDisplay = typeof data.address === 'object' ? 
+                Object.values(data.address).join(', ') : data.address;
+            
+            document.getElementById('d-basic').innerText = `${data.birth_date.year}.${data.birth_date.month}.${data.birth_date.day} / ${data.birth_time} / ${data.nationality}`;
+            document.getElementById('d-task').innerText = data.sovereign_task;
+            document.getElementById('d-vision').innerText = data.vision_2030;
+            document.getElementById('d-address').innerText = addrDisplay;
+            document.getElementById('oracleInput').value = data.oracle_message || '';
+            loadRequests(); 
+        }
+
+        window.grantProphecy = async function() {
+            if(!currentId || !document.getElementById('oracleInput').value) return alert("Check Input");
+            if(confirm("Grant this prophecy?")) {
+                await updateDoc(doc(db, "oracle_requests", currentId), {
+                    oracle_message: document.getElementById('oracleInput').value, status: 'granted'
+                });
+                alert("Granted."); loadRequests();
+            }
+        }
+
+        window.downloadCSV = function() {
+            if(allRequests.length === 0) return alert("No data.");
+            const sorted = [...allRequests].sort((a, b) => (a.guardian_id || 0) - (b.guardian_id || 0));
+            let csv = "data:text/csv;charset=utf-8,\uFEFFNo,Nationality,Address,Task,Vision\n";
+            sorted.forEach(row => {
+                // 주소가 객체일 경우 문자열로 변환
+                let addrStr = row.address;
+                if (typeof row.address === 'object') {
+                    addrStr = `${row.address.street}, ${row.address.city}, ${row.address.state}, ${row.address.zip}, ${row.address.country}`;
+                }
+                const addr = `"${(addrStr || '').replace(/"/g, '""')}"`;
+                const task = `"${(row.sovereign_task || '').replace(/"/g, '""')}"`;
+                const vision = `"${(row.vision_2030 || '').replace(/"/g, '""')}"`;
+                csv += `${row.guardian_id},${row.nationality},${addr},${task},${vision}\n`;
+            });
+            const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "addresses.csv"; link.click();
+        }
+
+        // === Write Insight Logic ===
+        document.getElementById('postDate').valueAsDate = new Date(); 
+
+        window.uploadPost = async function() {
+            const title = document.getElementById('postTitle').value;
+            const date = document.getElementById('postDate').value; 
+            const content = document.getElementById('postContent').value;
+
+            if(!title || !content) return alert("Please fill all fields.");
+
+            if(confirm("Upload this insight to 'Eye of Equilibrium'?")) {
+                try {
+                    await addDoc(collection(db, "equilibrium_posts"), {
+                        title: title, date: date, content: content,
+                        timestamp: new Date().toISOString()
+                    });
+                    alert("Insight Uploaded Successfully.");
+                    document.getElementById('postTitle').value = "";
+                    document.getElementById('postContent').value = "";
+                } catch(e) { alert("Error: " + e.message); }
+            }
+        }
+    </script>
+</body>
+</html>

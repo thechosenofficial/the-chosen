@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Chosen | Eye of Equilibrium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #131314;
+            --card-bg: #1e1f20;
+            --border: #333;
+            --header-h: 80px;
+            --silver-mid: #A5C9E1;
+            --silver-light: #FFFFFF;
+            --blue-silver-dark: #708090;
+            --pure-silver: #D3D3D3;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--pure-silver);
+            font-family: 'Pirata One', system-ui;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* === 헤더 (공통) === */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
+            z-index: 4000; background-color: rgba(19, 19, 20, 0.95);
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+        .luster-sky-silver { 
+            background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--blue-silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+        .logo { 
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap;
+        }
+        .guardian-badge { position: absolute; left: 20px; color: var(--silver-mid); font-size: 16px; }
+        .menu-btn { 
+            position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; 
+        }
+        .menu-btn span { 
+            display: block; width: 24px; height: 3px; background-color: #FFFFFF; 
+            margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; 
+        }
+        .compact-menu { 
+            position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); 
+            border: 1px solid var(--border); border-radius: 12px; padding: 10px; 
+            display: none; z-index: 4500; 
+        }
+        .compact-menu.active { display: block; }
+        .compact-menu a, .compact-menu button { 
+            display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; 
+            color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer;
+        }
+
+        /* === 메인 컨텐츠 === */
+        .container {
+            width: 100%; max-width: 700px; margin: 120px auto 50px auto;
+            padding: 0 20px; box-sizing: border-box;
+        }
+
+        h2 { 
+            text-align: center; font-size: 40px; margin-bottom: 40px; 
+            letter-spacing: 2px; color: var(--silver-mid);
+            text-shadow: 0 0 15px rgba(165, 201, 225, 0.3);
+        }
+
+        /* 게시글 리스트 (아코디언) */
+        .post-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .post-item {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .post-item:hover { border-color: var(--silver-mid); background: rgba(255, 255, 255, 0.05); }
+
+        /* 헤더 (클릭 영역) */
+        .post-header {
+            padding: 20px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .post-info { display: flex; flex-direction: column; gap: 5px; }
+        .post-date { font-size: 14px; color: var(--blue-silver-dark); letter-spacing: 1px; }
+        .post-title { font-size: 20px; color: var(--pure-silver); letter-spacing: 1px; }
+        
+        .toggle-icon { 
+            font-size: 20px; color: var(--silver-mid); transition: 0.3s; 
+        }
+        .post-item.open .toggle-icon { transform: rotate(180deg); }
+        .post-item.open .post-title { color: var(--silver-mid); text-shadow: 0 0 10px rgba(165, 201, 225, 0.5); }
+
+        /* 내용 (숨김 영역) */
+        .post-content {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .content-inner {
+            padding: 20px 20px 30px 20px;
+            font-size: 18px; line-height: 1.8;
+            color: #ddd; white-space: pre-wrap; /* 줄바꿈 반영 */
+            text-align: justify;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 더보기 버튼 */
+        .load-more-btn {
+            display: block; width: 100%; max-width: 300px; margin: 40px auto;
+            padding: 15px; border: 1px solid var(--border); background: transparent;
+            color: var(--silver-mid); font-family: 'Pirata One'; font-size: 18px;
+            cursor: pointer; border-radius: 30px; transition: 0.3s;
+            text-align: center;
+        }
+        .load-more-btn:hover { background: var(--border); color: #fff; }
+        .load-more-btn.hidden { display: none; }
+
+        /* 로딩 애니메이션 */
+        .loader { text-align: center; color: #666; padding: 20px; font-size: 14px; display: none; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="guardianIdDisplay" class="guardian-badge">No. ????</div>
+        <div class="logo luster-sky-silver">The Chosen</div>
+        <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        <div class="compact-menu" id="compactMenu">
+            <a href="inner-sanctum.html">Sanctum</a>
+            <a href="oracle-form.html">Oracle</a>
+            <button class="logout-link" onclick="logout()" style="color:#ff6b6b">Disconnect</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Eye of Equilibrium</h2>
+        
+        <div id="postList" class="post-list">
+            </div>
+
+        <div id="loader" class="loader">Loading insights...</div>
+        <button id="loadMoreBtn" class="load-more-btn hidden" onclick="loadPosts()">Reveal More Insights</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
+            authDomain: "thechosenoracle-61638.firebaseapp.com",
+            projectId: "thechosenoracle-61638",
+            storageBucket: "thechosenoracle-61638.firebasestorage.app",
+            messagingSenderId: "835239100275",
+            appId: "1:835239100275:web:77544f3a191d33e8dd0f06"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 변수
+        let lastVisible = null;
+        const POSTS_PER_PAGE = 10;
+        let isFetching = false;
+
+        window.onload = function() {
+            if (localStorage.getItem('chosen_access') !== 'granted') {
+                window.location.replace("index.html");
+                return;
+            }
+            const guardianId = localStorage.getItem('guardian_id') || "????";
+            document.getElementById('guardianIdDisplay').innerText = "No. " + String(guardianId).padStart(4, '0');
+            
+            loadPosts(); // 초기 로딩
+        };
+
+        // 헤더 기능
+        window.toggleMenu = function() { document.getElementById('compactMenu').classList.toggle('active'); }
+        window.logout = function() { localStorage.clear(); window.location.replace("index.html"); }
+
+        // 게시글 로딩 함수
+        window.loadPosts = async function() {
+            if (isFetching) return;
+            isFetching = true;
+            
+            const loader = document.getElementById('loader');
+            const btn = document.getElementById('loadMoreBtn');
+            loader.style.display = 'block';
+            btn.style.display = 'none';
+
+            try {
+                let q;
+                const postsRef = collection(db, "equilibrium_posts");
+
+                if (lastVisible) {
+                    // 다음 페이지 로딩
+                    q = query(postsRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(POSTS_PER_PAGE));
+                } else {
+                    // 첫 페이지 로딩
+                    q = query(postsRef, orderBy("timestamp", "desc"), limit(POSTS_PER_PAGE));
+                }
+
+                const documentSnapshots = await getDocs(q);
+
+                if (documentSnapshots.empty) {
+                    loader.innerText = "No more insights.";
+                    setTimeout(() => loader.style.display = 'none', 2000);
+                    return;
+                }
+
+                // 마지막 문서 저장 (다음 페이지용)
+                lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+
+                const listContainer = document.getElementById('postList');
+
+                documentSnapshots.forEach((doc) => {
+                    const data = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'post-item';
+                    div.innerHTML = `
+                        <div class="post-header" onclick="togglePost(this)">
+                            <div class="post-info">
+                                <span class="post-date">${data.date}</span>
+                                <span class="post-title">${data.title}</span>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="post-content">
+                            <div class="content-inner">${data.content}</div>
+                        </div>
+                    `;
+                    listContainer.appendChild(div);
+                });
+
+                // 더 불러올게 남았는지 체크 (간단히 항상 버튼 표시, 눌렀을 때 없으면 사라짐)
+                btn.style.display = 'block';
+                btn.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error loading posts:", error);
+                loader.innerText = "Connection Failed.";
+            } finally {
+                loader.style.display = 'none';
+                isFetching = false;
+            }
+        };
+
+        // 아코디언 토글 함수
+        window.togglePost = function(header) {
+            const item = header.parentElement;
+            const content = item.querySelector('.post-content');
+            
+            // 다른 열린 것들 닫기 (선택사항 - 현재는 다중 열림 허용)
+            // document.querySelectorAll('.post-item.open').forEach(openItem => {
+            //     if(openItem !== item) {
+            //         openItem.classList.remove('open');
+            //         openItem.querySelector('.post-content').style.maxHeight = null;
+            //     }
+            // });
+
+            item.classList.toggle('open');
+            
+            if (item.classList.contains('open')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.style.maxHeight = null;
+            }
+        };
+    </script>
+</body>
+</html>

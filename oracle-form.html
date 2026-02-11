@@ -12,17 +12,66 @@
             --border: #333;
             --silver-mid: #A5C9E1;
             --silver-light: #FFFFFF;
+            --blue-silver-dark: #708090;
             --pure-silver: #D3D3D3;
             --warning: #ff6b6b;
+            --header-h: 80px;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--pure-silver);
             font-family: 'Pirata One', system-ui;
-            margin: 0; padding: 20px;
+            margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
+        }
+
+        /* ✨ 헤더 스타일 (Inner Sanctum과 동일) */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
+            z-index: 4000; background-color: rgba(19, 19, 20, 0.95);
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+
+        .luster-sky-silver { 
+            background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--blue-silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+
+        .logo { 
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap;
+        }
+        .guardian-badge { position: absolute; left: 20px; color: var(--silver-mid); font-size: 16px; }
+        
+        .menu-btn { 
+            position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; 
+        }
+        .menu-btn span { 
+            display: block; width: 24px; height: 3px; background-color: #FFFFFF; 
+            margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; 
+        }
+
+        .compact-menu { 
+            position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); 
+            border: 1px solid var(--border); border-radius: 12px; padding: 10px; 
+            display: none; z-index: 4500; 
+        }
+        .compact-menu.active { display: block; }
+        .compact-menu a, .compact-menu button { 
+            display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; 
+            color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer;
+        }
+
+        /* 본문 컨테이너 (헤더 높이만큼 여백 추가) */
+        .altar-container { 
+            width: 100%; max-width: 500px; 
+            margin-top: 120px; /* 헤더 공간 확보 */
+            padding: 20px; box-sizing: border-box;
+            position: relative; padding-bottom: 50px; 
         }
 
         .luster-text {
@@ -31,16 +80,14 @@
             text-align: center;
         }
 
-        .altar-container { width: 100%; max-width: 500px; margin-top: 5vh; position: relative; }
+        h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
 
-        h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; }
-
-        /* ✨ 경고 문구 스타일 */
+        /* 경고 문구 */
         .warning-text {
-            color: var(--warning); font-size: 16px; text-align: center;
+            color: var(--warning); font-size: 15px; text-align: center;
             margin-bottom: 30px; letter-spacing: 1px;
             border: 1px solid var(--warning); padding: 10px; border-radius: 8px;
-            background: rgba(255, 107, 107, 0.05);
+            background: rgba(255, 107, 107, 0.05); line-height: 1.4;
         }
 
         .oracle-form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
@@ -59,11 +106,11 @@
             font-family: 'Pirata One', cursive; font-size: 18px; outline: none;
             transition: 0.3s; width: 100%; box-sizing: border-box;
         }
-
         input:focus, textarea:focus, select:focus { border-color: var(--silver-mid); background: rgba(255, 255, 255, 0.05); }
-
-        textarea { height: 100px; resize: none; }
+        textarea { height: 120px; resize: none; }
         
+        .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
         .submit-btn {
             background-color: var(--silver-mid); color: var(--bg-color);
             border: none; border-radius: 30px; padding: 18px;
@@ -72,17 +119,12 @@
         }
         .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
 
-        /* ✨ 상태별 섹션 (Waiting, Result) */
+        /* 상태 섹션 */
         .status-section { 
-            display: none; /* 기본 숨김 */
-            text-align: center; 
-            border: 1px solid var(--border); 
-            padding: 40px 20px; 
-            border-radius: 20px; 
-            background: var(--card-bg);
+            display: none; text-align: center; border: 1px solid var(--border); 
+            padding: 40px 20px; border-radius: 20px; background: var(--card-bg);
             animation: fadeIn 1s;
         }
-
         .reveal-btn {
             background: transparent; border: 1px solid var(--silver-mid);
             color: var(--silver-mid); padding: 15px 30px; font-size: 20px;
@@ -94,58 +136,77 @@
 
         @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(165, 201, 225, 0);} 100% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0);} }
 
-        /* ✨ 주소 수정 섹션 (하단) */
+        /* 주소 수정 섹션 */
         .address-update-box {
             margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;
-            display: none; /* 필요시 JS로 표시 */
+            display: none; 
         }
         .small-btn {
             background: #333; color: #ccc; border: none; padding: 10px 20px;
             border-radius: 20px; cursor: pointer; font-family: 'Pirata One'; margin-top: 10px;
         }
 
-        /* ✨ 팝업 모달 (Oracle Message) */
+        /* 팝업 모달 공통 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9); z-index: 9999;
             display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.5s;
+            opacity: 0; transition: opacity 0.3s;
         }
         .modal-content {
-            background: #111; border: 1px solid var(--silver-mid);
-            padding: 40px; border-radius: 15px; max-width: 80%; text-align: center;
-            box-shadow: 0 0 30px rgba(165, 201, 225, 0.2);
-            position: relative;
+            background: #191919; border: 1px solid var(--silver-mid);
+            padding: 30px; border-radius: 15px; max-width: 85%; width: 400px; text-align: center;
+            box-shadow: 0 0 30px rgba(165, 201, 225, 0.15); position: relative;
         }
-        .oracle-text {
-            font-size: 24px; line-height: 1.6; color: var(--silver-light);
-            margin: 20px 0; white-space: pre-wrap;
+        .modal-title { font-size: 24px; color: var(--silver-light); margin-bottom: 15px; }
+        .modal-msg { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 25px; white-space: pre-wrap; }
+        
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btn { 
+            padding: 12px 25px; border-radius: 25px; cursor: pointer; font-family: 'Pirata One'; font-size: 18px; border: none; 
         }
-        .close-modal {
-            position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666;
-        }
-        .close-modal:hover { color: #fff; }
+        .btn-cancel { background: #333; color: #fff; }
+        .btn-confirm { background: var(--silver-mid); color: #000; }
+
+        .close-modal { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 모바일 반응형 조정 */
+        @media (max-width: 768px) {
+            .logo { font-size: 28px; }
+            h2 { font-size: 32px; }
+            .altar-container { margin-top: 100px; }
+        }
     </style>
 </head>
 <body>
+
+    <header>
+        <div id="guardianIdDisplay" class="guardian-badge">No. ????</div>
+        <div class="logo luster-sky-silver">The Chosen</div>
+        <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        <div class="compact-menu" id="compactMenu">
+            <a href="inner-sanctum.html">Back to Doctrine</a>
+            <button class="logout-link" onclick="logout()" style="color:#ff6b6b">Disconnect</button>
+        </div>
+    </header>
 
     <div class="altar-container">
         <h2 class="luster-text">The Oracle Altar</h2>
 
         <div id="formSection">
             <div class="warning-text">
-                ⚠️ WARNING: Once offered, your destiny (Birth, Task, Vision) cannot be altered. Only your physical location (Address) remains mutable until 2029.
+                ⚠️ WARNING: Once offered, your destiny (Birth, Task, Vision) CANNOT be altered.<br>Only your physical location (Address) remains mutable until Aug 2029.
             </div>
 
             <form id="oracleForm" class="oracle-form">
                 <div class="field-group">
                     <label>Date of Birth</label>
                     <div class="birth-select-wrapper">
-                        <select id="birthYear" name="year" required><option value="" disabled selected>Year</option></select>
-                        <select id="birthMonth" name="month" required><option value="" disabled selected>Month</option></select>
-                        <select id="birthDay" name="day" required><option value="" disabled selected>Day</option></select>
+                        <select id="birthYear" required><option value="" disabled selected>Year</option></select>
+                        <select id="birthMonth" required><option value="" disabled selected>Month</option></select>
+                        <select id="birthDay" required><option value="" disabled selected>Day</option></select>
                     </div>
                 </div>
                 
@@ -171,25 +232,33 @@
 
                 <div class="field-group">
                     <label>Nationality</label>
-                    <input type="text" id="nationality" placeholder="Your Origin" required>
+                    <input type="text" id="nationality" placeholder="Your Origin (Country)" required>
                 </div>
 
                 <div class="field-group">
                     <label>Sovereign Task</label>
-                    <textarea id="sovereignTask" placeholder="Describe your purpose in this world..." required></textarea>
+                    <textarea id="sovereignTask" placeholder="(Task, Path walked so far, Frustrations, Anything to resolve the Curse of Knowledge)" required></textarea>
                 </div>
 
                 <div class="field-group">
                     <label>Vision of 2030</label>
-                    <textarea id="vision" maxlength="200" placeholder="I have seen the future..." required></textarea>
+                    <textarea id="vision" maxlength="70" placeholder="English only (Max 70 chars including spaces)..." required></textarea>
                 </div>
 
                 <div class="field-group">
-                    <label style="color: var(--silver-light);">Physical Address (Mailable)</label>
-                    <input type="text" id="address" placeholder="Full address for the Ma-Pae (Postal Code included)" required style="border-color: var(--silver-mid);">
+                    <label style="color: var(--silver-light);">Physical Address (International Shipping)</label>
+                    <input type="text" id="addr_street" placeholder="Street Address" required>
+                    <div class="address-grid">
+                        <input type="text" id="addr_city" placeholder="City" required>
+                        <input type="text" id="addr_state" placeholder="State / Province" required>
+                    </div>
+                    <div class="address-grid">
+                        <input type="text" id="addr_zip" placeholder="Zip / Postal Code" required>
+                        <input type="text" id="addr_country" placeholder="Country" required>
+                    </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Offer to Equilibrium</button>
+                <button type="button" class="submit-btn" onclick="preSubmitCheck()">Offer to Equilibrium</button>
             </form>
         </div>
 
@@ -204,21 +273,32 @@
         <div id="grantedSection" class="status-section">
             <h3 class="luster-text" style="font-size: 32px;">The Oracle has Spoken.</h3>
             <p>The Equilibrium has responded to your frequency.</p>
-            <button class="reveal-btn" onclick="openModal()">Reveal the Prophecy</button>
+            <button class="reveal-btn" onclick="openOracleModal()">Reveal the Prophecy</button>
         </div>
 
         <div id="addressUpdateSection" class="address-update-box">
-            <label>Update Physical Address (Until Sep. 2029)</label>
-            <input type="text" id="updateAddressInput" placeholder="New Address">
+            <label>Update Physical Address (Until Aug 2029)</label>
+            <input type="text" id="updateAddressInput" placeholder="New Full Address">
             <button class="small-btn" onclick="updateAddress()">Update Address</button>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title" style="color:var(--warning)">Final Confirmation</h3>
+            <p class="modal-msg">All contents CANNOT be modified after submission.<br><br>Only the address can be modified <strong>until the end of August 2029.</strong><br><br><span style="color:#ff6b6b; font-size:14px;">(We do NOT accept or collect email addresses.)</span></p>
+            <div class="modal-btns">
+                <button class="modal-btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="realSubmit()">Submit</button>
+            </div>
         </div>
     </div>
 
     <div id="oracleModal" class="modal-overlay">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <span class="close-modal" onclick="closeOracleModal()">&times;</span>
             <h3 class="luster-text">Prophecy</h3>
-            <div id="oracleContent" class="oracle-text"></div>
+            <div id="oracleContent" class="modal-msg" style="color:var(--silver-light)"></div>
             <div style="font-size: 14px; color: #555; margin-top: 30px;">The Chosen Oracle</div>
         </div>
     </div>
@@ -239,68 +319,102 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 문서 ID (해시값) 가져오기
+        // 문서 ID (해시값)
         const userHash = localStorage.getItem('user_code') ? await digestMessage(localStorage.getItem('user_code')) : null;
 
-        // 해시 함수 (로그인 때와 동일)
         async function digestMessage(message) {
-            const msgUint8 = new TextEncoder().encode(message.toUpperCase()); // 대문자 통일 중요
+            const msgUint8 = new TextEncoder().encode(message.toUpperCase());
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // 초기화
         window.onload = async function() {
             if (localStorage.getItem('chosen_access') !== 'granted' || !userHash) {
                 alert("Unauthorized Access.");
                 window.location.replace("index.html");
                 return;
             }
+            
+            // 헤더 가디언 번호 세팅
+            const guardianId = localStorage.getItem('guardian_id') || "????";
+            document.getElementById('guardianIdDisplay').innerText = "No. " + String(guardianId).padStart(4, '0');
 
-            initDateSelects(); // 날짜 드롭다운 생성
-            checkOracleStatus(); // 파이어베이스 상태 확인
+            initDateSelects();
+            checkOracleStatus();
         };
 
-        // 🔥 파이어베이스 상태 실시간 확인
+        // 헤더 메뉴 기능
+        window.toggleMenu = function() { document.getElementById('compactMenu').classList.toggle('active'); }
+        window.logout = function() { localStorage.clear(); window.location.replace("index.html"); }
+
+        // 파이어베이스 상태 확인
         function checkOracleStatus() {
             const docRef = doc(db, "oracle_requests", userHash);
-
-            // 실시간 리스너 (onSnapshot) 사용 -> 관리자가 승인하면 즉시 화면 바뀜
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // 1. 이미 제출한 경우 -> 폼 숨김
                     document.getElementById('formSection').style.display = 'none';
                     document.getElementById('addressUpdateSection').style.display = 'block';
-                    document.getElementById('updateAddressInput').value = data.address; // 기존 주소 표시
+                    
+                    const addrStr = typeof data.address === 'object' 
+                        ? `${data.address.street}, ${data.address.city}, ${data.address.state}, ${data.address.zip}, ${data.address.country}`
+                        : data.address;
+                    document.getElementById('updateAddressInput').value = addrStr;
 
-                    // 2. 상태에 따라 화면 분기
                     if (data.status === 'granted' && data.oracle_message) {
-                        // 신탁 도착
                         document.getElementById('waitingSection').style.display = 'none';
                         document.getElementById('grantedSection').style.display = 'block';
-                        document.getElementById('oracleContent').innerText = data.oracle_message; // 모달에 내용 주입
+                        document.getElementById('oracleContent').innerText = data.oracle_message;
                     } else {
-                        // 대기 중
                         document.getElementById('waitingSection').style.display = 'block';
                         document.getElementById('grantedSection').style.display = 'none';
                     }
                 } else {
-                    // 3. 제출 안 함 -> 폼 표시
                     document.getElementById('formSection').style.display = 'block';
                 }
             });
         }
 
-        // 📝 폼 제출 (최초 1회)
-        window.submitForm = async function(e) {
-            e.preventDefault();
+        // 제출 전 검증 (모달 열기)
+        window.preSubmitCheck = function() {
+            const form = document.getElementById('oracleForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const vision = document.getElementById('vision').value;
+            const englishRegex = /^[A-Za-z0-9\s.,!?'"()-]*$/;
+            if (!englishRegex.test(vision)) {
+                alert("Vision must be in English only.");
+                return;
+            }
+
+            const confirmModal = document.getElementById('confirmModal');
+            confirmModal.style.display = 'flex';
+            setTimeout(() => confirmModal.style.opacity = 1, 10);
+        }
+
+        // 진짜 제출
+        window.realSubmit = async function() {
+            closeConfirmModal();
             const btn = document.querySelector('.submit-btn');
             btn.innerText = "Offering...";
             btn.disabled = true;
 
+            const addressObj = {
+                street: document.getElementById('addr_street').value,
+                city: document.getElementById('addr_city').value,
+                state: document.getElementById('addr_state').value,
+                zip: document.getElementById('addr_zip').value,
+                country: document.getElementById('addr_country').value
+            };
+            
+            const fullAddressStr = `${addressObj.street}, ${addressObj.city}, ${addressObj.state}, ${addressObj.zip}, ${addressObj.country}`;
+
             const formData = {
+                guardian_id: parseInt(localStorage.getItem('guardian_id') || 0),
                 birth_date: {
                     year: document.getElementById('birthYear').value,
                     month: document.getElementById('birthMonth').value,
@@ -310,15 +424,16 @@
                 nationality: document.getElementById('nationality').value,
                 sovereign_task: document.getElementById('sovereignTask').value,
                 vision_2030: document.getElementById('vision').value,
-                address: document.getElementById('address').value,
-                status: 'pending', // 초기 상태
+                
+                address: fullAddressStr, 
+                address_detail: addressObj, 
+                
+                status: 'pending',
                 timestamp: new Date().toISOString()
             };
 
             try {
-                // 문서 ID를 사용자 해시값과 동일하게 생성 (1:1 매칭)
                 await setDoc(doc(db, "oracle_requests", userHash), formData);
-                // 제출 후 화면은 onSnapshot이 감지해서 자동으로 바꿈
             } catch (error) {
                 console.error("Error:", error);
                 alert("Connection Error. Please try again.");
@@ -327,59 +442,48 @@
             }
         };
 
-        document.getElementById('oracleForm').addEventListener('submit', window.submitForm);
-
-        // 🏠 주소 수정 기능
-        window.updateAddress = async function() {
-            const newAddr = document.getElementById('updateAddressInput').value;
-            if(!newAddr) return alert("Please enter an address.");
-
-            const confirmUpdate = confirm("Update your physical address?");
-            if(confirmUpdate) {
-                try {
-                    const docRef = doc(db, "oracle_requests", userHash);
-                    await updateDoc(docRef, { address: newAddr });
-                    alert("Address Updated.");
-                } catch(e) {
-                    alert("Update Failed.");
-                }
-            }
-        };
-
-        // 모달 제어
-        window.openModal = function() {
+        window.closeConfirmModal = function() {
+            const modal = document.getElementById('confirmModal');
+            modal.style.opacity = 0;
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+        
+        window.openOracleModal = function() {
             const modal = document.getElementById('oracleModal');
             modal.style.display = 'flex';
             setTimeout(() => modal.style.opacity = 1, 10);
         }
-        window.closeModal = function() {
+        window.closeOracleModal = function() {
             const modal = document.getElementById('oracleModal');
             modal.style.opacity = 0;
-            setTimeout(() => modal.style.display = 'none', 500);
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        // 날짜 선택기 초기화 (기존 로직)
+        window.updateAddress = async function() {
+            const newAddr = document.getElementById('updateAddressInput').value;
+            if(!newAddr) return alert("Please enter an address.");
+            if(confirm("Update your physical address?")) {
+                try {
+                    const docRef = doc(db, "oracle_requests", userHash);
+                    await updateDoc(docRef, { address: newAddr });
+                    alert("Address Updated.");
+                } catch(e) { alert("Update Failed."); }
+            }
+        };
+
         function initDateSelects() {
             const yearSelect = document.getElementById('birthYear');
             const monthSelect = document.getElementById('birthMonth');
             const daySelect = document.getElementById('birthDay');
-            
-            for (let i = 2026; i >= 1900; i--) {
-                let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; yearSelect.appendChild(opt);
-            }
-            for (let i = 1; i <= 12; i++) {
-                let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; monthSelect.appendChild(opt);
-            }
-            
+            for (let i = 2026; i >= 1900; i--) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; yearSelect.appendChild(opt); }
+            for (let i = 1; i <= 12; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; monthSelect.appendChild(opt); }
             function updateDays() {
                 const year = parseInt(yearSelect.value);
                 const month = parseInt(monthSelect.value);
                 if (!year || !month) return;
                 const lastDay = new Date(year, month, 0).getDate();
                 daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
-                for (let i = 1; i <= lastDay; i++) {
-                    let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; daySelect.appendChild(opt);
-                }
+                for (let i = 1; i <= lastDay; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; daySelect.appendChild(opt); }
             }
             yearSelect.onchange = updateDays;
             monthSelect.onchange = updateDays;

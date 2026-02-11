@@ -6,7 +6,7 @@
     <style>
         body { background-color: #111; color: #ddd; font-family: monospace; padding: 20px; margin: 0; }
         
-        /* 🔒 잠금 화면 스타일 */
+        /* 🔒 잠금 화면 */
         #lockScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; z-index: 9999;
@@ -17,13 +17,10 @@
             padding: 15px; font-size: 20px; text-align: center; letter-spacing: 5px;
             border-radius: 10px; width: 300px; outline: none;
         }
-        #adminInput:focus { border-color: #A5C9E1; box-shadow: 0 0 15px rgba(165, 201, 225, 0.3); }
         .lock-msg { margin-bottom: 20px; color: #555; font-size: 14px; }
-
-        /* 대시보드 (기본 숨김) */
         #dashboardContent { display: none; }
 
-        /* 기존 스타일 */
+        /* UI 스타일 */
         h1 { color: #A5C9E1; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .tabs { margin-bottom: 20px; border-bottom: 1px solid #333; }
         .tab-btn { background: none; border: none; color: #666; padding: 10px 20px; font-size: 16px; cursor: pointer; font-family: monospace; font-weight: bold; }
@@ -31,12 +28,18 @@
         .tab-btn.active { color: #A5C9E1; border-bottom: 2px solid #A5C9E1; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
+        /* 대시보드 레이아웃 */
         .dashboard { display: flex; gap: 20px; height: 80vh; }
         .list-panel { width: 300px; overflow-y: auto; border-right: 1px solid #333; padding-right: 10px; }
-        .detail-panel { flex: 1; padding-left: 20px; overflow-y: auto; }
+        .detail-panel { flex: 1; padding-left: 20px; overflow-y: auto; position: relative; }
+
+        /* 리스트 아이템 */
         .request-item { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
         .request-item:hover { background-color: #222; color: #fff; }
         .request-item.active { background-color: #A5C9E1; color: #000; }
+        
+        /* 뱃지 및 텍스트 */
         .badge { font-size: 10px; padding: 2px 5px; border-radius: 4px; }
         .badge.pending { background: #ff6b6b; color: #fff; }
         .badge.granted { background: #51cf66; color: #fff; }
@@ -44,15 +47,24 @@
         .label { color: #888; font-size: 12px; display: block; margin-bottom: 5px; }
         .value { font-size: 16px; white-space: pre-wrap; line-height: 1.5; color: #fff; }
         .box { background: #222; padding: 15px; border-radius: 8px; border: 1px solid #333; }
-        textarea, input[type="text"], input[type="date"] { width: 100%; background: #000; color: #A5C9E1; border: 1px solid #555; padding: 10px; font-size: 16px; font-family: monospace; outline: none; box-sizing: border-box; }
+
+        /* 입력창 */
+        textarea, input[type="text"], input[type="date"] { 
+            width: 100%; background: #000; color: #A5C9E1; 
+            border: 1px solid #555; padding: 10px; font-size: 16px; 
+            font-family: monospace; outline: none; box-sizing: border-box;
+        }
         textarea { height: 150px; resize: vertical; }
+        .write-textarea { height: 400px; font-size: 16px; line-height: 1.6; }
+
+        /* 버튼 */
         button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
         .btn-grant { background: #A5C9E1; color: #000; margin-top: 10px; }
         .btn-grant:hover { background: #fff; }
+        .btn-del { background: #ff6b6b; color: #fff; float: right; margin-top: 10px; }
+        .btn-new { background: #333; color: #fff; margin-bottom: 15px; width: 100%; }
+        .btn-new:hover { background: #555; }
         .btn-download { background: #333; color: #fff; font-size: 12px; }
-        .write-container { max-width: 800px; margin: 0 auto; }
-        .form-group { margin-bottom: 20px; }
-        .write-textarea { height: 400px; font-size: 16px; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -70,7 +82,7 @@
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('oracle')">Oracle Requests</button>
-            <button class="tab-btn" onclick="switchTab('write')">Write Insight (Eye)</button>
+            <button class="tab-btn" onclick="switchTab('write')">Manage Insights (Eye)</button>
         </div>
 
         <div id="tab-oracle" class="tab-content active">
@@ -89,18 +101,26 @@
         </div>
 
         <div id="tab-write" class="tab-content">
-            <div class="write-container">
-                <div class="form-group"><span class="label">Title</span><input type="text" id="postTitle" placeholder="Title"></div>
-                <div class="form-group"><span class="label">Date</span><input type="date" id="postDate"></div>
-                <div class="form-group"><span class="label">Content</span><textarea id="postContent" class="write-textarea" placeholder="Content..."></textarea></div>
-                <button class="btn-grant" onclick="uploadPost()">⚡ UPLOAD TO EYE</button>
+            <div class="dashboard">
+                <div class="list-panel">
+                    <button class="btn-new" onclick="resetPostForm()">+ Write New Post</button>
+                    <div id="postListPanel">Loading Posts...</div>
+                </div>
+                <div class="detail-panel">
+                    <div class="info-row"><span class="label">Title</span><input type="text" id="postTitle" placeholder="Title"></div>
+                    <div class="info-row"><span class="label">Date</span><input type="date" id="postDate"></div>
+                    <div class="info-row"><span class="label">Content</span><textarea id="postContent" class="write-textarea" placeholder="Content..."></textarea></div>
+                    
+                    <button id="btnSavePost" class="btn-grant" onclick="savePost()">💾 SAVE POST</button>
+                    <button id="btnDelPost" class="btn-del" onclick="deletePost()" style="display:none;">🗑 DELETE</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, setDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
@@ -114,41 +134,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 🔒 [보안] 관리자 인증 로직
+        // 🔒 관리자 인증
         window.checkAdmin = async function() {
             const input = document.getElementById('adminInput').value.trim().toUpperCase();
-            
-            // 1. 해시 계산
-            const msgUint8 = new TextEncoder().encode(input);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-            // 2. 검증 (chosendltmdrn 의 해시값과 비교)
-            // 주의: 이 해시값은 'CHOSENDLTMDRN'의 SHA-256 값입니다.
-            const TARGET_HASH = "3053075253503259020963365922306232532650050226330030560293206000"; 
-            
-            // * 중요: 제가 계산한 값이 틀릴 수 있으므로, 만약 로그인이 안 되면 
-            // 아래 console.log(hashHex) 주석을 풀고 F12 콘솔에서 진짜 해시값을 확인한 뒤 TARGET_HASH를 수정하세요.
-            // console.log("Calculated Hash:", hashHex); 
-
-            // 위 값이 틀릴 경우를 대비해, 브라우저가 계산한 값으로 직접 비교하게 수정합니다.
-            // 아래 값은 CHOSENDLTMDRN의 실제 해시일 확률이 높지만, 안전하게 사용자 환경에서 확인하는게 좋습니다.
-            // 일단 '3053...' 이건 제가 임의로 적은 더미입니다. 
-            
-            // ✨ [수정] 더초즌제로님, 이 부분을 주목하세요!
-            // 아래 코드는 'chosendltmdrn'을 입력하면 무조건 통과되게 하는 로직입니다.
             if (input === "CHOSENDLTMDRN") {
                 document.getElementById('lockScreen').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'block';
-                loadRequests(); // 데이터 로딩 시작
+                loadRequests(); // 오라클 로드
+                loadInsightPosts(); // 게시글 로드
             } else {
                 alert("ACCESS DENIED");
                 document.getElementById('adminInput').value = "";
             }
         };
 
-        // === Tab Switching ===
+        // 탭 전환
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -156,9 +156,11 @@
             event.target.classList.add('active');
         }
 
-        // === Oracle Logic ===
+        // ==========================
+        // 🔮 1. Oracle Logic
+        // ==========================
         let allRequests = [];
-        let currentId = null;
+        let currentOracleId = null;
 
         async function loadRequests() {
             const listPanel = document.getElementById('requestList');
@@ -170,7 +172,7 @@
             snapshot.forEach(doc => {
                 const data = doc.data(); data.id = doc.id; allRequests.push(data);
                 const div = document.createElement('div');
-                div.className = `request-item ${data.id === currentId ? 'active' : ''}`;
+                div.className = `request-item ${data.id === currentOracleId ? 'active' : ''}`;
                 div.onclick = () => selectRequest(data.id);
                 const statusBadge = data.status === 'granted' ? `<span class="badge granted">DONE</span>` : `<span class="badge pending">WAIT</span>`;
                 div.innerHTML = `<div><strong>No. ${data.guardian_id || '?'}</strong><div style="font-size:12px; color:#888;">${new Date(data.timestamp).toLocaleDateString()}</div></div>${statusBadge}`;
@@ -179,14 +181,13 @@
         }
 
         window.selectRequest = function(id) {
-            currentId = id;
+            currentOracleId = id;
             const data = allRequests.find(r => r.id === id);
             if(!data) return;
             document.getElementById('detailPanel').style.display = 'block';
             document.getElementById('d-no').innerText = `No. ${data.guardian_id || 'Unknown'}`;
-            // 주소 표시 로직 수정 (문자열/객체 호환)
-            const addrDisplay = typeof data.address === 'object' ? 
-                Object.values(data.address).join(', ') : data.address;
+            
+            const addrDisplay = typeof data.address === 'object' ? Object.values(data.address).join(', ') : data.address;
             
             document.getElementById('d-basic').innerText = `${data.birth_date.year}.${data.birth_date.month}.${data.birth_date.day} / ${data.birth_time} / ${data.nationality}`;
             document.getElementById('d-task').innerText = data.sovereign_task;
@@ -197,9 +198,9 @@
         }
 
         window.grantProphecy = async function() {
-            if(!currentId || !document.getElementById('oracleInput').value) return alert("Check Input");
+            if(!currentOracleId || !document.getElementById('oracleInput').value) return alert("Check Input");
             if(confirm("Grant this prophecy?")) {
-                await updateDoc(doc(db, "oracle_requests", currentId), {
+                await updateDoc(doc(db, "oracle_requests", currentOracleId), {
                     oracle_message: document.getElementById('oracleInput').value, status: 'granted'
                 });
                 alert("Granted."); loadRequests();
@@ -211,7 +212,6 @@
             const sorted = [...allRequests].sort((a, b) => (a.guardian_id || 0) - (b.guardian_id || 0));
             let csv = "data:text/csv;charset=utf-8,\uFEFFNo,Nationality,Address,Task,Vision\n";
             sorted.forEach(row => {
-                // 주소가 객체일 경우 문자열로 변환
                 let addrStr = row.address;
                 if (typeof row.address === 'object') {
                     addrStr = `${row.address.street}, ${row.address.city}, ${row.address.state}, ${row.address.zip}, ${row.address.country}`;
@@ -224,28 +224,104 @@
             const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "addresses.csv"; link.click();
         }
 
-        // === Write Insight Logic ===
-        document.getElementById('postDate').valueAsDate = new Date(); 
+        // ==========================
+        // 👁️ 2. Insight (Post) Logic
+        // ==========================
+        let allPosts = [];
+        let currentPostId = null; // null이면 새 글 작성 모드
 
-        window.uploadPost = async function() {
+        document.getElementById('postDate').valueAsDate = new Date();
+
+        // 게시글 목록 불러오기
+        async function loadInsightPosts() {
+            const listPanel = document.getElementById('postListPanel');
+            listPanel.innerHTML = 'Loading...';
+            const q = query(collection(db, "equilibrium_posts"), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
+            
+            allPosts = [];
+            listPanel.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const data = doc.data(); data.id = doc.id; allPosts.push(data);
+                const div = document.createElement('div');
+                div.className = `request-item ${data.id === currentPostId ? 'active' : ''}`;
+                div.onclick = () => selectPost(data.id);
+                div.innerHTML = `<div><strong>${data.title}</strong><div style="font-size:12px; color:#888;">${data.date}</div></div>`;
+                listPanel.appendChild(div);
+            });
+        }
+
+        // 글 선택 (수정 모드)
+        window.selectPost = function(id) {
+            currentPostId = id;
+            const data = allPosts.find(p => p.id === id);
+            
+            document.getElementById('postTitle').value = data.title;
+            document.getElementById('postDate').value = data.date;
+            document.getElementById('postContent').value = data.content;
+            
+            document.getElementById('btnSavePost').innerText = "🔄 UPDATE POST";
+            document.getElementById('btnDelPost').style.display = "block";
+            
+            // 리스트 하이라이트 갱신
+            loadInsightPosts();
+        }
+
+        // 새 글 작성 모드로 리셋
+        window.resetPostForm = function() {
+            currentPostId = null;
+            document.getElementById('postTitle').value = "";
+            document.getElementById('postDate').valueAsDate = new Date();
+            document.getElementById('postContent').value = "";
+            
+            document.getElementById('btnSavePost').innerText = "💾 SAVE NEW POST";
+            document.getElementById('btnDelPost').style.display = "none";
+            loadInsightPosts(); // 하이라이트 제거용
+        }
+
+        // 글 저장 (작성 또는 수정)
+        window.savePost = async function() {
             const title = document.getElementById('postTitle').value;
-            const date = document.getElementById('postDate').value; 
+            const date = document.getElementById('postDate').value;
             const content = document.getElementById('postContent').value;
 
-            if(!title || !content) return alert("Please fill all fields.");
+            if(!title || !content) return alert("Fill all fields.");
 
-            if(confirm("Upload this insight to 'Eye of Equilibrium'?")) {
-                try {
+            if(currentPostId) {
+                // 수정
+                if(confirm("Update this post?")) {
+                    await updateDoc(doc(db, "equilibrium_posts", currentPostId), {
+                        title: title, date: date, content: content
+                    });
+                    alert("Updated.");
+                    loadInsightPosts();
+                }
+            } else {
+                // 새 글 작성
+                if(confirm("Upload new post?")) {
                     await addDoc(collection(db, "equilibrium_posts"), {
                         title: title, date: date, content: content,
                         timestamp: new Date().toISOString()
                     });
-                    alert("Insight Uploaded Successfully.");
-                    document.getElementById('postTitle').value = "";
-                    document.getElementById('postContent').value = "";
-                } catch(e) { alert("Error: " + e.message); }
+                    alert("Uploaded.");
+                    resetPostForm();
+                    loadInsightPosts();
+                }
             }
         }
+
+        // 글 삭제
+        window.deletePost = async function() {
+            if(!currentPostId) return;
+            if(confirm("⚠️ Permanently DELETE this post?")) {
+                await deleteDoc(doc(db, "equilibrium_posts", currentPostId));
+                alert("Deleted.");
+                resetPostForm();
+                loadInsightPosts();
+            }
+        }
+
     </script>
 </body>
 </html>

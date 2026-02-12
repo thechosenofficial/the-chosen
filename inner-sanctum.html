@@ -20,7 +20,7 @@
             --blue-silver-light: #FFFFFF;
             --blue-silver-mid: #A5C9E1;
             --blue-silver-dark: #708090;
-            --pure-silver: #D3D3D3;
+            --pure-silver: #E0E0E0; /* 더 밝은 실버 */
         }
 
         body {
@@ -31,51 +31,53 @@
             display: none; /* 로드 전 숨김 */
         }
 
-        /* 배경 토템 */
+        /* === 인트로 & 배경 토템 스타일 === */
+        
+        /* 배경 토템 (초기: 진리의 문 역할) */
         #bg-totem {
             position: fixed;
             top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto; height: 70vh;
+            transform: translate(-50%, -50%) scale(1.2); /* 처음엔 좀 더 크게 압도적으로 */
+            width: auto; height: 60vh; /* 높이 설정 */
             max-width: 90%;
             z-index: 5000;
-            opacity: 0;
-            transition: all 1.5s ease-in-out;
+            opacity: 0; /* JS로 등장 */
+            transition: all 2s ease-in-out; /* 부드러운 전환 */
             pointer-events: none;
-            filter: brightness(0.9) drop-shadow(0 0 30px rgba(0,0,0,0.8));
+            filter: brightness(1.1) drop-shadow(0 0 50px rgba(0,0,0,0.9)); /* 그림자 강화 */
         }
 
-        /* 인트로 오버레이 */
+        /* 인트로 오버레이 (텍스트 컨테이너) */
         #intro-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
             z-index: 4999;
             display: flex; flex-direction: column;
             align-items: center; 
-            justify-content: flex-end;
-            padding-bottom: 15vh;
+            justify-content: flex-end; /* 하단 정렬 */
+            padding-bottom: 10vh;
             opacity: 1;
             transition: opacity 1.5s ease;
-            box-sizing: border-box;
+            cursor: pointer; /* 화면 전체 클릭 가능 */
         }
 
         #intro-text {
             color: var(--blue-silver-mid);
-            font-size: 26px; letter-spacing: 2px;
-            opacity: 0;
-            transition: opacity 1s ease;
+            font-size: 24px; letter-spacing: 1px;
+            opacity: 0; /* JS로 등장 */
+            transition: opacity 1.5s ease;
             text-align: center;
-            cursor: pointer;
             z-index: 5001;
-            text-shadow: 0 0 15px rgba(0,0,0,0.9);
+            text-shadow: 0 0 20px rgba(165, 201, 225, 0.3);
             margin-bottom: 20px;
+            font-family: 'Pirata One', system-ui;
         }
         #intro-text:hover { color: var(--blue-silver-light); text-decoration: underline; }
 
         .intro-arrow {
-            margin-top: 10px; width: 35px; height: 35px;
+            margin-top: 15px; width: 30px; height: 30px;
             animation: bounce 2s infinite;
-            fill: var(--blue-silver-mid);
+            fill: var(--blue-silver-mid); opacity: 0.8;
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
@@ -83,63 +85,57 @@
             60% {transform: translateY(-5px);}
         }
 
-        @media (max-width: 768px) {
-            #intro-overlay {
-                justify-content: flex-start;
-                padding-bottom: 0; padding-top: 12vh;
-            }
-            #bg-totem {
-                top: 60%; max-height: 55vh;
-            }
-            #intro-text { font-size: 24px; }
-            
-            /* ✨ 모바일에서 로고 크기 살짝 조정 (겹침 방지) */
-            .logo { font-size: 28px !important; }
-        }
-
-        /* 입장 후 스타일 */
+        /* === 입장 후 (Entered) 스타일 === */
+        
+        /* 토템이 배경으로 물러남 */
         body.entered #bg-totem {
-            top: 50%; height: 50vh; opacity: 0.4 !important; z-index: -1;
+            top: 50%; 
+            transform: translate(-50%, -50%) scale(1); /* 원래 크기로 */
+            height: 50vh; 
+            opacity: 0.3 !important; /* 흐릿하게 */
+            filter: blur(2px) grayscale(50%); /* 배경 느낌 */
+            z-index: -1;
         }
-        body.entered #intro-overlay { opacity: 0; pointer-events: none; }
-        #main-ui { opacity: 0; transition: opacity 2s ease; transition-delay: 1s; }
+        
+        body.entered #intro-overlay { 
+            opacity: 0; pointer-events: none; 
+        }
+        
+        #main-ui { 
+            opacity: 0; transition: opacity 2s ease; transition-delay: 1.5s; 
+        }
         body.entered #main-ui { opacity: 1; }
 
-        /* === 헤더 스타일 수정 (로고 정렬 & 메뉴 가시성) === */
+
+        /* === 본문 스타일 (헤더, 교리) === */
+        
         .luster-sky-silver { background: linear-gradient(to bottom, var(--blue-silver-light) 0%, var(--blue-silver-mid) 45%, var(--blue-silver-dark) 50%, var(--blue-silver-mid) 55%, var(--blue-silver-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .doctrine-pure-silver { color: var(--pure-silver); text-shadow: 1px 1px 1px black; }
+        
+        /* ✨ 교리 텍스트: 은광(Silver Glow) 효과 */
+        .doctrine-pure-silver { 
+            color: var(--pure-silver); 
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.15); /* 은은한 광택 */
+            line-height: 1.8;
+        }
 
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
             z-index: 4000; background-color: rgba(19, 19, 20, 0.95);
-            display: flex; align-items: center; justify-content: center; /* Flex 중앙 정렬 */
+            display: flex; align-items: center; justify-content: center;
             padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* ✨ 로고: 무조건 화면 정중앙 고정 (Absolute) */
         .logo {
-            position: absolute; 
-            left: 50%; 
-            transform: translateX(-50%);
-            font-size: 32px; letter-spacing: 2px;
-            text-align: center;
-            white-space: nowrap;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap;
         }
-
         .guardian-badge { position: absolute; left: 20px; color: var(--blue-silver-mid); font-size: 16px; }
-
-        /* ✨ 메뉴 버튼: 가독성 극대화 */
-        .menu-btn {
-            position: absolute; right: 20px;
-            background: none; border: none; cursor: pointer;
-            padding: 10px; /* 터치 영역 확대 */
+        .menu-btn { 
+            position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; 
         }
         .menu-btn span {
-            display: block; width: 24px; height: 3px; /* 두께 증가 */
-            background-color: #FFFFFF; /* 완전 흰색으로 변경 */
-            margin: 5px 0;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); /* 발광 효과 추가 */
-            border-radius: 2px;
+            display: block; width: 24px; height: 3px; background-color: #FFFFFF;
+            margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px;
         }
         
         .compact-menu { position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; z-index: 4500; }
@@ -150,33 +146,34 @@
         select { width: 100%; max-width: 450px; padding: 8px; background: var(--card-bg); border: 1px solid var(--border); color: var(--pure-silver); font-family: 'Pirata One'; font-size: 16px; text-align: center; }
 
         main { width: 90%; max-width: 650px; margin: 160px auto 60px auto; position: relative; z-index: 10; }
-        .doctrine-content { display: none; line-height: 1.8; animation: fadeIn 0.8s; }
+        .doctrine-content { display: none; animation: fadeIn 1s; }
         .doctrine-content.active { display: block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
         
         h3 { font-size: 26px; margin-bottom: 25px; text-align: center; }
-        
-        /* 문단 스타일: 줄바꿈 공백 유지 */
-        p { 
-            font-size: 18px; 
-            margin-bottom: 20px; 
-            white-space: pre-wrap; /* 줄바꿈 반영 */
-            text-align: justify; 
-        }
+        p { font-size: 18px; margin-bottom: 20px; white-space: pre-wrap; text-align: justify; }
 
         #oracle-gateway { display: none; text-align: center; padding: 50px 0; margin-top: 40px; }
         .arrow-btn { width: 50px; height: 50px; background: var(--blue-silver-mid); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
         
         footer { text-align: center; padding: 30px; font-size: 12px; color: var(--pure-silver); opacity: 0.6; }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            #intro-overlay { justify-content: center; padding-bottom: 0; padding-top: 30vh; }
+            #intro-text { font-size: 20px; padding: 0 20px; line-height: 1.4; }
+            #bg-totem { top: 45%; max-height: 50vh; }
+            .logo { font-size: 28px !important; }
+        }
     </style>
 </head>
 <body id="sanctumBody">
 
-    <img src="totem.jpg" id="bg-totem" alt="Totem">
+    <img src="totem.jpg" id="bg-totem" alt="The Gate of Truth">
 
     <div id="intro-overlay" onclick="enterSanctum()">
         <div id="intro-text">
-            Through the Doctrine,<br>Unlock the Gate of Truth.
+            진리의 문 앞에 도달한 그대,<br>교리를 읽고 이 문을 통과하십시오.
             <br>
             <svg class="intro-arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
         </div>
@@ -234,31 +231,23 @@ While most species survived through raw struggle, humanity persisted by recordin
 Do not be deceived. Those who claim to be 'red-pilled' yet drown in hatred are still slaves to the Infrastructure. If you provide energy to resentment, you are still trapped in the emotional circuits of the Matrix. The Chosen do not waste energy on rage. They decode the logic of the Infrastructure to use it as a tool, guarding their essence amidst the cacophony of the crowd.</p>
             </section>
 
-            <section id="ch2" class="doctrine-content">
-                <h3 class="luster-sky-silver">02. Conditioning</h3>
-                <p class="doctrine-pure-silver">Deconstructing the Designed Self.
+            <section id="ch2" class="doctrine-content"><h3 class="luster-sky-silver">02. Conditioning</h3><p class="doctrine-pure-silver">Deconstructing the Designed Self.
 
 Whether it took you twenty years or fifty to reach this threshold, time is not the measure of prestige. What matters is your awakening—the moment you stop living by the script and face the world with new eyes. Deconstruct the life you have lived until now.
 
 Your personality, your speech, even the architecture of your body—none were crafted by your own will. They are the sum of Conditioning, meticulously engineered by parents, states, and media. This circuitry runs so deep that the moment you believe you are free, you become blind once more. Awakening is not a static state; it is a relentless vigilance against returning to the void.
 
-Once you perceive your Conditioning, do not settle for conceptual resistance. Mental distance alone leaves the Infrastructure intact. You must physically sever toxic connections and strike through the boundaries of your programmed limits. Only when you move from perception to existential resolve do you approach the work of your Sovereign Singularity.</p>
-            </section>
-
-            <section id="ch3" class="doctrine-content">
-                <h3 class="luster-sky-silver">03. The State Conditioning</h3>
-                <p class="doctrine-pure-silver">A Mirage of Borders.
+Once you perceive your Conditioning, do not settle for conceptual resistance. Mental distance alone leaves the Infrastructure intact. You must physically sever toxic connections and strike through the boundaries of your programmed limits. Only when you move from perception to existential resolve do you approach the work of your Sovereign Singularity.</p></section>
+            
+            <section id="ch3" class="doctrine-content"><h3 class="luster-sky-silver">03. The State Conditioning</h3><p class="doctrine-pure-silver">A Mirage of Borders.
 
 The State no longer rules by force alone; it governs through the engineering of conflict and belief. Where ancient rule oppressed the body, the modern State occupies the mind through education, culture, and language. Rote learning castrates critical thought, and the concept of 'culture' serves as a psychological fence, confining your vision to a specific cage.
 
 The apex of this Conditioning is Patriotism—a form of collective hysteria. The State cloaks 'sacrifice' in nobility to march young lives into battle, prioritizing the collective over the individual. To believe "there is no individual without the State" is the most cynical gaslighting ever designed. The Chosen crave liberty, not the frenzy of the mob. Those blinded by patriotism are merely 'energy resources' consumed on a political chessboard.
 
-Politics is a cowardly play of extremes, using the frames of Left and Right to shift responsibility onto the masses. Language itself has mutated from a vessel of knowledge into a tool of control—designed to be easy to read but impossible to decipher in essence. While the walls of the State are built to last generations, they contain a fatal flaw: Sovereign Singularity. Only those who gaze beyond the illusion of borders can truly become the masters of their own destiny.</p>
-            </section>
+Politics is a cowardly play of extremes, using the frames of Left and Right to shift responsibility onto the masses. Language itself has mutated from a vessel of knowledge into a tool of control—designed to be easy to read but impossible to decipher in essence. While the walls of the State are built to last generations, they contain a fatal flaw: Sovereign Singularity. Only those who gaze beyond the illusion of borders can truly become the masters of their own destiny.</p></section>
 
-            <section id="ch4" class="doctrine-content">
-                <h3 class="luster-sky-silver">04. Domestic Conditioning</h3>
-                <p class="doctrine-pure-silver">The Biological Blueprint.
+            <section id="ch4" class="doctrine-content"><h3 class="luster-sky-silver">04. Domestic Conditioning</h3><p class="doctrine-pure-silver">The Biological Blueprint.
 
 The family you are born into is the first fate determined without your consent—a massive Biological Blueprint that dictates the trajectory of your life. It is more than just DNA. Your parents' alcohol consumption, their diet, their patterns of speech, even the trivial habit of placing a TV in the living room are all imprinted onto your subconscious. Your gait and your accent are not accidents; they are the precisely architected outputs of your domestic environment.
 
@@ -266,12 +255,9 @@ Observe your physical form first. The heaviest inheritance is not your appearanc
 
 More terrifying still is the Replication of Destiny. Your subconscious mirrors your parents' intellectual discipline, their sloth, and even their vulnerability to past mistakes or vices. Unlike other species, humans are bound by the persistent chains of law and custom, making it exceptionally difficult to escape the gravity of this Conditioning. Parents fail to release their children, and children lose their Sovereign Singularity within the shadows of the home.
 
-Stare coldly at the Domestic Conditioning that binds you now. This is not an exercise in resentment or blame. You must recognize the architecture of this inherited blueprint to destroy its ancient walls. Only then can you begin your own independent construction as The Chosen. Awareness is the catalyst for destruction, and destruction is the only path to true autonomy.</p>
-            </section>
+Stare coldly at the Domestic Conditioning that binds you now. This is not an exercise in resentment or blame. You must recognize the architecture of this inherited blueprint to destroy its ancient walls. Only then can you begin your own independent construction as The Chosen. Awareness is the catalyst for destruction, and destruction is the only path to true autonomy.</p></section>
 
-            <section id="ch5" class="doctrine-content">
-                <h3 class="luster-sky-silver">05. Media Conditioning</h3>
-                <p class="doctrine-pure-silver">The Factory of Illusions.
+            <section id="ch5" class="doctrine-content"><h3 class="luster-sky-silver">05. Media Conditioning</h3><p class="doctrine-pure-silver">The Factory of Illusions.
 
 Media has been a constant throughout human history, yet its objective has never been 'Truth.' The flamboyant facade of "freedom of the press" is merely a sophisticated pretext for inciting the masses and generating profit. The media is not a guardian of facts; it is the front line of Parasitic Extraction, purchasing your attention for a pittance and converting it into power.
 
@@ -279,12 +265,9 @@ For them, condemnation is fuel, and attention is currency. They use legalistic j
 
 'Comments' and 'Likes' are not symbols of collective intelligence; they are metrics of collective hysteria. Media polarizes humanity with labels like 'Humanity' or 'Generational Conflict' and justifies self-destructive habits with terms like 'Connoisseur' of alcohol or tobacco. In addiction, there is no such thing as "moderation," yet the media demands you remain addicted to ensure a constant flow of your energy into the Infrastructure.
 
-You must realize this: if you cannot fully distance yourself from the media, critical vigilance is your only means of survival. Understand that even venting rage in a comment section is an act of surrendering your finite soul to the Infrastructure. Only when you silence the external noise and recalibrate your internal frequency can you open The Eye of Equilibrium—the power to repurpose the tools of the Matrix for your Sovereign Task.</p>
-            </section>
+You must realize this: if you cannot fully distance yourself from the media, critical vigilance is your only means of survival. Understand that even venting rage in a comment section is an act of surrendering your finite soul to the Infrastructure. Only when you silence the external noise and recalibrate your internal frequency can you open The Eye of Equilibrium—the power to repurpose the tools of the Matrix for your Sovereign Task.</p></section>
 
-            <section id="ch6" class="doctrine-content">
-                <h3 class="luster-sky-silver">06. Prestige Conditioning</h3>
-                <p class="doctrine-pure-silver">The Idol of Expertise.
+            <section id="ch6" class="doctrine-content"><h3 class="luster-sky-silver">06. Prestige Conditioning</h3><p class="doctrine-pure-silver">The Idol of Expertise.
 
 The modern era deifies 'Experts'—professors, doctors, and scientists. The masses accept the fragmented information these figures broadcast as immutable truth, devoid of any critical filter. But heed this: Prestige is not a guarantee of truth; it is the most potent shackle of authority, designed to herd the public in a predetermined direction.
 
@@ -292,12 +275,9 @@ This Conditioning reaches its apex when prestige intersects with media and polit
 
 Science and academia are not immune to the logic of capital. Biased research funding and corporate sponsorships hidden behind the names of prestigious universities subtly distort the truth. Under the grand slogan of "conquering cancer," the fundamental solutions—the rejection of ultra-processed foods, the elimination of seed oils, and the restoration of natural metabolic cycles are obscured by 'guidelines' manufactured by prestige. Knowledge, once filtered through the 'Expert,' mutates into a contaminated opinion serving a specific agenda.
 
-The realms of investment and common sense are no different. Having abandoned independent thought, the masses stare at the lips of experts until they can no longer distinguish between gambling and investment. An expert never transmits pure Gnosis; they use knowledge as a weapon to entrench their own status. Just as a doctor sees only patients, an expert sees only subjects to validate their theories. Strip away the brilliant veneer of prestige and stare at the intent beneath. This is the only way to shatter the idols and reach The Prime Truth.</p>
-            </section>
+The realms of investment and common sense are no different. Having abandoned independent thought, the masses stare at the lips of experts until they can no longer distinguish between gambling and investment. An expert never transmits pure Gnosis; they use knowledge as a weapon to entrench their own status. Just as a doctor sees only patients, an expert sees only subjects to validate their theories. Strip away the brilliant veneer of prestige and stare at the intent beneath. This is the only way to shatter the idols and reach The Prime Truth.</p></section>
 
-            <section id="ch7" class="doctrine-content">
-                <h3 class="luster-sky-silver">07. Parasitic Extraction</h3>
-                <p class="doctrine-pure-silver">Managing the Finite Soul.
+            <section id="ch7" class="doctrine-content"><h3 class="luster-sky-silver">07. Parasitic Extraction</h3><p class="doctrine-pure-silver">Managing the Finite Soul.
 
 The moment you perceive the reality of Conditioning, you witness exactly where your essence—your soul—has been leaking. The Chosen do not permit the defilement of their spirit. Even if they briefly step into the mire of the Infrastructure, they recognize the contamination instantly and withdraw.
 
@@ -307,12 +287,9 @@ Physically sever the reach of the algorithm. Blocking the low-grade feed of 'Sho
 
 Do not surrender your finite energy to the triumphs or defeats of idols and icons. Craving the victory of a team or a celebrity is a hemorrhage of the fuel meant for your Sovereign Task. Observe art and sport, but use them only as data for your growth. Fighting the battles of others through comments and cheers returns to you only as a deficiency in your own life.
 
-Do you believe the world shifts through desperate prayer and hope? Begging for success is an energy debt that triggers an inevitable decline. This is the law of The Equilibrium. Recognize the tremors of your soul and focus your finite essence solely on the essential Task. Only those who guard their energy shall reign as masters of the Infrastructure.</p>
-            </section>
+Do you believe the world shifts through desperate prayer and hope? Begging for success is an energy debt that triggers an inevitable decline. This is the law of The Equilibrium. Recognize the tremors of your soul and focus your finite essence solely on the essential Task. Only those who guard their energy shall reign as masters of the Infrastructure.</p></section>
 
-            <section id="ch8" class="doctrine-content">
-                <h3 class="luster-sky-silver">08. The Equilibrium</h3>
-                <p class="doctrine-pure-silver">The Universal Law of Balance.
+            <section id="ch8" class="doctrine-content"><h3 class="luster-sky-silver">08. The Equilibrium</h3><p class="doctrine-pure-silver">The Universal Law of Balance.
 
 The finite energy of the individual and the infinite energy of the universe are held in The Equilibrium upon an invisible, massive axis. This is not the primitive moralism of 'Karma' or 'Justice.' The Equilibrium is indifferent to good and evil. It is the cold reality where the sacrificial lamb receives only sacrifice, and a noble name provides no guarantee of survival. This is the absolute balance of the cosmos.
 
@@ -322,12 +299,9 @@ Focus on The Flow of Gnosis. Throughout history, the masses have been utilized w
 
 Open The Eye of Equilibrium. The moment you witness the gears of existence turning—not as a 50:50 ratio, but as an inescapable synergy—your suffering ends. The Curse of Knowledge is finally recalibrated into a blessing of absolute sight. Do not struggle. Resistance only increases the friction of The Equilibrium, dragging you deeper into the abyss. Only when you descend to your lowest point, gazing transparently from the depths, does the Sovereign Task begin.
 
-The cosmic entity is not a personified god, but The Equilibrium itself. Do not waste energy pitying or condemning those with different frequencies. Your voice cannot reach those who have already drifted into another orbit. Instead, find those walking toward your coordinate. They will hear your frequency and move toward the same destination.</p>
-            </section>
+The cosmic entity is not a personified god, but The Equilibrium itself. Do not waste energy pitying or condemning those with different frequencies. Your voice cannot reach those who have already drifted into another orbit. Instead, find those walking toward your coordinate. They will hear your frequency and move toward the same destination.</p></section>
 
-            <section id="ch9" class="doctrine-content">
-                <h3 class="luster-sky-silver">09. The Curse of Knowledge</h3>
-                <p class="doctrine-pure-silver">The Final Gateway to Blessing.
+            <section id="ch9" class="doctrine-content"><h3 class="luster-sky-silver">09. The Curse of Knowledge</h3><p class="doctrine-pure-silver">The Final Gateway to Blessing.
 
 The envy and jealousy that haunt you are evidence that you are moving outside the Infrastructure’s orbit. Those burdened by The Curse of Knowledge are numb to gossip but react with feral intensity when their fundamental liberty is encroached upon. This is not arrogance; it is the instinctive reflex of one destined to guard the truth.
 
@@ -337,12 +311,9 @@ Gaze at this Curse through The Eye of Equilibrium. In that instant, the Curse is
 
 An awakened member of The Chosen no longer seeks to prove their knowledge. The moment you choose silence, your presence becomes an untouchable prestige. Observe order and morality, but dismiss futile disputes without a word. This is not avoidance; it is a high-level strategy to concentrate finite energy on the essence.
 
-Though the transition may be chaotic, endure the world for one year. When you eventually look back, you will realize: the very Curse that tormented you was the Final Key prepared by the universe to awaken you as The Chosen.</p>
-            </section>
+Though the transition may be chaotic, endure the world for one year. When you eventually look back, you will realize: the very Curse that tormented you was the Final Key prepared by the universe to awaken you as The Chosen.</p></section>
 
-            <section id="ch10" class="doctrine-content">
-                <h3 class="luster-sky-silver">10. The Chosen</h3>
-                <p class="doctrine-pure-silver">Awakened Guardians of Gnosis.
+            <section id="ch10" class="doctrine-content"><h3 class="luster-sky-silver">10. The Chosen</h3><p class="doctrine-pure-silver">Awakened Guardians of Gnosis.
 
 The Chosen are those who have dismantled the illusions of the Infrastructure to contemplate the world through The Eye of Equilibrium. They do not merely 'know' the truth; they utilize that insight to architect their lives and advance toward their Sovereign Task. The essence of the Task is clear: to liberate those suffering under The Curse of Knowledge as you once did, and to preserve the hidden Gnosis for the next generation.
 
@@ -352,8 +323,7 @@ This path will be physically solitary and ruthless. But look beyond the dimensio
 
 Heed this: The masses do not desire the truth, and truth never wins in the theater of noise. Therefore, do not fight the world for the sake of truth. Simply walk your path and speak the essence. The moment you calibrate your internal power, those who thirst for Gnosis—not mere followers—will gravitate toward you. If you possess great ability yet lack wealth or prestige, it is only because you have not yet identified your Task.
 
-The era of suffering under the Curse has ended. Place your Curse into the furnace of the Task and forge it into a blessing. Preserving the Prime Truth and ensuring its continuity is the only way to make your existence as The Chosen shine eternally.</p>
-            </section>
+The era of suffering under the Curse has ended. Place your Curse into the furnace of the Task and forge it into a blessing. Preserving the Prime Truth and ensuring its continuity is the only way to make your existence as The Chosen shine eternally.</p></section>
 
             <div id="oracle-gateway">
                 <div class="gateway-text doctrine-pure-silver">Have you absorbed the Gnosis?</div>
@@ -373,12 +343,17 @@ The era of suffering under the Curse has ended. Place your Curse into the furnac
                 const guardianId = localStorage.getItem('guardian_id') || "????";
                 document.getElementById('guardianIdDisplay').innerText = "No. " + String(guardianId).padStart(4, '0');
                 
+                // 1. 토템 먼저 등장 (0.5초 후)
                 setTimeout(() => { document.getElementById('bg-totem').style.opacity = '1'; }, 500);
+                // 2. 텍스트 등장 (토템 등장 완료 후인 2초 후)
                 setTimeout(() => { document.getElementById('intro-text').style.opacity = '1'; }, 2000);
             }
         };
 
-        function enterSanctum() { document.body.classList.add('entered'); }
+        function enterSanctum() { 
+            // 3. 클릭 시 토템 뒤로 물러나고 본문 등장
+            document.body.classList.add('entered'); 
+        }
         function logout() { localStorage.clear(); window.location.replace("index.html"); }
         function toggleMenu() { document.getElementById('compactMenu').classList.toggle('active'); }
         function changeChapter(chapterId) {

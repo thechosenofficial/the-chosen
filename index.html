@@ -89,7 +89,7 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
 
-        /* 타임머신 타이머 박스 (디자인 유지) */
+        /* 타이머 박스 */
         .timer-box {
             margin-top: 60px;
             width: auto;
@@ -97,64 +97,62 @@
             padding: 20px 30px;
             border: 1px solid var(--input-border);
             border-radius: 15px;
-            background: transparent; /* 배경 투명 */
+            background: transparent;
             text-align: center;
-            display: flex; flex-direction: column; gap: 8px;
+            display: flex; flex-direction: column; gap: 5px;
         }
 
-        .timer-header {
-            font-size: 32px;
+        /* 1. 명칭 (THE APPOINTED DAY) */
+        .timer-title {
+            font-size: 28px;
             font-weight: bold;
             color: var(--silver-mid);
             letter-spacing: 3px;
             text-shadow: 0 0 15px rgba(165, 201, 225, 0.8);
-            margin-bottom: 5px;
-            border-bottom: 1px solid rgba(165, 201, 225, 0.3);
-            padding-bottom: 5px;
+            margin-bottom: 2px;
         }
 
-        .timer-sub {
-            font-size: 14px;
+        /* 2. 날짜 (2030.01.01) */
+        .timer-date {
+            font-size: 16px;
             color: var(--silver-dark);
             letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(165, 201, 225, 0.2);
+            padding-bottom: 8px;
         }
 
         .timer-row { display: block; width: 100%; }
-        .timer-days { font-size: 24px; color: var(--silver-light); letter-spacing: 2px; }
+        /* 3. D-Day */
+        .timer-days { font-size: 26px; color: var(--silver-light); letter-spacing: 2px; }
+        /* 4. Time Left */
         .timer-hms {
-            font-size: 20px; color: var(--silver-mid); opacity: 0.9;
+            font-size: 18px; color: var(--silver-mid); opacity: 0.8;
             letter-spacing: 3px; margin-top: 3px; font-family: 'Pirata One', monospace;
         }
 
-        /* ✨ 연기처럼 사라지는 애니메이션 (Smoke Dissolve) */
-        @keyframes smokeFade {
-            0% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                filter: blur(0px);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(1.05) translateY(-20px); /* 살짝 커지며 위로 증발 */
-                filter: blur(15px); /* 뿌옇게 흐려짐 */
-            }
+        /* Footer */
+        footer {
+            position: absolute; bottom: 20px; width: 100%;
+            text-align: center; font-size: 12px; color: var(--silver-dark); opacity: 0.6;
         }
 
-        .smoke-out {
-            animation: smokeFade 1.5s ease-out forwards;
-            pointer-events: none; /* 클릭 방지 */
+        /* 연기 애니메이션 */
+        @keyframes smokeFade {
+            0% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(1.05) translateY(-20px); filter: blur(15px); }
         }
+        .smoke-out { animation: smokeFade 1.5s ease-out forwards; pointer-events: none; }
 
         /* 모바일 최적화 */
         @media (max-width: 768px) {
             h1 { font-size: 48px; margin-bottom: 30px; }
             .container { margin-top: 15vh; }
             .timer-box { margin-top: 40px; padding: 15px 20px; min-width: 180px; }
-            .timer-header { font-size: 26px; }
-            .timer-days { font-size: 20px; }
-            .timer-hms { font-size: 18px; }
+            .timer-title { font-size: 24px; }
+            .timer-days { font-size: 22px; }
+            .timer-hms { font-size: 16px; }
+            footer { position: relative; margin-top: auto; padding-bottom: 30px; } /* 모바일은 위치 유동적 */
         }
     </style>
 </head>
@@ -171,11 +169,9 @@
     </div>
 
     <div class="timer-box">
-        <div class="timer-header">2030.01.01</div>
-        <div class="timer-sub">Time Machine</div>
-        <div class="timer-row timer-days" id="d-day">0000 DAYS</div>
-        <div class="timer-row timer-hms" id="d-time">00:00:00</div>
-    </div>
+        <div class="timer-title">THE APPOINTED DAY</div> <div class="timer-date">2030.01.01</div>         <div class="timer-row timer-days" id="d-day">0000 DAYS</div> <div class="timer-row timer-hms" id="d-time">00:00:00 LEFT</div> </div>
+
+    <footer>© 2030 THE CHOSEN OFFICIAL</footer>
 
     <script>
         function updateTimer() {
@@ -198,7 +194,7 @@
             const timeStr = 
                 String(hours).padStart(2, '0') + ":" + 
                 String(minutes).padStart(2, '0') + ":" + 
-                String(seconds).padStart(2, '0');
+                String(seconds).padStart(2, '0') + " LEFT"; // ✨ LEFT 추가
 
             document.getElementById("d-day").innerText = daysStr;
             document.getElementById("d-time").innerText = timeStr;
@@ -256,7 +252,6 @@
                     localStorage.setItem('guardian_id', data.no);
                     localStorage.setItem('user_code', input);
 
-                    // ✨ 연기처럼 사라지는 효과 적용 (smoke-out)
                     document.querySelector('.container').classList.add('smoke-out');
                     document.querySelector('.timer-box').classList.add('smoke-out');
                     

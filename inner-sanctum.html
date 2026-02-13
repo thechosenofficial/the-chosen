@@ -32,15 +32,11 @@
         }
 
         /* === 인트로 & 배경 토템 스타일 === */
-        
-        /* 배경 토템 (초기: 진리의 문) */
         #bg-totem {
             position: fixed;
-            /* ✨ 수정: 위치를 약간 위로 올려서 텍스트 공간 확보 */
             top: 45%; left: 50%;
             transform: translate(-50%, -50%) scale(1.1); 
-            width: auto; 
-            height: 55vh; /* ✨ 수정: 높이를 살짝 줄임 */
+            width: auto; height: 55vh;
             max-width: 90%;
             z-index: 5000;
             opacity: 0;
@@ -49,7 +45,6 @@
             filter: brightness(1.1) drop-shadow(0 0 50px rgba(0,0,0,0.9));
         }
 
-        /* 인트로 오버레이 (텍스트 컨테이너) */
         #intro-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
@@ -57,7 +52,6 @@
             display: flex; flex-direction: column;
             align-items: center; 
             justify-content: flex-end;
-            /* ✨ 수정: 하단 패딩을 늘려 텍스트를 위로 올림 */
             padding-bottom: 15vh;
             opacity: 1;
             transition: opacity 1.5s ease;
@@ -89,50 +83,39 @@
             60% {transform: translateY(-5px);}
         }
 
-        /* === 입장 후 (Entered) 스타일 === */
         body.entered #bg-totem {
-            top: 50%; 
-            transform: translate(-50%, -50%) scale(1);
-            height: 50vh; 
-            opacity: 0.3 !important;
-            filter: blur(2px) grayscale(50%);
-            z-index: -1;
+            top: 50%; transform: translate(-50%, -50%) scale(1);
+            height: 50vh; opacity: 0.3 !important;
+            filter: blur(2px) grayscale(50%); z-index: -1;
         }
         body.entered #intro-overlay { opacity: 0; pointer-events: none; }
         #main-ui { opacity: 0; transition: opacity 2s ease; transition-delay: 1.5s; }
         body.entered #main-ui { opacity: 1; }
 
-        /* === 모바일 최적화 수정 === */
         @media (max-width: 768px) {
-            #intro-overlay { 
-                /* ✨ 수정: 모바일에서도 하단 정렬 유지하고 패딩으로 조절 */
-                justify-content: flex-end;
-                padding-bottom: 18vh; /* 모바일은 조금 더 높게 */
-            }
+            #intro-overlay { justify-content: flex-end; padding-bottom: 18vh; }
             #intro-text { font-size: 22px; padding: 0 20px; }
-            #bg-totem { 
-                /* ✨ 수정: 모바일에서 토템 위치와 크기 조정 */
-                top: 40%; 
-                max-height: 45vh; 
-            }
+            #bg-totem { top: 40%; max-height: 45vh; }
             .logo { font-size: 28px !important; }
         }
 
         /* === 본문 스타일 === */
         .luster-sky-silver { background: linear-gradient(to bottom, var(--blue-silver-light) 0%, var(--blue-silver-mid) 45%, var(--blue-silver-dark) 50%, var(--blue-silver-mid) 55%, var(--blue-silver-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .doctrine-pure-silver { 
-            color: var(--pure-silver); 
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-            line-height: 1.8;
-        }
+        .doctrine-pure-silver { color: var(--pure-silver); text-shadow: 0 0 8px rgba(255, 255, 255, 0.15); line-height: 1.8; }
+        
         header { position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h); z-index: 4000; background-color: rgba(19, 19, 20, 0.95); display: flex; align-items: center; justify-content: center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .logo { position: absolute; left: 50%; transform: translateX(-50%); font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap; }
         .guardian-badge { position: absolute; left: 20px; color: var(--blue-silver-mid); font-size: 16px; }
         .menu-btn { position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; }
         .menu-btn span { display: block; width: 24px; height: 3px; background-color: #FFFFFF; margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; }
+        
         .compact-menu { position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; z-index: 4500; }
         .compact-menu.active { display: block; }
         .compact-menu a, .compact-menu button { display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer; }
+        
+        /* ✨ 자물쇠 아이콘 스타일 */
+        #eyeLock { font-size: 14px; margin-left: 5px; opacity: 0.7; }
+
         .sticky-nav { position: fixed; top: var(--header-h); left: 0; width: 100%; height: var(--nav-h); background-color: var(--bg-color); z-index: 3000; display: flex; align-items: center; justify-content: center; }
         select { width: 100%; max-width: 450px; padding: 8px; background: var(--card-bg); border: 1px solid var(--border); color: var(--pure-silver); font-family: 'Pirata One'; font-size: 16px; text-align: center; }
         main { width: 90%; max-width: 650px; margin: 160px auto 60px auto; position: relative; z-index: 10; }
@@ -148,11 +131,11 @@
 </head>
 <body id="sanctumBody">
 
-    <img src="totem.jpg" id="bg-totem" alt="The Gate of Gnosis">
+    <img src="totem.jpg" id="bg-totem" alt="The Gate of Truth">
 
     <div id="intro-overlay" onclick="enterSanctum()">
         <div id="intro-text">
-            You who stand before the Gate of Gnosis.<br>Read the Doctrine, and open the way.
+            You who stand before the Gate of Truth.<br>Read the Doctrine, and open the way.
             <br>
             <svg class="intro-arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
         </div>
@@ -165,7 +148,7 @@
             <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
             <div class="compact-menu" id="compactMenu">
                 <a href="#" onclick="toggleMenu()">Sanctum</a>
-                <a href="eye-of-equilibrium.html">Eye of Equilibrium</a>
+                <a href="#" onclick="checkEyeAccess()">Eye of Equilibrium <span id="eyeLock">🔒</span></a>
                 <a href="oracle-form.html">Oracle</a>
                 <button class="logout-link" onclick="logout()" style="color:#ff6b6b">Disconnect</button>
             </div>
@@ -322,6 +305,11 @@ The era of suffering under the Curse has ended. Place your Curse into the furnac
                 const guardianId = localStorage.getItem('guardian_id') || "????";
                 document.getElementById('guardianIdDisplay').innerText = "No. " + String(guardianId).padStart(4, '0');
                 
+                // 페이지 로드 시 자물쇠 해제 여부 확인
+                if(localStorage.getItem('oracle_submitted') === 'true') {
+                    document.getElementById('eyeLock').innerText = ""; 
+                }
+
                 setTimeout(() => { document.getElementById('bg-totem').style.opacity = '1'; }, 500);
                 setTimeout(() => { document.getElementById('intro-text').style.opacity = '1'; }, 2000);
             }
@@ -330,6 +318,18 @@ The era of suffering under the Curse has ended. Place your Curse into the furnac
         function enterSanctum() { document.body.classList.add('entered'); }
         function logout() { localStorage.clear(); window.location.replace("index.html"); }
         function toggleMenu() { document.getElementById('compactMenu').classList.toggle('active'); }
+        
+        // ✨ Eye of Equilibrium 접근 권한 확인
+        function checkEyeAccess() {
+            const hasSubmitted = localStorage.getItem('oracle_submitted');
+            if (hasSubmitted === 'true') {
+                window.location.href = "eye-of-equilibrium.html";
+            } else {
+                alert("ACCESS DENIED.\n\nYou must offer your Sovereign Task to the Oracle first.\n(오라클에 과업을 제출한 자만이 입장할 수 있습니다.)");
+                window.location.href = "oracle-form.html";
+            }
+        }
+
         function changeChapter(chapterId) {
             const allChapters = document.querySelectorAll('.doctrine-content');
             const gateway = document.getElementById('oracle-gateway');

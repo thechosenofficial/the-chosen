@@ -27,7 +27,7 @@
             min-height: 100vh;
         }
 
-        /* ✨ 헤더 스타일 (Inner Sanctum과 동일) */
+        /* 헤더 스타일 */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
             z-index: 4000; background-color: rgba(19, 19, 20, 0.95);
@@ -35,149 +35,69 @@
             padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
             box-sizing: border-box;
         }
-
-        .luster-sky-silver { 
-            background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--blue-silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-        }
-
-        .logo { 
-            position: absolute; left: 50%; transform: translateX(-50%);
-            font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap;
-        }
+        .luster-sky-silver { background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--blue-silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap; }
         .guardian-badge { position: absolute; left: 20px; color: var(--silver-mid); font-size: 16px; }
-        
-        .menu-btn { 
-            position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; 
-        }
-        .menu-btn span { 
-            display: block; width: 24px; height: 3px; background-color: #FFFFFF; 
-            margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; 
-        }
-
-        .compact-menu { 
-            position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); 
-            border: 1px solid var(--border); border-radius: 12px; padding: 10px; 
-            display: none; z-index: 4500; 
-        }
+        .menu-btn { position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; }
+        .menu-btn span { display: block; width: 24px; height: 3px; background-color: #FFFFFF; margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; }
+        .compact-menu { position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; z-index: 4500; }
         .compact-menu.active { display: block; }
-        .compact-menu a, .compact-menu button { 
-            display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; 
-            color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer;
-        }
+        .compact-menu a, .compact-menu button { display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer; }
 
-        /* 본문 컨테이너 (헤더 높이만큼 여백 추가) */
+        /* 메인 컨테이너 */
         .altar-container { 
             width: 100%; max-width: 500px; 
-            margin-top: 120px; /* 헤더 공간 확보 */
-            padding: 20px; box-sizing: border-box;
-            position: relative; padding-bottom: 50px; 
+            margin-top: 120px; /* 헤더 공간 */
+            padding: 20px; box-sizing: border-box; 
+            position: relative; 
+            flex: 1; /* 푸터를 바닥으로 밀기 위해 */
+            padding-bottom: 50px; 
         }
-
-        .luster-text {
-            background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center;
-        }
-
+        
+        .luster-text { background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
         h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
-
-        /* 경고 문구 */
-        .warning-text {
-            color: var(--warning); font-size: 15px; text-align: center;
-            margin-bottom: 30px; letter-spacing: 1px;
-            border: 1px solid var(--warning); padding: 10px; border-radius: 8px;
-            background: rgba(255, 107, 107, 0.05); line-height: 1.4;
-        }
-
+        .warning-text { color: var(--warning); font-size: 15px; text-align: center; margin-bottom: 30px; letter-spacing: 1px; border: 1px solid var(--warning); padding: 10px; border-radius: 8px; background: rgba(255, 107, 107, 0.05); line-height: 1.4; }
+        
         .oracle-form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .field-group { display: flex; flex-direction: column; gap: 8px; }
-
         .birth-select-wrapper { display: flex; gap: 10px; }
         .birth-select-wrapper select { flex: 1; }
-
         label { font-size: 16px; color: var(--silver-mid); margin-left: 5px; }
-
-        input, textarea, select {
-            background-color: rgba(255, 255, 255, 0.03); 
-            border: 1px solid var(--border);
-            border-radius: 12px; padding: 15px; 
-            color: var(--pure-silver);
-            font-family: 'Pirata One', cursive; font-size: 18px; outline: none;
-            transition: 0.3s; width: 100%; box-sizing: border-box;
-        }
+        input, textarea, select { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--pure-silver); font-family: 'Pirata One', cursive; font-size: 18px; outline: none; transition: 0.3s; width: 100%; box-sizing: border-box; }
         input:focus, textarea:focus, select:focus { border-color: var(--silver-mid); background: rgba(255, 255, 255, 0.05); }
         textarea { height: 120px; resize: none; }
-        
         .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-        .submit-btn {
-            background-color: var(--silver-mid); color: var(--bg-color);
-            border: none; border-radius: 30px; padding: 18px;
-            font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer;
-            transition: 0.4s; margin-top: 20px; width: 100%;
-        }
+        
+        .submit-btn { background-color: var(--silver-mid); color: var(--bg-color); border: none; border-radius: 30px; padding: 18px; font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer; transition: 0.4s; margin-top: 20px; width: 100%; }
         .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
-
-        /* 상태 섹션 */
-        .status-section { 
-            display: none; text-align: center; border: 1px solid var(--border); 
-            padding: 40px 20px; border-radius: 20px; background: var(--card-bg);
-            animation: fadeIn 1s;
-        }
-        .reveal-btn {
-            background: transparent; border: 1px solid var(--silver-mid);
-            color: var(--silver-mid); padding: 15px 30px; font-size: 20px;
-            border-radius: 30px; cursor: pointer; margin-top: 20px;
-            font-family: 'Pirata One'; transition: 0.3s;
-            animation: pulse 2s infinite;
-        }
+        
+        .status-section { display: none; text-align: center; border: 1px solid var(--border); padding: 40px 20px; border-radius: 20px; background: var(--card-bg); animation: fadeIn 1s; }
+        .reveal-btn { background: transparent; border: 1px solid var(--silver-mid); color: var(--silver-mid); padding: 15px 30px; font-size: 20px; border-radius: 30px; cursor: pointer; margin-top: 20px; font-family: 'Pirata One'; transition: 0.3s; animation: pulse 2s infinite; }
         .reveal-btn:hover { background: var(--silver-mid); color: #000; box-shadow: 0 0 20px var(--silver-mid); }
-
         @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(165, 201, 225, 0);} 100% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0);} }
-
-        /* 주소 수정 섹션 */
-        .address-update-box {
-            margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;
-            display: none; 
-        }
-        .small-btn {
-            background: #333; color: #ccc; border: none; padding: 10px 20px;
-            border-radius: 20px; cursor: pointer; font-family: 'Pirata One'; margin-top: 10px;
-        }
-
-        /* 팝업 모달 공통 */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); z-index: 9999;
-            display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .modal-content {
-            background: #191919; border: 1px solid var(--silver-mid);
-            padding: 30px; border-radius: 15px; max-width: 85%; width: 400px; text-align: center;
-            box-shadow: 0 0 30px rgba(165, 201, 225, 0.15); position: relative;
-        }
+        
+        .address-update-box { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; display: none; }
+        .small-btn { background: #333; color: #ccc; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-family: 'Pirata One'; margin-top: 10px; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-content { background: #191919; border: 1px solid var(--silver-mid); padding: 30px; border-radius: 15px; max-width: 85%; width: 400px; text-align: center; box-shadow: 0 0 30px rgba(165, 201, 225, 0.15); position: relative; }
         .modal-title { font-size: 24px; color: var(--silver-light); margin-bottom: 15px; }
         .modal-msg { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 25px; white-space: pre-wrap; }
-        
         .modal-btns { display: flex; gap: 10px; justify-content: center; }
-        .modal-btn { 
-            padding: 12px 25px; border-radius: 25px; cursor: pointer; font-family: 'Pirata One'; font-size: 18px; border: none; 
-        }
+        .modal-btn { padding: 12px 25px; border-radius: 25px; cursor: pointer; font-family: 'Pirata One'; font-size: 18px; border: none; }
         .btn-cancel { background: #333; color: #fff; }
         .btn-confirm { background: var(--silver-mid); color: #000; }
-
         .close-modal { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 모바일 반응형 조정 */
-        @media (max-width: 768px) {
-            .logo { font-size: 28px; }
-            h2 { font-size: 32px; }
-            .altar-container { margin-top: 100px; }
+        
+        /* ✨ Footer 스타일 추가 */
+        footer { 
+            text-align: center; padding: 30px; font-size: 12px; 
+            color: var(--pure-silver); opacity: 0.6; width: 100%;
+            margin-top: auto; /* 내용이 적어도 바닥에 붙게 */
         }
+
+        @media (max-width: 768px) { .logo { font-size: 28px; } h2 { font-size: 32px; } .altar-container { margin-top: 100px; } }
     </style>
 </head>
 <body>
@@ -187,7 +107,7 @@
         <div class="logo luster-sky-silver">The Chosen</div>
         <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
         <div class="compact-menu" id="compactMenu">
-            <a href="inner-sanctum.html">Back to Doctrine</a>
+            <a href="inner-sanctum.html">Back to Sanctum</a>
             <button class="logout-link" onclick="logout()" style="color:#ff6b6b">Disconnect</button>
         </div>
     </header>
@@ -209,7 +129,6 @@
                         <select id="birthDay" required><option value="" disabled selected>Day</option></select>
                     </div>
                 </div>
-                
                 <div class="field-group">
                     <label>Time of Birth</label>
                     <select id="birthTime" required>
@@ -229,22 +148,18 @@
                         <option value="21:00-22:59">21:00 ~ 22:59 (Pig)</option>
                     </select>
                 </div>
-
                 <div class="field-group">
                     <label>Nationality</label>
                     <input type="text" id="nationality" placeholder="Your Origin (Country)" required>
                 </div>
-
                 <div class="field-group">
                     <label>Sovereign Task</label>
                     <textarea id="sovereignTask" placeholder="(Task, Path walked so far, Frustrations, Anything to resolve the Curse of Knowledge)" required></textarea>
                 </div>
-
                 <div class="field-group">
                     <label>Vision of 2030</label>
                     <textarea id="vision" maxlength="70" placeholder="English only (Max 70 chars including spaces)..." required></textarea>
                 </div>
-
                 <div class="field-group">
                     <label style="color: var(--silver-light);">Physical Address (International Shipping)</label>
                     <input type="text" id="addr_street" placeholder="Street Address" required>
@@ -257,7 +172,6 @@
                         <input type="text" id="addr_country" placeholder="Country" required>
                     </div>
                 </div>
-
                 <button type="button" class="submit-btn" onclick="preSubmitCheck()">Offer to Equilibrium</button>
             </form>
         </div>
@@ -266,14 +180,23 @@
             <h3 class="luster-text">The Offering is Made.</h3>
             <p>Your frequency is being analyzed by the Void.</p>
             <p style="color: var(--silver-mid); margin-top: 20px;">Estimated Waiting Time: Within 7 Days</p>
-            <br>
-            <p style="font-size: 14px; color: #666;">(You can close this window and return later.)</p>
+            
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
+                <p style="font-size: 16px; color: #ccc; margin-bottom: 15px;">While you wait, observe the world through the Eye.</p>
+                <button class="reveal-btn" onclick="location.href='eye-of-equilibrium.html'" style="font-size: 18px; padding: 12px 25px;">
+                    Enter Eye of Equilibrium
+                </button>
+            </div>
         </div>
 
         <div id="grantedSection" class="status-section">
             <h3 class="luster-text" style="font-size: 32px;">The Oracle has Spoken.</h3>
             <p>The Equilibrium has responded to your frequency.</p>
             <button class="reveal-btn" onclick="openOracleModal()">Reveal the Prophecy</button>
+            
+            <div style="margin-top: 30px;">
+                <button class="small-btn" onclick="location.href='eye-of-equilibrium.html'">Go to Eye of Equilibrium</button>
+            </div>
         </div>
 
         <div id="addressUpdateSection" class="address-update-box">
@@ -282,6 +205,8 @@
             <button class="small-btn" onclick="updateAddress()">Update Address</button>
         </div>
     </div>
+
+    <footer>© 2030 THE CHOSEN OFFICIAL</footer>
 
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-content">
@@ -319,7 +244,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 문서 ID (해시값)
         const userHash = localStorage.getItem('user_code') ? await digestMessage(localStorage.getItem('user_code')) : null;
 
         async function digestMessage(message) {
@@ -334,8 +258,6 @@
                 window.location.replace("index.html");
                 return;
             }
-            
-            // 헤더 가디언 번호 세팅
             const guardianId = localStorage.getItem('guardian_id') || "????";
             document.getElementById('guardianIdDisplay').innerText = "No. " + String(guardianId).padStart(4, '0');
 
@@ -343,17 +265,16 @@
             checkOracleStatus();
         };
 
-        // 헤더 메뉴 기능
         window.toggleMenu = function() { document.getElementById('compactMenu').classList.toggle('active'); }
         window.logout = function() { localStorage.clear(); window.location.replace("index.html"); }
 
-        // 파이어베이스 상태 확인
         function checkOracleStatus() {
             const docRef = doc(db, "oracle_requests", userHash);
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    
+                    localStorage.setItem('oracle_submitted', 'true');
+
                     document.getElementById('formSection').style.display = 'none';
                     document.getElementById('addressUpdateSection').style.display = 'block';
                     
@@ -376,27 +297,17 @@
             });
         }
 
-        // 제출 전 검증 (모달 열기)
         window.preSubmitCheck = function() {
             const form = document.getElementById('oracleForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
+            if (!form.checkValidity()) { form.reportValidity(); return; }
             const vision = document.getElementById('vision').value;
             const englishRegex = /^[A-Za-z0-9\s.,!?'"()-]*$/;
-            if (!englishRegex.test(vision)) {
-                alert("Vision must be in English only.");
-                return;
-            }
-
+            if (!englishRegex.test(vision)) { alert("Vision must be in English only."); return; }
             const confirmModal = document.getElementById('confirmModal');
             confirmModal.style.display = 'flex';
             setTimeout(() => confirmModal.style.opacity = 1, 10);
         }
 
-        // 진짜 제출
         window.realSubmit = async function() {
             closeConfirmModal();
             const btn = document.querySelector('.submit-btn');
@@ -410,30 +321,24 @@
                 zip: document.getElementById('addr_zip').value,
                 country: document.getElementById('addr_country').value
             };
-            
             const fullAddressStr = `${addressObj.street}, ${addressObj.city}, ${addressObj.state}, ${addressObj.zip}, ${addressObj.country}`;
 
             const formData = {
                 guardian_id: parseInt(localStorage.getItem('guardian_id') || 0),
-                birth_date: {
-                    year: document.getElementById('birthYear').value,
-                    month: document.getElementById('birthMonth').value,
-                    day: document.getElementById('birthDay').value
-                },
+                birth_date: { year: document.getElementById('birthYear').value, month: document.getElementById('birthMonth').value, day: document.getElementById('birthDay').value },
                 birth_time: document.getElementById('birthTime').value,
                 nationality: document.getElementById('nationality').value,
                 sovereign_task: document.getElementById('sovereignTask').value,
                 vision_2030: document.getElementById('vision').value,
-                
                 address: fullAddressStr, 
                 address_detail: addressObj, 
-                
                 status: 'pending',
                 timestamp: new Date().toISOString()
             };
 
             try {
                 await setDoc(doc(db, "oracle_requests", userHash), formData);
+                localStorage.setItem('oracle_submitted', 'true');
             } catch (error) {
                 console.error("Error:", error);
                 alert("Connection Error. Please try again.");
@@ -442,22 +347,9 @@
             }
         };
 
-        window.closeConfirmModal = function() {
-            const modal = document.getElementById('confirmModal');
-            modal.style.opacity = 0;
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-        
-        window.openOracleModal = function() {
-            const modal = document.getElementById('oracleModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.style.opacity = 1, 10);
-        }
-        window.closeOracleModal = function() {
-            const modal = document.getElementById('oracleModal');
-            modal.style.opacity = 0;
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
+        window.closeConfirmModal = function() { const modal = document.getElementById('confirmModal'); modal.style.opacity = 0; setTimeout(() => modal.style.display = 'none', 300); }
+        window.openOracleModal = function() { const modal = document.getElementById('oracleModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = 1, 10); }
+        window.closeOracleModal = function() { const modal = document.getElementById('oracleModal'); modal.style.opacity = 0; setTimeout(() => modal.style.display = 'none', 300); }
 
         window.updateAddress = async function() {
             const newAddr = document.getElementById('updateAddressInput').value;

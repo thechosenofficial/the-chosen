@@ -44,13 +44,12 @@
         .compact-menu.active { display: block; }
         .compact-menu a, .compact-menu button { display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer; }
 
-        /* 메인 컨테이너 */
         .altar-container { 
             width: 100%; max-width: 500px; 
-            margin-top: 120px; /* 헤더 공간 */
+            margin-top: 120px; 
             padding: 20px; box-sizing: border-box; 
             position: relative; 
-            flex: 1; /* 푸터를 바닥으로 밀기 위해 */
+            flex: 1; 
             padding-bottom: 50px; 
         }
         
@@ -68,6 +67,11 @@
         textarea { height: 120px; resize: none; }
         .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
+        /* ✨ 국가번호 + 전화번호 입력 그룹 스타일 */
+        .phone-input-group { display: flex; gap: 10px; }
+        .phone-input-group select { width: 35%; min-width: 100px; } /* 국가코드 너비 */
+        .phone-input-group input { flex: 1; }
+
         .submit-btn { background-color: var(--silver-mid); color: var(--bg-color); border: none; border-radius: 30px; padding: 18px; font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer; transition: 0.4s; margin-top: 20px; width: 100%; }
         .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
         
@@ -90,12 +94,7 @@
         .close-modal { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* ✨ Footer 스타일 추가 */
-        footer { 
-            text-align: center; padding: 30px; font-size: 12px; 
-            color: var(--pure-silver); opacity: 0.6; width: 100%;
-            margin-top: auto; /* 내용이 적어도 바닥에 붙게 */
-        }
+        footer { text-align: center; padding: 30px; font-size: 12px; color: var(--pure-silver); opacity: 0.6; width: 100%; margin-top: auto; }
 
         @media (max-width: 768px) { .logo { font-size: 28px; } h2 { font-size: 32px; } .altar-container { margin-top: 100px; } }
     </style>
@@ -160,6 +159,7 @@
                     <label>Vision of 2030</label>
                     <textarea id="vision" maxlength="70" placeholder="English only (Max 70 chars including spaces)..." required></textarea>
                 </div>
+                
                 <div class="field-group">
                     <label style="color: var(--silver-light);">Physical Address (International Shipping)</label>
                     <input type="text" id="addr_street" placeholder="Street Address" required>
@@ -172,6 +172,29 @@
                         <input type="text" id="addr_country" placeholder="Country" required>
                     </div>
                 </div>
+
+                <div class="field-group">
+                    <label>Phone Number (Mandatory)</label>
+                    <div class="phone-input-group">
+                        <select id="countryCode" required>
+                            <option value="+82">KR (+82)</option>
+                            <option value="+1">US/CA (+1)</option>
+                            <option value="+81">JP (+81)</option>
+                            <option value="+86">CN (+86)</option>
+                            <option value="+44">UK (+44)</option>
+                            <option value="+49">DE (+49)</option>
+                            <option value="+33">FR (+33)</option>
+                            <option value="+61">AU (+61)</option>
+                            <option value="+65">SG (+65)</option>
+                            <option value="+852">HK (+852)</option>
+                            <option value="+886">TW (+886)</option>
+                            <option value="">Other</option>
+                        </select>
+                        <input type="tel" id="phoneNumber" placeholder="10-1234-5678" required style="border-color: var(--silver-mid);">
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">If 'Other', please include country code in the input box.</div>
+                </div>
+
                 <button type="button" class="submit-btn" onclick="preSubmitCheck()">Offer to Equilibrium</button>
             </form>
         </div>
@@ -193,7 +216,6 @@
             <h3 class="luster-text" style="font-size: 32px;">The Oracle has Spoken.</h3>
             <p>The Equilibrium has responded to your frequency.</p>
             <button class="reveal-btn" onclick="openOracleModal()">Reveal the Prophecy</button>
-            
             <div style="margin-top: 30px;">
                 <button class="small-btn" onclick="location.href='eye-of-equilibrium.html'">Go to Eye of Equilibrium</button>
             </div>
@@ -323,6 +345,11 @@
             };
             const fullAddressStr = `${addressObj.street}, ${addressObj.city}, ${addressObj.state}, ${addressObj.zip}, ${addressObj.country}`;
 
+            // ✨ 전화번호 조합 로직
+            const code = document.getElementById('countryCode').value;
+            const num = document.getElementById('phoneNumber').value;
+            const fullPhone = code ? `${code} ${num}` : num; // Other일 경우 입력값 그대로
+
             const formData = {
                 guardian_id: parseInt(localStorage.getItem('guardian_id') || 0),
                 birth_date: { year: document.getElementById('birthYear').value, month: document.getElementById('birthMonth').value, day: document.getElementById('birthDay').value },
@@ -332,6 +359,7 @@
                 vision_2030: document.getElementById('vision').value,
                 address: fullAddressStr, 
                 address_detail: addressObj, 
+                phone: fullPhone, // 저장
                 status: 'pending',
                 timestamp: new Date().toISOString()
             };

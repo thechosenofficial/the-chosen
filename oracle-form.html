@@ -43,10 +43,26 @@
         .compact-menu.active { display: block; }
         .compact-menu a, .compact-menu button { display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer; }
 
-        .altar-container { width: 100%; max-width: 500px; margin-top: 120px; padding: 20px; box-sizing: border-box; position: relative; flex: 1; padding-bottom: 50px; }
+        .altar-container { 
+            width: 100%; max-width: 500px; 
+            margin-top: 120px; 
+            padding: 20px; box-sizing: border-box; 
+            position: relative; 
+            flex: 1; 
+            padding-bottom: 50px; 
+        }
+        
         .luster-text { background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
         h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
-        .warning-text { color: var(--warning); font-size: 15px; text-align: center; margin-bottom: 30px; letter-spacing: 1px; border: 1px solid var(--warning); padding: 10px; border-radius: 8px; background: rgba(255, 107, 107, 0.05); line-height: 1.4; }
+        
+        /* ✨ 경고문 스타일 강화 */
+        .warning-text { 
+            color: var(--warning); font-size: 15px; text-align: center; 
+            margin-bottom: 30px; letter-spacing: 1px; 
+            border: 1px solid var(--warning); padding: 15px; 
+            border-radius: 8px; background: rgba(255, 107, 107, 0.05); 
+            line-height: 1.6; 
+        }
         
         .oracle-form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .field-group { display: flex; flex-direction: column; gap: 8px; }
@@ -106,10 +122,15 @@
 
         <div id="formSection">
             <div class="warning-text">
-                ⚠️ WARNING: Once offered, your destiny CANNOT be altered.<br>
-                Only the address can be modified until Aug 2029.<br>
-                <span style="color: #ff4d4d; display:block; margin-top:5px;">
-                * Submission by a non-holder wallet will result in permanent disqualification.
+                ⚠️ <strong>IRREVERSIBLE RITUAL</strong><br>
+                Once offered, your destiny (Birth, Task, Vision) CANNOT be altered.
+                Only the physical address remains mutable until 2029.<br><br>
+                
+                <span style="color: #ff4d4d; font-weight: bold; font-size: 16px;">
+                🚫 SOUL-BOUND ACTIVATION<br>
+                Submitting this form CONSUMES the utility of your NFT.<br>
+                Even if you sell the NFT later, the new owner CANNOT access this Oracle.<br>
+                DO NOT SUBMIT if you intend to trade.
                 </span>
             </div>
 
@@ -281,7 +302,6 @@
                 window.location.replace("index.html");
                 return;
             }
-            // 초기 헤더 설정: 부여된 번호가 있으면 표시, 없으면 ????
             const storedID = localStorage.getItem('my_guardian_id');
             const displayID = storedID ? String(storedID).padStart(4, '0') : "????";
             document.getElementById('guardianIdDisplay').innerText = "No. " + displayID;
@@ -299,8 +319,6 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     localStorage.setItem('oracle_submitted', 'true');
-                    
-                    // ✨ 서버에서 guardian_id가 생겼는지 확인
                     if(data.guardian_id) {
                         localStorage.setItem('my_guardian_id', data.guardian_id);
                         document.getElementById('guardianIdDisplay').innerText = "No. " + String(data.guardian_id).padStart(4, '0');
@@ -314,20 +332,15 @@
                         : data.address;
                     document.getElementById('updateAddressInput').value = addrStr;
 
-                    // 상태 메시지 업데이트
                     const waitingTitle = document.querySelector('#waitingSection h3');
                     const waitingP = document.querySelector('#waitingSection p');
                     
                     if(data.status === 'granted' && data.guardian_id) {
-                        // 승인 완료된 상태
                         document.getElementById('waitingSection').style.display = 'none';
                         document.getElementById('grantedSection').style.display = 'block';
                         document.getElementById('oracleContent').innerText = data.oracle_message;
-                        
-                        // Granted 섹션 타이틀에 번호 표시
                         document.querySelector('#grantedSection h3').innerHTML = `No. ${String(data.guardian_id).padStart(4,'0')}<br>The Oracle has Spoken.`;
                     } else {
-                        // 대기 중 (Pending)
                         document.getElementById('waitingSection').style.display = 'block';
                         document.getElementById('grantedSection').style.display = 'none';
                         waitingTitle.innerText = "The Offering is Made.";
@@ -339,7 +352,6 @@
             });
         }
 
-        // ... preSubmitCheck 등은 기존 동일 ...
         window.preSubmitCheck = function() {
             const form = document.getElementById('oracleForm');
             if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -381,8 +393,7 @@
             }
 
             const formData = {
-                // guardian_id는 아직 없음 (null)
-                guardian_id: null,
+                guardian_id: null, // 매니저 승인 시 부여
                 birth_date: { year: document.getElementById('birthYear').value, month: document.getElementById('birthMonth').value, day: document.getElementById('birthDay').value },
                 birth_time: document.getElementById('birthTime').value,
                 nationality: document.getElementById('nationality').value,
@@ -397,7 +408,6 @@
             };
 
             try {
-                // 단순 저장 (번호 부여 안 함)
                 await setDoc(doc(db, "oracle_requests", userHash), formData);
                 localStorage.setItem('oracle_submitted', 'true');
                 alert("Offering Accepted. Wait for verification.");

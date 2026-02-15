@@ -11,8 +11,9 @@
             --input-border: #333;
             --text-main: #e3e3e3;
             --silver-light: #FFFFFF;
-            --silver-mid: #A5C9E1; /* Sky Silver Blue */
+            --silver-mid: #A5C9E1;
             --silver-dark: #708090;
+            --error-red: #ff6b6b;
         }
 
         body {
@@ -21,191 +22,175 @@
             font-family: 'Pirata One', system-ui;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            align-items: center; 
+            align-items: center; justify-content: center;
             min-height: 100vh;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
             position: relative;
         }
 
-        /* 입력창 컨테이너 */
+        /* ✨ 배경 이미지 (흐릿하게) */
+        #bg-blur {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            filter: blur(8px) brightness(0.6);
+            z-index: -1;
+            transform: scale(1.1);
+        }
+
         .container {
             text-align: center;
             width: 90%; max-width: 400px;
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
-            margin-top: 20vh; /* 위치 유지 */
         }
 
         h1 {
             font-size: 60px;
-            font-weight: normal; margin-bottom: 50px; letter-spacing: 4px;
+            font-weight: normal; margin-bottom: 40px; letter-spacing: 4px;
             background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 20px rgba(165, 201, 225, 0.3));
             animation: pulse-glow 3s infinite alternate;
         }
-        
         @keyframes pulse-glow {
             from { filter: drop-shadow(0 0 10px rgba(165, 201, 225, 0.2)); }
             to { filter: drop-shadow(0 0 25px rgba(165, 201, 225, 0.6)); }
         }
 
-        .input-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 30px; width: 100%; }
+        /* 입력 그룹 */
+        .form-group { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-bottom: 10px; }
 
         input {
-            width: 100%; padding: 16px 55px 16px 25px;
-            background: rgba(255, 255, 255, 0.03);
+            width: 100%; padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--input-border);
-            border-radius: 30px;
+            border-radius: 12px;
             color: var(--silver-mid); font-size: 18px;
             font-family: 'Pirata One', cursive; outline: none; transition: 0.3s;
-            letter-spacing: 3px; backdrop-filter: blur(5px); box-sizing: border-box;
+            letter-spacing: 2px; backdrop-filter: blur(5px); box-sizing: border-box;
             text-align: center;
         }
-
+        input::placeholder { color: #555; letter-spacing: 1px; font-size: 16px; }
         input:focus {
             border-color: var(--silver-mid);
-            box-shadow: 0 0 20px rgba(165, 201, 225, 0.15);
-            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(165, 201, 225, 0.2);
+            background: rgba(0, 0, 0, 0.8);
         }
 
-        .arrow-login {
-            position: absolute; right: 10px; width: 40px; height: 40px;
-            background-color: var(--silver-mid); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: none; transition: 0.3s;
+        /* 에러 메시지 */
+        .error-msg {
+            color: var(--error-red); font-size: 16px; margin-top: 5px; height: 20px;
+            opacity: 0; transition: opacity 0.3s; letter-spacing: 1px;
         }
+        .error-msg.show { opacity: 1; }
 
-        .arrow-login:hover { background-color: var(--silver-light); transform: scale(1.1); }
-        .arrow-login svg { width: 22px; height: 22px; fill: var(--gemini-bg); }
+        /* 버튼 */
+        .submit-btn {
+            background: transparent;
+            border: 1px solid var(--silver-mid);
+            color: var(--silver-mid);
+            padding: 12px 30px;
+            font-size: 20px; border-radius: 30px;
+            cursor: pointer; margin-top: 20px;
+            font-family: 'Pirata One'; transition: 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover { background: var(--silver-mid); color: #000; box-shadow: 0 0 15px var(--silver-mid); }
 
         .buy-ticket {
-            display: inline-block; text-decoration: none; font-size: 16px;
+            display: inline-block; text-decoration: none; font-size: 14px;
             letter-spacing: 2px; color: var(--silver-dark); opacity: 0.6;
-            transition: 0.3s; font-family: 'Pirata One', cursive;
-            margin-top: 10px;
+            transition: 0.3s; margin-top: 20px;
         }
-        .buy-ticket:hover { opacity: 1; color: var(--silver-mid); letter-spacing: 3px; }
+        .buy-ticket:hover { opacity: 1; color: var(--silver-mid); }
 
-        /* 타이머 박스 */
-        .timer-box {
-            margin-top: 60px;
-            width: auto;
-            min-width: 220px;
-            padding: 20px 30px;
-            border: 1px solid var(--input-border);
-            border-radius: 15px;
-            background: transparent;
-            text-align: center;
-            display: flex; flex-direction: column; gap: 5px;
+        /* 상태 화면 (Pending / Welcome) */
+        .status-overlay {
+            display: none; flex-direction: column; align-items: center; gap: 20px;
+            width: 100%; text-align: center; animation: fadeIn 1s;
         }
-
-        /* 1. 명칭 (THE APPOINTED DAY) */
-        .timer-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--silver-mid);
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px rgba(165, 201, 225, 0.8);
-            margin-bottom: 2px;
+        .status-title { font-size: 32px; color: var(--silver-light); margin-bottom: 10px; }
+        .status-desc { font-size: 18px; color: #ccc; line-height: 1.6; }
+        .countdown { font-size: 24px; color: var(--error-red); margin-top: 10px; }
+        
+        .enter-btn {
+            background: var(--silver-mid); color: #000; border: none;
+            padding: 15px 40px; font-size: 22px; border-radius: 30px;
+            cursor: pointer; margin-top: 30px; font-family: 'Pirata One';
+            box-shadow: 0 0 20px var(--silver-mid); animation: pulse 2s infinite;
         }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+        @keyframes fadeIn { from {opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
 
-        /* 2. 날짜 (2030.01.01) */
-        .timer-date {
-            font-size: 16px;
-            color: var(--silver-dark);
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(165, 201, 225, 0.2);
-            padding-bottom: 8px;
-        }
-
-        .timer-row { display: block; width: 100%; }
-        /* 3. D-Day */
-        .timer-days { font-size: 26px; color: var(--silver-light); letter-spacing: 2px; }
-        /* 4. Time Left */
-        .timer-hms {
-            font-size: 18px; color: var(--silver-mid); opacity: 0.8;
-            letter-spacing: 3px; margin-top: 3px; font-family: 'Pirata One', monospace;
-        }
-
-        /* Footer */
         footer {
             position: absolute; bottom: 20px; width: 100%;
             text-align: center; font-size: 12px; color: var(--silver-dark); opacity: 0.6;
         }
 
-        /* 연기 애니메이션 */
-        @keyframes smokeFade {
-            0% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
-            100% { opacity: 0; transform: scale(1.05) translateY(-20px); filter: blur(15px); }
-        }
         .smoke-out { animation: smokeFade 1.5s ease-out forwards; pointer-events: none; }
+        @keyframes smokeFade {
+            0% { opacity: 1; transform: scale(1); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(1.1); filter: blur(10px); }
+        }
 
-        /* 모바일 최적화 */
         @media (max-width: 768px) {
             h1 { font-size: 48px; margin-bottom: 30px; }
-            .container { margin-top: 15vh; }
-            .timer-box { margin-top: 40px; padding: 15px 20px; min-width: 180px; }
-            .timer-title { font-size: 24px; }
-            .timer-days { font-size: 22px; }
-            .timer-hms { font-size: 16px; }
-            footer { position: relative; margin-top: auto; padding-bottom: 30px; } /* 모바일은 위치 유동적 */
+            .container { width: 85%; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>The Chosen</h1>
-        <div class="input-wrapper">
-            <input type="password" id="accessCode" placeholder="FREQUENCY CODE" onkeypress="if(event.keyCode==13) login()">
-            <button class="arrow-login" onclick="login()">
-                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-            </button>
-        </div>
-        <a href="https://opensea.io/" target="_blank" class="buy-ticket">Decide Your Future</a>
-    </div>
 
-    <div class="timer-box">
-        <div class="timer-title">THE APPOINTED DAY</div> <div class="timer-date">2030.01.01</div>         <div class="timer-row timer-days" id="d-day">0000 DAYS</div> <div class="timer-row timer-hms" id="d-time">00:00:00 LEFT</div> </div>
+    <img src="totem.jpg" id="bg-blur" alt="Background">
+
+    <div class="container" id="loginContainer">
+        <h1>The Chosen</h1>
+        
+        <div id="loginForm">
+            <div class="form-group">
+                <input type="password" id="accessCode" placeholder="FREQUENCY CODE" oninput="clearError()">
+                <input type="text" id="walletAddr" placeholder="WALLET ADDRESS (0x...)" oninput="clearError()">
+            </div>
+            
+            <div id="errorMsg" class="error-msg">Incorrect Frequency Code.</div>
+            
+            <button class="submit-btn" onclick="requestEntry()">Request Entry</button>
+            <a href="https://opensea.io/" target="_blank" class="buy-ticket">Decide Your Future</a>
+        </div>
+
+        <div id="pendingView" class="status-overlay">
+            <div class="status-title">VERIFICATION PENDING</div>
+            <div class="status-desc">
+                Your frequency is being analyzed.<br>
+                Please return after the verification period.
+            </div>
+            <div class="countdown" id="countdownTimer">Calculating...</div>
+        </div>
+
+        <div id="welcomeView" class="status-overlay">
+            <div class="status-title" id="welcomeTitle">Welcome, Guardian</div>
+            <div class="status-desc">
+                Welcome before the Gate of Truth.<br>
+                Will you check the Doctrine and request the Oracle?
+            </div>
+            <button class="enter-btn" onclick="enterSanctum()">YES, I AM READY</button>
+        </div>
+
+        <div id="rejectedView" class="status-overlay">
+            <div class="status-title" style="color: #ff6b6b;">ACCESS DENIED</div>
+            <div class="status-desc">
+                You are not The Chosen.<br>
+                Return to the Infrastructure.
+            </div>
+        </div>
+    </div>
 
     <footer>© 2030 THE CHOSEN OFFICIAL</footer>
 
-    <script>
-        function updateTimer() {
-            const targetDate = new Date("Jan 1, 2030 00:00:00").getTime();
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            if (difference < 0) {
-                document.getElementById("d-day").innerText = "THE TIME HAS COME";
-                document.getElementById("d-time").innerText = "";
-                return;
-            }
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            const daysStr = String(days).padStart(4, '0') + " DAYS";
-            const timeStr = 
-                String(hours).padStart(2, '0') + ":" + 
-                String(minutes).padStart(2, '0') + ":" + 
-                String(seconds).padStart(2, '0') + " LEFT"; // ✨ LEFT 추가
-
-            document.getElementById("d-day").innerText = daysStr;
-            document.getElementById("d-time").innerText = timeStr;
-        }
-        setInterval(updateTimer, 1000);
-        updateTimer();
-    </script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
@@ -219,57 +204,142 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.onload = function() {
-            if (localStorage.getItem('chosen_access') === 'granted') {
-                window.location.replace("inner-sanctum.html");
-            }
-            updateTimer();
-        };
-
+        // 암호화
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        window.login = async function() {
-            const input = document.getElementById('accessCode').value.trim().toUpperCase();
-            const btn = document.querySelector('.arrow-login');
-            
-            if (!input) return;
+        window.clearError = function() {
+            document.getElementById('errorMsg').classList.remove('show');
+        }
 
+        // 로그인 요청
+        window.requestEntry = async function() {
+            const codeInput = document.getElementById('accessCode').value.trim().toUpperCase();
+            const walletInput = document.getElementById('walletAddr').value.trim();
+            const btn = document.querySelector('.submit-btn');
+            const errorEl = document.getElementById('errorMsg');
+
+            // 1. 빈칸 체크
+            if (!codeInput || !walletInput) {
+                errorEl.innerText = "Fill all fields.";
+                errorEl.classList.add('show');
+                return;
+            }
+
+            // 2. 지갑 주소 형식 체크 (EVM 42자리, 0x 시작)
+            if (!walletInput.startsWith('0x') || walletInput.length !== 42) {
+                errorEl.innerText = "Invalid Wallet Address (Must be 42 chars starting with 0x).";
+                errorEl.classList.add('show');
+                return;
+            }
+
+            btn.innerText = "Verifying...";
             btn.style.opacity = "0.5";
             btn.style.pointerEvents = "none";
 
             try {
-                const inputHash = await digestMessage(input);
-                const docRef = doc(db, "secret_codes", inputHash);
-                const docSnap = await getDoc(docRef);
+                // 3. 암호 코드 해시 검증
+                const codeHash = await digestMessage(codeInput);
+                const codeRef = doc(db, "secret_codes", codeHash);
+                const codeSnap = await getDoc(codeRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    localStorage.setItem('chosen_access', 'granted');
-                    localStorage.setItem('guardian_id', data.no);
-                    localStorage.setItem('user_code', input);
-
-                    document.querySelector('.container').classList.add('smoke-out');
-                    document.querySelector('.timer-box').classList.add('smoke-out');
-                    
-                    setTimeout(() => window.location.href = "inner-sanctum.html", 1500);
-                } else {
-                    alert("ACCESS DENIED: Untrusted Frequency.");
-                    document.getElementById('accessCode').value = "";
-                    document.getElementById('accessCode').focus();
+                if (!codeSnap.exists()) {
+                    errorEl.innerText = "Incorrect Frequency Code.";
+                    errorEl.classList.add('show');
+                    btn.innerText = "Request Entry";
                     btn.style.opacity = "1";
                     btn.style.pointerEvents = "auto";
+                    return;
                 }
+
+                // 4. 지갑 주소로 DB 확인
+                const userDocRef = doc(db, "oracle_requests", walletInput);
+                const userSnap = await getDoc(userDocRef);
+
+                if (!userSnap.exists()) {
+                    // 신규 -> 대기 등록
+                    await setDoc(userDocRef, {
+                        wallet_address: walletInput,
+                        status: 'pending',
+                        timestamp: new Date().toISOString(),
+                        guardian_id: null
+                    });
+                    showPendingScreen(new Date());
+                } else {
+                    // 기존 -> 상태 확인
+                    const data = userSnap.data();
+                    if (data.status === 'granted') {
+                        showWelcomeScreen(data.guardian_id);
+                    } else if (data.status === 'rejected') {
+                        document.getElementById('loginForm').style.display = 'none';
+                        document.getElementById('rejectedView').style.display = 'flex';
+                    } else {
+                        showPendingScreen(new Date(data.timestamp));
+                    }
+                }
+
             } catch (e) {
                 console.error(e);
-                alert("Connection Unstable.");
+                errorEl.innerText = "Connection Error.";
+                errorEl.classList.add('show');
+                btn.innerText = "Request Entry";
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
             }
         };
+
+        // 대기 화면 (48시간 카운트다운)
+        function showPendingScreen(requestTime) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('pendingView').style.display = 'flex';
+
+            const requestMs = requestTime.getTime();
+            const waitTime = 48 * 60 * 60 * 1000; // 48시간
+            
+            const updateTimer = () => {
+                const now = new Date().getTime();
+                const elapsed = now - requestMs;
+                const remaining = waitTime - elapsed;
+
+                if (remaining <= 0) {
+                    // 48시간 지났는데 아직 승인 안 됨
+                    document.getElementById('countdownTimer').innerText = "Verification in progress...";
+                    document.getElementById('countdownTimer').style.color = "#ccc";
+                } else {
+                    const hours = Math.floor(remaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                    document.getElementById('countdownTimer').innerText = 
+                        `${hours} hours ${minutes} minutes left`;
+                }
+            };
+            updateTimer();
+            setInterval(updateTimer, 60000);
+        }
+
+        // 환영 화면
+        function showWelcomeScreen(guardianId) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('welcomeView').style.display = 'flex';
+            
+            const no = guardianId ? String(guardianId).padStart(4, '0') : "????";
+            document.getElementById('welcomeTitle').innerText = `Welcome, Guardian No. ${no}`;
+            
+            // 로컬 스토리지 저장 (성소에서 사용)
+            localStorage.setItem('my_guardian_id', guardianId);
+            localStorage.setItem('my_wallet_id', document.getElementById('walletAddr').value);
+        }
+
+        // 입장 (성소 이동)
+        window.enterSanctum = function() {
+            localStorage.setItem('chosen_access', 'granted');
+            document.getElementById('loginContainer').classList.add('smoke-out');
+            setTimeout(() => {
+                window.location.href = "inner-sanctum.html";
+            }, 1500);
+        }
     </script>
 </body>
 </html>

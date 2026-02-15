@@ -28,7 +28,7 @@
             position: relative;
         }
 
-        /* ✨ 배경 이미지 (흐릿하게) */
+        /* 배경: 진리의 문 (흐릿하게 고정) */
         #bg-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
@@ -58,7 +58,6 @@
             to { filter: drop-shadow(0 0 25px rgba(165, 201, 225, 0.6)); }
         }
 
-        /* 입력 그룹 */
         .form-group { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-bottom: 10px; }
 
         input {
@@ -78,14 +77,12 @@
             background: rgba(0, 0, 0, 0.8);
         }
 
-        /* 에러 메시지 */
         .error-msg {
             color: var(--error-red); font-size: 16px; margin-top: 5px; height: 20px;
             opacity: 0; transition: opacity 0.3s; letter-spacing: 1px;
         }
         .error-msg.show { opacity: 1; }
 
-        /* 버튼 */
         .submit-btn {
             background: transparent;
             border: 1px solid var(--silver-mid);
@@ -142,7 +139,7 @@
 </head>
 <body>
 
-    <img src="totem.jpg" id="bg-blur" alt="Background">
+    <img src="totem.jpg" id="bg-blur" alt="The Gate of Gnosis">
 
     <div class="container" id="loginContainer">
         <h1>The Chosen</h1>
@@ -171,10 +168,10 @@
         <div id="welcomeView" class="status-overlay">
             <div class="status-title" id="welcomeTitle">Welcome, Guardian</div>
             <div class="status-desc">
-                Welcome before the Gate of Truth.<br>
-                Will you check the Doctrine and request the Oracle?
+                You have been chosen.<br>
+                Proceed to the Sanctum.
             </div>
-            <button class="enter-btn" onclick="enterSanctum()">YES, I AM READY</button>
+            <button class="enter-btn" onclick="enterSanctum()">ENTER SANCTUM</button>
         </div>
 
         <div id="rejectedView" class="status-overlay">
@@ -215,25 +212,19 @@
             document.getElementById('errorMsg').classList.remove('show');
         }
 
-        // 로그인 요청
         window.requestEntry = async function() {
             const codeInput = document.getElementById('accessCode').value.trim().toUpperCase();
             const walletInput = document.getElementById('walletAddr').value.trim();
             const btn = document.querySelector('.submit-btn');
             const errorEl = document.getElementById('errorMsg');
 
-            // 1. 빈칸 체크
             if (!codeInput || !walletInput) {
                 errorEl.innerText = "Fill all fields.";
-                errorEl.classList.add('show');
-                return;
+                errorEl.classList.add('show'); return;
             }
-
-            // 2. 지갑 주소 형식 체크 (EVM 42자리, 0x 시작)
             if (!walletInput.startsWith('0x') || walletInput.length !== 42) {
                 errorEl.innerText = "Invalid Wallet Address (Must be 42 chars starting with 0x).";
-                errorEl.classList.add('show');
-                return;
+                errorEl.classList.add('show'); return;
             }
 
             btn.innerText = "Verifying...";
@@ -241,7 +232,7 @@
             btn.style.pointerEvents = "none";
 
             try {
-                // 3. 암호 코드 해시 검증
+                // 1. 암호 검증
                 const codeHash = await digestMessage(codeInput);
                 const codeRef = doc(db, "secret_codes", codeHash);
                 const codeSnap = await getDoc(codeRef);
@@ -255,29 +246,33 @@
                     return;
                 }
 
-                // 4. 지갑 주소로 DB 확인
+                // 2. 지갑 주소 상태 확인
                 const userDocRef = doc(db, "oracle_requests", walletInput);
                 const userSnap = await getDoc(userDocRef);
 
                 if (!userSnap.exists()) {
-                    // 신규 -> 대기 등록
+                    // [최초] 상태: 'pending_entry' (입장 대기)
                     await setDoc(userDocRef, {
                         wallet_address: walletInput,
-                        status: 'pending',
-                        timestamp: new Date().toISOString(),
+                        status: 'pending_entry', 
+                        entry_requested_at: new Date().toISOString(),
                         guardian_id: null
                     });
                     showPendingScreen(new Date());
                 } else {
-                    // 기존 -> 상태 확인
+                    // [기존] 상태 확인
                     const data = userSnap.data();
-                    if (data.status === 'granted') {
-                        showWelcomeScreen(data.guardian_id);
+                    
+                    if (data.status === 'pending_entry') {
+                        // 아직 승인 안 됨 -> 대기 화면
+                        showPendingScreen(new Date(data.entry_requested_at));
                     } else if (data.status === 'rejected') {
+                        // 거절됨
                         document.getElementById('loginForm').style.display = 'none';
                         document.getElementById('rejectedView').style.display = 'flex';
                     } else {
-                        showPendingScreen(new Date(data.timestamp));
+                        // 그 외 (entry_approved, oracle_submitted 등) -> 입장 허용
+                        showWelcomeScreen(data);
                     }
                 }
 
@@ -291,7 +286,6 @@
             }
         };
 
-        // 대기 화면 (48시간 카운트다운)
         function showPendingScreen(requestTime) {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('pendingView').style.display = 'flex';
@@ -305,7 +299,6 @@
                 const remaining = waitTime - elapsed;
 
                 if (remaining <= 0) {
-                    // 48시간 지났는데 아직 승인 안 됨
                     document.getElementById('countdownTimer').innerText = "Verification in progress...";
                     document.getElementById('countdownTimer').style.color = "#ccc";
                 } else {
@@ -319,20 +312,18 @@
             setInterval(updateTimer, 60000);
         }
 
-        // 환영 화면
-        function showWelcomeScreen(guardianId) {
+        function showWelcomeScreen(data) {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('welcomeView').style.display = 'flex';
             
-            const no = guardianId ? String(guardianId).padStart(4, '0') : "????";
+            const no = data.guardian_id ? String(data.guardian_id).padStart(4, '0') : "????";
             document.getElementById('welcomeTitle').innerText = `Welcome, Guardian No. ${no}`;
             
-            // 로컬 스토리지 저장 (성소에서 사용)
-            localStorage.setItem('my_guardian_id', guardianId);
+            // 로컬 저장 (성소에서 사용)
+            localStorage.setItem('my_guardian_id', data.guardian_id);
             localStorage.setItem('my_wallet_id', document.getElementById('walletAddr').value);
         }
 
-        // 입장 (성소 이동)
         window.enterSanctum = function() {
             localStorage.setItem('chosen_access', 'granted');
             document.getElementById('loginContainer').classList.add('smoke-out');

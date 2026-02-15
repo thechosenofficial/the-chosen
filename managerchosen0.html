@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>The Chosen | Manager Sanctum</title>
     <style>
+        /* 기존 스타일 유지 */
         body { background-color: #111; color: #ddd; font-family: monospace; padding: 20px; margin: 0; }
         
-        /* 🔒 잠금 화면 */
         #lockScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; z-index: 9999;
@@ -17,11 +17,11 @@
             padding: 15px; font-size: 20px; text-align: center; letter-spacing: 5px;
             border-radius: 10px; width: 300px; outline: none;
         }
-        .lock-msg { margin-bottom: 20px; color: #555; font-size: 14px; }
         #dashboardContent { display: none; }
 
-        /* UI 스타일 */
         h1 { color: #A5C9E1; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 탭 스타일 */
         .tabs { margin-bottom: 20px; border-bottom: 1px solid #333; }
         .tab-btn { background: none; border: none; color: #666; padding: 10px 20px; font-size: 16px; cursor: pointer; font-family: monospace; font-weight: bold; }
         .tab-btn:hover { color: #fff; }
@@ -29,7 +29,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* 대시보드 레이아웃 */
         .dashboard { display: flex; gap: 20px; height: 80vh; }
         .list-panel { width: 300px; overflow-y: auto; border-right: 1px solid #333; padding-right: 10px; }
         .detail-panel { flex: 1; padding-left: 20px; overflow-y: auto; position: relative; }
@@ -40,49 +39,33 @@
         .request-item.active { background-color: #A5C9E1; color: #000; }
         
         .badge { font-size: 10px; padding: 2px 5px; border-radius: 4px; }
-        .badge.pending { background: #ff6b6b; color: #fff; }
-        .badge.granted { background: #51cf66; color: #fff; }
+        .badge.pending { background: #ff6b6b; color: #fff; } /* 대기 */
+        .badge.new { background: #ffae00; color: #000; } /* 신규 신청 */
         
+        .wallet-box {
+            border: 1px solid #A5C9E1; background: rgba(165, 201, 225, 0.1);
+            padding: 15px; margin-bottom: 20px; border-radius: 8px; cursor: pointer;
+        }
         .info-row { margin-bottom: 15px; }
         .label { color: #888; font-size: 12px; display: block; margin-bottom: 5px; }
         .value { font-size: 16px; white-space: pre-wrap; line-height: 1.5; color: #fff; }
         .box { background: #222; padding: 15px; border-radius: 8px; border: 1px solid #333; }
 
-        /* ✨ 지갑 주소 스타일 */
-        .wallet-box {
-            border: 1px solid #A5C9E1; background: rgba(165, 201, 225, 0.1);
-            padding: 15px; margin-bottom: 20px; border-radius: 8px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .wallet-box:hover { background: rgba(165, 201, 225, 0.2); }
-        .wallet-box:active { transform: scale(0.98); }
+        /* 버튼 */
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .btn-grant { background: #333; color: #777; margin-top: 10px; pointer-events: none; width: 100%; }
+        .btn-grant.active { background: #A5C9E1; color: #000; pointer-events: auto; }
+        .btn-reject { background: #333; color: #ff6b6b; border: 1px solid #ff6b6b; margin-top: 10px; width: 100%; font-size: 12px; }
+        .btn-reject:hover { background: #ff6b6b; color: #000; }
+        .btn-download { background: #333; color: #fff; font-size: 12px; }
 
-        /* ✨ 검증 체크박스 영역 */
-        .verify-section {
-            background: #191919; padding: 15px; border-radius: 8px; margin-top: 20px;
-            border: 1px solid #333;
-        }
-        .verify-label { color: #A5C9E1; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #A5C9E1; cursor: pointer; }
-
+        /* 입력창 */
         textarea, input[type="text"], input[type="date"] { 
             width: 100%; background: #000; color: #A5C9E1; 
-            border: 1px solid #555; padding: 10px; font-size: 16px; 
-            font-family: monospace; outline: none; box-sizing: border-box;
+            border: 1px solid #555; padding: 10px; font-size: 16px; font-family: monospace; outline: none; box-sizing: border-box;
         }
         textarea { height: 150px; resize: vertical; }
         .write-textarea { height: 400px; font-size: 16px; line-height: 1.6; }
-
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        
-        /* Grant 버튼: 비활성/활성 상태 */
-        .btn-grant { background: #333; color: #777; margin-top: 10px; pointer-events: none; width: 100%; }
-        .btn-grant.active { background: #A5C9E1; color: #000; pointer-events: auto; }
-        .btn-grant.active:hover { background: #fff; box-shadow: 0 0 15px #A5C9E1; }
-
-        .btn-del { background: #ff6b6b; color: #fff; float: right; margin-top: 10px; }
-        .btn-new { background: #333; color: #fff; margin-bottom: 15px; width: 100%; }
-        .btn-download { background: #333; color: #fff; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -99,51 +82,62 @@
         </h1>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('oracle')">Oracle Requests</button>
-            <button class="tab-btn" onclick="switchTab('write')">Manage Insights (Eye)</button>
+            <button class="tab-btn active" onclick="switchTab('gate')">Gate of Gnosis (Entry)</button>
+            <button class="tab-btn" onclick="switchTab('oracle')">Oracle Altar (Prophecy)</button>
+            <button class="tab-btn" onclick="switchTab('write')">Equilibrium Eye</button>
         </div>
 
-        <div id="tab-oracle" class="tab-content active">
+        <div id="tab-gate" class="tab-content active">
             <div class="dashboard">
-                <div class="list-panel" id="requestList"><div>Loading...</div></div>
-                <div class="detail-panel" id="detailPanel" style="display:none;">
+                <div class="list-panel" id="gateList"><div>Loading...</div></div>
+                <div class="detail-panel" id="gateDetail" style="display:none;">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <span class="label">Entry Request</span>
+                        <div class="wallet-box" onclick="copyText('g-wallet')" title="Click to Copy">
+                            <span class="label" style="color: #A5C9E1;">💳 Wallet Address</span>
+                            <div id="g-wallet" style="font-size: 16px; word-break: break-all; color: #fff;"></div>
+                        </div>
+                        <div class="info-row"><span class="label">Requested At</span><div class="value" id="g-date"></div></div>
+                    </div>
+
+                    <hr style="border-color:#333; margin: 30px 0;">
+
+                    <div style="background: #191919; padding: 15px; border-radius: 8px; border: 1px solid #333;">
+                        <label style="color: #A5C9E1; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="gateVerifyCheck" onchange="toggleGateBtn()"> 
+                            ✅ I have verified this Wallet on OpenSea.
+                        </label>
+                        <button id="btnEntryApprove" class="btn-grant" onclick="approveEntry()">⚡ ASSIGN NUMBER & OPEN GATE</button>
+                        <button class="btn-reject" onclick="rejectEntry()">⛔ REJECT (Non-Holder)</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-oracle" class="tab-content">
+            <div class="dashboard">
+                <div class="list-panel" id="oracleList"><div>Loading...</div></div>
+                <div class="detail-panel" id="oracleDetail" style="display:none;">
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span class="label">Current Status</span>
-                        <div id="d-no" style="font-size: 24px; color: #A5C9E1; font-weight: bold;">No. ????</div>
+                        <span class="label">Guardian Status</span>
+                        <div id="o-no" style="font-size: 24px; color: #51cf66; font-weight: bold;">No. ????</div>
                     </div>
 
-                    <div class="wallet-box" onclick="copyWallet()" title="Click to Copy">
-                        <span class="label" style="color: #A5C9E1; margin-bottom: 5px;">💳 Wallet Address (Click to Copy)</span>
-                        <div id="d-wallet" style="font-size: 16px; word-break: break-all; color: #fff;"></div>
-                    </div>
-
-                    <div class="info-row"><span class="label">Basic Info</span><div class="value" id="d-basic"></div></div>
-                    <div class="info-row"><span class="label">Contact</span><div class="value" id="d-contact"></div></div>
-                    <div class="info-row"><span class="label">Address</span><div class="value" id="d-address" style="color:#ffae00;"></div></div>
+                    <div class="info-row"><span class="label">Basic Info</span><div class="value" id="o-basic"></div></div>
                     
-                    <div class="info-row"><span class="label">Sovereign Task</span><div class="value box" id="d-task"></div></div>
-                    <div class="info-row"><span class="label">Vision 2030</span><div class="value box" id="d-vision"></div></div>
+                    <div class="info-row"><span class="label">Contact (Phone)</span><div class="value" id="o-phone"></div></div>
+                    <div class="info-row"><span class="label">Address (Final)</span><div class="value" id="o-address" style="color:#ffae00;"></div></div>
+                    
+                    <div class="info-row"><span class="label">Sovereign Task</span><div class="value box" id="o-task"></div></div>
+                    <div class="info-row"><span class="label">Vision 2030</span><div class="value box" id="o-vision"></div></div>
                     
                     <hr style="border-color:#333; margin: 30px 0;">
                     
-                    <div id="grantSection">
-                        <div class="info-row"><span class="label">Oracle Message</span><textarea id="oracleInput" placeholder="Write the prophecy..."></textarea></div>
-                        
-                        <div class="verify-section">
-                            <label class="verify-label">
-                                <input type="checkbox" id="verifyCheck" onchange="toggleGrantBtn()"> 
-                                ✅ I have verified this Wallet on OpenSea.
-                            </label>
-                            <button id="btnGrant" class="btn-grant" onclick="grantProphecy()">⚡ ASSIGN NUMBER & GRANT</button>
-                        </div>
-                    </div>
-                    
-                    <div id="grantedInfo" style="display:none; text-align: center; margin-top: 20px; color: #51cf66;">
-                        <h3>ALREADY GRANTED</h3>
-                        <p>Message updated if you click again.</p>
-                        <button class="btn-grant active" onclick="updateMessageOnly()">Update Message Only</button>
-                    </div>
+                    <div class="info-row"><span class="label">Oracle Message</span><textarea id="oracleMsgInput" placeholder="Write the prophecy..."></textarea></div>
+                    <button class="btn-grant active" onclick="grantProphecy()">⚡ GRANT PROPHECY</button>
 
                 </div>
             </div>
@@ -152,25 +146,26 @@
         <div id="tab-write" class="tab-content">
             <div class="dashboard">
                 <div class="list-panel">
-                    <button class="btn-new" onclick="resetPostForm()">+ Write New Post</button>
+                    <button class="btn-new" onclick="resetPostForm()" style="background:#333; width:100%; color:#fff; margin-bottom:10px;">+ Write New Post</button>
                     <div id="postListPanel">Loading Posts...</div>
                 </div>
                 <div class="detail-panel">
                     <div class="info-row"><span class="label">Title</span><input type="text" id="postTitle" placeholder="Title"></div>
                     <div class="info-row"><span class="label">Date</span><input type="date" id="postDate"></div>
+                    <div class="info-row"><span class="label">Image URL (Optional)</span><input type="text" id="postImage" placeholder="https://..."></div>
                     <div class="info-row"><span class="label">Content</span><textarea id="postContent" class="write-textarea" placeholder="Content..."></textarea></div>
                     
                     <button id="btnSavePost" class="btn-grant active" onclick="savePost()">💾 SAVE POST</button>
-                    <button id="btnDelPost" class="btn-del" onclick="deletePost()" style="display:none;">🗑 DELETE</button>
+                    <button id="btnDelPost" class="btn-reject" onclick="deletePost()" style="display:none; width:auto; float:right;">🗑 DELETE</button>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        // ✨ runTransaction 추가됨
-        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, setDoc, addDoc, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy, setDoc, addDoc, deleteDoc, runTransaction, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
@@ -185,12 +180,13 @@
         const db = getFirestore(app);
 
         // 🔒 관리자 인증
-        window.checkAdmin = async function() {
+        window.checkAdmin = function() {
             const input = document.getElementById('adminInput').value.trim().toUpperCase();
             if (input === "CHOSENDLTMDRN") {
                 document.getElementById('lockScreen').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'block';
-                loadRequests(); 
+                loadGateList(); 
+                loadOracleList(); 
                 loadInsightPosts(); 
             } else {
                 alert("ACCESS DENIED");
@@ -198,7 +194,6 @@
             }
         };
 
-        // 탭 전환
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -206,166 +201,160 @@
             event.target.classList.add('active');
         }
 
-        // ==========================
-        // 🔮 1. Oracle Logic
-        // ==========================
-        let allRequests = [];
-        let currentOracleId = null;
+        window.copyText = function(id) {
+            const txt = document.getElementById(id).innerText;
+            if(txt) navigator.clipboard.writeText(txt).then(() => alert("Copied!"));
+        }
 
-        async function loadRequests() {
-            const listPanel = document.getElementById('requestList');
+        // ==========================
+        // 🚪 Tab 1: Gate of Gnosis (Entry)
+        // ==========================
+        let gateRequests = [];
+        let currentGateId = null;
+
+        async function loadGateList() {
+            const listPanel = document.getElementById('gateList');
             listPanel.innerHTML = 'Loading...';
-            const q = query(collection(db, "oracle_requests"), orderBy("timestamp", "desc"));
+            // pending_entry 상태인 것만 불러옴
+            const q = query(collection(db, "oracle_requests"), where("status", "==", "pending_entry"));
             const snapshot = await getDocs(q);
-            allRequests = [];
+            gateRequests = [];
             listPanel.innerHTML = '';
+            
+            if(snapshot.empty) { listPanel.innerHTML = '<div style="padding:10px; color:#666;">No Pending Requests</div>'; return; }
+
             snapshot.forEach(doc => {
-                const data = doc.data(); data.id = doc.id; allRequests.push(data);
+                const data = doc.data(); data.id = doc.id; gateRequests.push(data);
                 const div = document.createElement('div');
-                div.className = `request-item ${data.id === currentOracleId ? 'active' : ''}`;
-                div.onclick = () => selectRequest(data.id);
-                // 번호가 있으면 표시, 없으면 'NEW'
-                const noDisplay = data.guardian_id ? `No. ${data.guardian_id}` : `[NEW]`;
-                const statusBadge = data.status === 'granted' ? `<span class="badge granted">DONE</span>` : `<span class="badge pending">WAIT</span>`;
-                div.innerHTML = `<div><strong>${noDisplay}</strong><div style="font-size:12px; color:#888;">${new Date(data.timestamp).toLocaleDateString()}</div></div>${statusBadge}`;
+                div.className = `request-item ${data.id === currentGateId ? 'active' : ''}`;
+                div.onclick = () => selectGateRequest(data.id);
+                // 지갑 주소 앞뒤만 보여주기
+                const shortWallet = data.wallet_address.substring(0,6) + "..." + data.wallet_address.substring(38);
+                div.innerHTML = `<div><strong>${shortWallet}</strong><div style="font-size:12px; color:#888;">${new Date(data.entry_requested_at).toLocaleDateString()}</div></div><span class="badge new">NEW</span>`;
                 listPanel.appendChild(div);
             });
         }
 
-        window.selectRequest = function(id) {
-            currentOracleId = id;
-            const data = allRequests.find(r => r.id === id);
-            if(!data) return;
-            document.getElementById('detailPanel').style.display = 'block';
+        window.selectGateRequest = function(id) {
+            currentGateId = id;
+            const data = gateRequests.find(r => r.id === id);
+            document.getElementById('gateDetail').style.display = 'block';
+            document.getElementById('g-wallet').innerText = data.wallet_address;
+            document.getElementById('g-date').innerText = new Date(data.entry_requested_at).toLocaleString();
             
-            // 번호 표시
-            document.getElementById('d-no').innerText = data.guardian_id ? `No. ${data.guardian_id}` : `Not Assigned`;
-            document.getElementById('d-no').style.color = data.guardian_id ? "#51cf66" : "#A5C9E1";
-
-            // 지갑 및 정보
-            document.getElementById('d-wallet').innerText = data.wallet_address || "No Wallet Info";
-            document.getElementById('d-contact').innerText = data.phone || "No Phone";
-            
-            const addrDisplay = typeof data.address === 'object' ? Object.values(data.address).join(', ') : data.address;
-            document.getElementById('d-basic').innerText = `${data.birth_date.year}.${data.birth_date.month}.${data.birth_date.day} / ${data.birth_time} / ${data.nationality}`;
-            document.getElementById('d-task').innerText = data.sovereign_task;
-            document.getElementById('d-vision').innerText = data.vision_2030;
-            document.getElementById('d-address').innerText = addrDisplay;
-            document.getElementById('oracleInput').value = data.oracle_message || '';
-
-            // 승인 상태에 따른 UI 제어
-            if(data.status === 'granted') {
-                document.getElementById('grantSection').style.display = 'none';
-                document.getElementById('grantedInfo').style.display = 'block';
-            } else {
-                document.getElementById('grantSection').style.display = 'block';
-                document.getElementById('grantedInfo').style.display = 'none';
-                // 체크박스 초기화
-                document.getElementById('verifyCheck').checked = false;
-                toggleGrantBtn();
-            }
-            loadRequests(); // 리스트 하이라이트 갱신
+            // 체크박스 초기화
+            document.getElementById('gateVerifyCheck').checked = false;
+            toggleGateBtn();
         }
 
-        // 지갑주소 복사 기능
-        window.copyWallet = function() {
-            const walletText = document.getElementById('d-wallet').innerText;
-            if(walletText) {
-                navigator.clipboard.writeText(walletText).then(() => {
-                    alert("Wallet Address Copied!");
-                });
-            }
+        window.toggleGateBtn = function() {
+            const isChecked = document.getElementById('gateVerifyCheck').checked;
+            const btn = document.getElementById('btnEntryApprove');
+            if(isChecked) btn.classList.add('active'); else btn.classList.remove('active');
         }
 
-        // 체크박스에 따라 버튼 활성화
-        window.toggleGrantBtn = function() {
-            const isChecked = document.getElementById('verifyCheck').checked;
-            const btn = document.getElementById('btnGrant');
-            if(isChecked) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        }
-
-        // 🔥 핵심: 승인 및 번호 부여 (Transaction)
-        window.grantProphecy = async function() {
-            if(!currentOracleId || !document.getElementById('oracleInput').value) return alert("Write Oracle Message.");
-            
-            if(!confirm("Are you sure? This will ASSIGN a Guardian Number permanently.")) return;
+        // 🔥 입장 승인 (번호 부여)
+        window.approveEntry = async function() {
+            if(!currentGateId) return;
+            if(!confirm("Approve Entry & Assign Number?")) return;
 
             try {
                 await runTransaction(db, async (transaction) => {
-                    // 1. 카운터 가져오기 (가디언 숫자)
                     const counterRef = doc(db, "system_settings", "guardian_counter");
                     const counterSnap = await transaction.get(counterRef);
-                    
                     let newId = 1;
-                    if (counterSnap.exists()) {
-                        newId = counterSnap.data().current_count + 1;
-                    }
-
-                    // 2. 현재 요청 문서 확인 (이미 번호가 있는지 방어)
-                    const reqRef = doc(db, "oracle_requests", currentOracleId);
-                    const reqSnap = await transaction.get(reqRef);
-                    if (reqSnap.data().guardian_id) {
-                        throw "Error: This user already has a number.";
-                    }
-
-                    // 3. 업데이트 (카운터 증가 + 사용자에게 번호 부여)
+                    if (counterSnap.exists()) { newId = counterSnap.data().current_count + 1; }
+                    
+                    const reqRef = doc(db, "oracle_requests", currentGateId);
                     transaction.set(counterRef, { current_count: newId }, { merge: true });
                     transaction.update(reqRef, {
                         guardian_id: newId,
-                        oracle_message: document.getElementById('oracleInput').value,
-                        status: 'granted',
-                        granted_at: new Date().toISOString()
+                        status: 'entry_approved', // 1단계 통과
+                        approved_at: new Date().toISOString()
                     });
                 });
-
-                alert("GRANTED. Number Assigned.");
-                selectRequest(currentOracleId); // 화면 갱신
-
-            } catch (error) {
-                console.error(error);
-                alert("Error: " + error);
-            }
+                alert("Gate Opened. Number Assigned.");
+                document.getElementById('gateDetail').style.display = 'none';
+                loadGateList(); // 목록 갱신
+            } catch (e) { alert("Error: " + e); }
         }
 
-        // 이미 승인된 사람 메시지만 수정
-        window.updateMessageOnly = async function() {
-            if(!confirm("Update message only?")) return;
-            await updateDoc(doc(db, "oracle_requests", currentOracleId), {
-                oracle_message: document.getElementById('oracleInput').value
-            });
-            alert("Message Updated.");
+        // 입장 거절
+        window.rejectEntry = async function() {
+            if(!currentGateId) return;
+            if(!confirm("Reject this wallet PERMANENTLY?")) return;
+            await updateDoc(doc(db, "oracle_requests", currentGateId), { status: 'rejected' });
+            alert("Rejected.");
+            document.getElementById('gateDetail').style.display = 'none';
+            loadGateList();
         }
 
-        window.downloadCSV = function() {
-            if(allRequests.length === 0) return alert("No data.");
-            const sorted = [...allRequests].sort((a, b) => (a.guardian_id || 9999) - (b.guardian_id || 9999));
-            let csv = "data:text/csv;charset=utf-8,\uFEFFNo,Wallet,Phone,Nationality,Address,Task,Vision\n";
-            sorted.forEach(row => {
-                let addrStr = row.address;
-                if (typeof row.address === 'object') {
-                    addrStr = `${row.address.street}, ${row.address.city}, ${row.address.state}, ${row.address.zip}, ${row.address.country}`;
-                }
-                const addr = `"${(addrStr || '').replace(/"/g, '""')}"`;
-                const task = `"${(row.sovereign_task || '').replace(/"/g, '""')}"`;
-                const vision = `"${(row.vision_2030 || '').replace(/"/g, '""')}"`;
-                const wallet = row.wallet_address || '';
-                const phone = row.phone || '';
-                
-                csv += `${row.guardian_id || 'Pending'},${wallet},${phone},${row.nationality},${addr},${task},${vision}\n`;
-            });
-            const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "guardian_list.csv"; link.click();
-        }
 
         // ==========================
-        // 👁️ 2. Insight (Post) Logic (기존 동일)
+        // 🔮 Tab 2: Oracle Altar (Prophecy)
+        // ==========================
+        let oracleRequests = [];
+        let currentOracleId = null;
+
+        async function loadOracleList() {
+            const listPanel = document.getElementById('oracleList');
+            listPanel.innerHTML = 'Loading...';
+            // oracle_submitted (폼 제출됨) 상태만 불러옴 (이미 번호 있음)
+            const q = query(collection(db, "oracle_requests"), where("status", "==", "oracle_submitted"));
+            const snapshot = await getDocs(q);
+            oracleRequests = [];
+            listPanel.innerHTML = '';
+
+            if(snapshot.empty) { listPanel.innerHTML = '<div style="padding:10px; color:#666;">No Pending Oracles</div>'; return; }
+
+            snapshot.forEach(doc => {
+                const data = doc.data(); data.id = doc.id; oracleRequests.push(data);
+                const div = document.createElement('div');
+                div.className = `request-item ${data.id === currentOracleId ? 'active' : ''}`;
+                div.onclick = () => selectOracleRequest(data.id);
+                div.innerHTML = `<div><strong>No. ${data.guardian_id}</strong><div style="font-size:12px; color:#888;">Submitted</div></div><span class="badge pending">WAIT</span>`;
+                listPanel.appendChild(div);
+            });
+        }
+
+        window.selectOracleRequest = function(id) {
+            currentOracleId = id;
+            const data = oracleRequests.find(r => r.id === id);
+            document.getElementById('oracleDetail').style.display = 'block';
+            
+            document.getElementById('o-no').innerText = `No. ${String(data.guardian_id).padStart(4,'0')}`;
+            document.getElementById('o-basic').innerText = `${data.birth_date.year}.${data.birth_date.month}.${data.birth_date.day} / ${data.birth_time} / ${data.nationality}`;
+            document.getElementById('o-phone').innerText = data.phone;
+            
+            const addrDisplay = typeof data.address === 'object' ? Object.values(data.address).join(', ') : data.address;
+            document.getElementById('o-address').innerText = addrDisplay;
+            
+            document.getElementById('o-task').innerText = data.sovereign_task;
+            document.getElementById('o-vision').innerText = data.vision_2030;
+            document.getElementById('oracleMsgInput').value = '';
+        }
+
+        // 신탁 하사
+        window.grantProphecy = async function() {
+            if(!currentOracleId || !document.getElementById('oracleMsgInput').value) return alert("Write Oracle Message.");
+            if(!confirm("Grant Prophecy?")) return;
+
+            await updateDoc(doc(db, "oracle_requests", currentOracleId), {
+                oracle_message: document.getElementById('oracleMsgInput').value,
+                status: 'oracle_granted', // 2단계 통과 (최종 완료)
+                granted_at: new Date().toISOString()
+            });
+            alert("Prophecy Granted.");
+            document.getElementById('oracleDetail').style.display = 'none';
+            loadOracleList();
+        }
+
+
+        // ==========================
+        // 👁️ Tab 3: Equilibrium Eye (Write)
         // ==========================
         let allPosts = [];
-        let currentPostId = null; 
-
+        let currentPostId = null;
         document.getElementById('postDate').valueAsDate = new Date();
 
         async function loadInsightPosts() {
@@ -389,6 +378,7 @@
             const data = allPosts.find(p => p.id === id);
             document.getElementById('postTitle').value = data.title;
             document.getElementById('postDate').value = data.date;
+            document.getElementById('postImage').value = data.image_url || ""; // 이미지 URL 불러오기
             document.getElementById('postContent').value = data.content;
             document.getElementById('btnSavePost').innerText = "🔄 UPDATE POST";
             document.getElementById('btnDelPost').style.display = "block";
@@ -399,6 +389,7 @@
             currentPostId = null;
             document.getElementById('postTitle').value = "";
             document.getElementById('postDate').valueAsDate = new Date();
+            document.getElementById('postImage').value = "";
             document.getElementById('postContent').value = "";
             document.getElementById('btnSavePost').innerText = "💾 SAVE NEW POST";
             document.getElementById('btnDelPost').style.display = "none";
@@ -408,16 +399,22 @@
         window.savePost = async function() {
             const title = document.getElementById('postTitle').value;
             const date = document.getElementById('postDate').value;
+            const image_url = document.getElementById('postImage').value;
             const content = document.getElementById('postContent').value;
-            if(!title || !content) return alert("Fill all fields.");
+
+            if(!title || !content) return alert("Fill Title & Content.");
+
+            const postData = { title, date, image_url, content };
+
             if(currentPostId) {
                 if(confirm("Update this post?")) {
-                    await updateDoc(doc(db, "equilibrium_posts", currentPostId), { title, date, content });
+                    await updateDoc(doc(db, "equilibrium_posts", currentPostId), postData);
                     alert("Updated."); loadInsightPosts();
                 }
             } else {
                 if(confirm("Upload new post?")) {
-                    await addDoc(collection(db, "equilibrium_posts"), { title, date, content, timestamp: new Date().toISOString() });
+                    postData.timestamp = new Date().toISOString();
+                    await addDoc(collection(db, "equilibrium_posts"), postData);
                     alert("Uploaded."); resetPostForm(); loadInsightPosts();
                 }
             }
@@ -429,6 +426,11 @@
                 await deleteDoc(doc(db, "equilibrium_posts", currentPostId));
                 alert("Deleted."); resetPostForm(); loadInsightPosts();
             }
+        }
+
+        window.downloadCSV = function() {
+            // (CSV 다운로드 로직은 나중에 필요하면 전체 데이터 조회해서 구현)
+            alert("CSV download for specific tab not implemented yet.");
         }
     </script>
 </body>

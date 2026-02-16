@@ -12,104 +12,45 @@
             --border: #333;
             --silver-mid: #A5C9E1;
             --silver-light: #FFFFFF;
-            --blue-silver-dark: #708090;
-            --pure-silver: #D3D3D3;
             --warning: #ff6b6b;
             --header-h: 80px;
         }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--pure-silver);
-            font-family: 'Pirata One', system-ui;
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
-            z-index: 4000; background-color: rgba(19, 19, 20, 0.95);
-            display: flex; align-items: center; justify-content: center;
-            padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            box-sizing: border-box;
-        }
-        .luster-sky-silver { background: linear-gradient(to bottom, var(--silver-light) 0%, var(--silver-mid) 45%, var(--blue-silver-dark) 50%, var(--silver-mid) 55%, var(--silver-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logo { position: absolute; left: 50%; transform: translateX(-50%); font-size: 32px; letter-spacing: 2px; text-align: center; white-space: nowrap; }
+        body { background-color: var(--bg-color); color: #D3D3D3; font-family: 'Pirata One', system-ui; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        header { position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h); z-index: 4000; background-color: rgba(19, 19, 20, 0.95); display: flex; align-items: center; justify-content: center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); font-size: 32px; letter-spacing: 2px; }
         .guardian-badge { position: absolute; left: 20px; color: var(--silver-mid); font-size: 16px; }
         .menu-btn { position: absolute; right: 20px; background: none; border: none; cursor: pointer; padding: 10px; }
-        .menu-btn span { display: block; width: 24px; height: 3px; background-color: #FFFFFF; margin: 5px 0; box-shadow: 0 0 8px rgba(255, 255, 255, 0.6); border-radius: 2px; }
+        .menu-btn span { display: block; width: 24px; height: 3px; background-color: #fff; margin: 5px 0; }
         .compact-menu { position: fixed; top: 70px; right: 20px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; z-index: 4500; }
         .compact-menu.active { display: block; }
-        .compact-menu a, .compact-menu button { display: block; text-decoration: none; font-size: 18px; padding: 10px 15px; color: var(--pure-silver); background: none; border: none; text-align: left; width: 100%; cursor: pointer; }
+        .compact-menu a, .compact-menu button { display: block; padding: 10px 15px; color: #D3D3D3; background: none; border: none; text-align: left; width: 100%; cursor: pointer; font-size: 18px; text-decoration: none; }
 
-        .altar-container { 
-            width: 100%; max-width: 500px; 
-            margin-top: 120px; 
-            padding: 20px; box-sizing: border-box; 
-            position: relative; 
-            flex: 1; 
-            padding-bottom: 50px; 
-        }
+        .altar-container { width: 100%; max-width: 500px; margin-top: 120px; padding: 20px; box-sizing: border-box; padding-bottom: 50px; }
+        h2 { font-size: 40px; margin-bottom: 20px; text-align: center; color: var(--silver-mid); }
         
-        .luster-text { background: linear-gradient(to bottom, var(--silver-light), var(--silver-mid), var(--silver-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
-        h2 { font-size: 40px; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
+        .warning-text { color: var(--warning); font-size: 15px; text-align: center; margin-bottom: 30px; padding: 15px; border: 1px solid var(--warning); border-radius: 8px; background: rgba(255, 107, 107, 0.05); line-height: 1.6; }
         
-        /* ✨ 경고문 스타일 강화 */
-        .warning-text { 
-            color: var(--warning); font-size: 15px; text-align: center; 
-            margin-bottom: 30px; letter-spacing: 1px; 
-            border: 1px solid var(--warning); padding: 15px; 
-            border-radius: 8px; background: rgba(255, 107, 107, 0.05); 
-            line-height: 1.6; 
-        }
+        .field-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; color: var(--silver-mid); }
+        input, textarea, select { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: #fff; font-family: 'Pirata One'; font-size: 18px; outline: none; box-sizing: border-box; }
+        .submit-btn { background: var(--silver-mid); color: #000; border: none; border-radius: 30px; padding: 15px; font-size: 22px; width: 100%; cursor: pointer; font-family: 'Pirata One'; margin-top: 20px; }
         
-        .oracle-form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
-        .field-group { display: flex; flex-direction: column; gap: 8px; }
-        .birth-select-wrapper { display: flex; gap: 10px; }
-        .birth-select-wrapper select { flex: 1; }
-        label { font-size: 16px; color: var(--silver-mid); margin-left: 5px; }
-        input, textarea, select { background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--pure-silver); font-family: 'Pirata One', cursive; font-size: 18px; outline: none; transition: 0.3s; width: 100%; box-sizing: border-box; }
-        input:focus, textarea:focus, select:focus { border-color: var(--silver-mid); background: rgba(255, 255, 255, 0.05); }
-        textarea { height: 120px; resize: none; }
-        .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .status-section { display: none; text-align: center; border: 1px solid var(--border); padding: 30px 20px; border-radius: 20px; background: var(--card-bg); animation: fadeIn 1s; margin-bottom: 30px; }
+        .prophecy-text { font-size: 20px; color: #fff; white-space: pre-wrap; line-height: 1.6; margin: 20px 0; border-left: 3px solid var(--silver-mid); padding-left: 15px; text-align: left; }
         
-        .phone-input-group { display: flex; gap: 10px; }
-        .phone-input-group select { width: 35%; min-width: 100px; } 
-        .phone-input-group input { flex: 1; }
-
-        .submit-btn { background-color: var(--silver-mid); color: var(--bg-color); border: none; border-radius: 30px; padding: 18px; font-family: 'Pirata One', cursive; font-size: 22px; cursor: pointer; transition: 0.4s; margin-top: 20px; width: 100%; }
-        .submit-btn:hover { background-color: var(--silver-light); transform: translateY(-3px); }
-        
-        .status-section { display: none; text-align: center; border: 1px solid var(--border); padding: 40px 20px; border-radius: 20px; background: var(--card-bg); animation: fadeIn 1s; }
-        .reveal-btn { background: transparent; border: 1px solid var(--silver-mid); color: var(--silver-mid); padding: 15px 30px; font-size: 20px; border-radius: 30px; cursor: pointer; margin-top: 20px; font-family: 'Pirata One'; transition: 0.3s; animation: pulse 2s infinite; }
-        .reveal-btn:hover { background: var(--silver-mid); color: #000; box-shadow: 0 0 20px var(--silver-mid); }
-        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(165, 201, 225, 0);} 100% {box-shadow: 0 0 0 0 rgba(165, 201, 225, 0);} }
-        
-        .address-update-box { margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; display: none; }
+        .final-actions { display: none; margin-top: 40px; border-top: 1px solid #333; padding-top: 30px; }
         .small-btn { background: #333; color: #ccc; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-family: 'Pirata One'; margin-top: 10px; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        .modal-content { background: #191919; border: 1px solid var(--silver-mid); padding: 30px; border-radius: 15px; max-width: 85%; width: 400px; text-align: center; box-shadow: 0 0 30px rgba(165, 201, 225, 0.15); position: relative; }
-        .modal-title { font-size: 24px; color: var(--silver-light); margin-bottom: 15px; }
-        .modal-msg { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 25px; white-space: pre-wrap; }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
-        .modal-btn { padding: 12px 25px; border-radius: 25px; cursor: pointer; font-family: 'Pirata One'; font-size: 18px; border: none; }
-        .btn-cancel { background: #333; color: #fff; }
-        .btn-confirm { background: var(--silver-mid); color: #000; }
-        .close-modal { position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: #666; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        footer { text-align: center; padding: 30px; font-size: 12px; color: var(--pure-silver); opacity: 0.6; width: 100%; margin-top: auto; }
+        .eye-btn { background: var(--silver-mid); color: #000; width: 100%; padding: 15px; font-size: 20px; border-radius: 30px; margin-bottom: 20px; cursor: pointer; border: none; font-family: 'Pirata One'; }
 
-        @media (max-width: 768px) { .logo { font-size: 28px; } h2 { font-size: 32px; } .altar-container { margin-top: 100px; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <header>
         <div id="guardianIdDisplay" class="guardian-badge">No. ????</div>
-        <div class="logo luster-sky-silver">The Chosen</div>
+        <div class="logo">The Chosen</div>
         <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
         <div class="compact-menu" id="compactMenu">
             <a href="inner-sanctum.html">Back to Sanctum</a>
@@ -118,163 +59,72 @@
     </header>
 
     <div class="altar-container">
-        <h2 class="luster-text">The Oracle Altar</h2>
+        <h2>The Oracle Altar</h2>
 
         <div id="formSection">
             <div class="warning-text">
                 ⚠️ <strong>IRREVERSIBLE RITUAL</strong><br>
-                Once offered, your destiny (Birth, Task, Vision) CANNOT be altered.
-                Only the physical address remains mutable until 2029.<br><br>
-                
-                <span style="color: #ff4d4d; font-weight: bold; font-size: 16px;">
-                🚫 SOUL-BOUND ACTIVATION<br>
                 Submitting this form CONSUMES the utility of your NFT.<br>
-                Even if you sell the NFT later, the new owner CANNOT access this Oracle.<br>
-                DO NOT SUBMIT if you intend to trade.
-                </span>
+                Once offered, your Sovereign Task cannot be altered.
             </div>
-
-            <form id="oracleForm" class="oracle-form">
+            <form id="oracleForm">
                 <div class="field-group">
                     <label>Date of Birth</label>
-                    <div class="birth-select-wrapper">
+                    <div style="display:flex; gap:10px;">
                         <select id="birthYear" required><option value="" disabled selected>Year</option></select>
                         <select id="birthMonth" required><option value="" disabled selected>Month</option></select>
                         <select id="birthDay" required><option value="" disabled selected>Day</option></select>
                     </div>
                 </div>
-                <div class="field-group">
-                    <label>Time of Birth</label>
-                    <select id="birthTime" required>
-                        <option value="" disabled selected>Select Time</option>
-                        <option value="unknown">Unknown</option>
-                        <option value="23:00-00:59">23:00 ~ 00:59 (Rat)</option>
-                        <option value="01:00-02:59">01:00 ~ 02:59 (Ox)</option>
-                        <option value="03:00-04:59">03:00 ~ 04:59 (Tiger)</option>
-                        <option value="05:00-06:59">05:00 ~ 06:59 (Rabbit)</option>
-                        <option value="07:00-08:59">07:00 ~ 08:59 (Dragon)</option>
-                        <option value="09:00-10:59">09:00 ~ 10:59 (Snake)</option>
-                        <option value="11:00-12:59">11:00 ~ 12:59 (Horse)</option>
-                        <option value="13:00-14:59">13:00 ~ 14:59 (Sheep)</option>
-                        <option value="15:00-16:59">15:00 ~ 16:59 (Monkey)</option>
-                        <option value="17:00-18:59">17:00 ~ 18:59 (Rooster)</option>
-                        <option value="19:00-20:59">19:00 ~ 20:59 (Dog)</option>
-                        <option value="21:00-22:59">21:00 ~ 22:59 (Pig)</option>
-                    </select>
-                </div>
-                <div class="field-group">
-                    <label>Nationality</label>
-                    <input type="text" id="nationality" placeholder="Your Origin (Country)" required>
-                </div>
+                <div class="field-group"><label>Time of Birth</label><select id="birthTime" required><option value="unknown">Unknown</option><option value="known">Specific Time (Select later)</option></select></div> <div class="field-group"><label>Nationality</label><input type="text" id="nationality" required></div>
                 
-                <div class="field-group">
-                    <label style="color: #A5C9E1;">Wallet Address (Holder Verification)</label>
-                    <input type="text" id="walletAddress" placeholder="0x..." required style="border-color: #A5C9E1; letter-spacing: 1px;">
-                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Must match the NFT holder address.</div>
-                </div>
-
-                <div class="field-group">
-                    <label>Sovereign Task</label>
-                    <textarea id="sovereignTask" placeholder="(Task, Path walked so far, Frustrations, Anything to resolve the Curse of Knowledge)" required></textarea>
-                </div>
-                <div class="field-group">
-                    <label>Vision of 2030</label>
-                    <textarea id="vision" maxlength="70" placeholder="English only (Max 70 chars including spaces)..." required></textarea>
-                </div>
+                <div class="field-group"><label>Sovereign Task (Your Burden)</label><textarea id="sovereignTask" style="height:120px;" required></textarea></div>
                 
-                <div class="field-group">
-                    <label style="color: var(--silver-light);">Physical Address (International Shipping)</label>
-                    <input type="text" id="addr_street" placeholder="Street Address" required>
-                    <div class="address-grid">
-                        <input type="text" id="addr_city" placeholder="City" required>
-                        <input type="text" id="addr_state" placeholder="State / Province" required>
-                    </div>
-                    <div class="address-grid">
-                        <input type="text" id="addr_zip" placeholder="Zip / Postal Code" required>
-                        <input type="text" id="addr_country" placeholder="Country" required>
-                    </div>
-                </div>
+                <div class="field-group"><label>Physical Address</label><input type="text" id="addr_full" placeholder="Full Address with ZipCode" required></div>
+                <div class="field-group"><label>Phone</label><input type="tel" id="phoneNumber" placeholder="+82 10-1234-5678" required></div>
 
-                <div class="field-group">
-                    <label>Phone Number (Mandatory)</label>
-                    <div class="phone-input-group">
-                        <select id="countryCode" required>
-                            <option value="+82">KR (+82)</option>
-                            <option value="+1">US/CA (+1)</option>
-                            <option value="+81">JP (+81)</option>
-                            <option value="+86">CN (+86)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+49">DE (+49)</option>
-                            <option value="+33">FR (+33)</option>
-                            <option value="+61">AU (+61)</option>
-                            <option value="+65">SG (+65)</option>
-                            <option value="+852">HK (+852)</option>
-                            <option value="+886">TW (+886)</option>
-                            <option value="">Other</option>
-                        </select>
-                        <input type="tel" id="phoneNumber" placeholder="10-1234-5678" required style="border-color: var(--silver-mid);">
-                    </div>
-                    <div style="font-size: 12px; color: #666; margin-top: 5px;">If 'Other', please include country code in the input box.</div>
-                </div>
-
-                <button type="button" class="submit-btn" onclick="preSubmitCheck()">Offer to Equilibrium</button>
+                <button type="button" class="submit-btn" onclick="submitTask()">Offer to Equilibrium</button>
             </form>
         </div>
 
         <div id="waitingSection" class="status-section">
-            <h3 class="luster-text">The Offering is Made.</h3>
-            <p>Your frequency is being analyzed by the Void.</p>
-            <p style="color: var(--silver-mid); margin-top: 20px;">Estimated Waiting Time: Within 7 Days</p>
+            <h3>Oracle Requested.</h3>
+            <p>Your frequency has been transmitted.</p>
+            <p style="color: var(--silver-mid); margin-top: 20px;">Expected Waiting Time: Within 5 Days</p>
+            <p id="submittedTime" style="color: #666; font-size: 14px; margin-top: 30px;"></p>
+        </div>
+
+        <div id="prophecySection" class="status-section">
+            <h3>The Oracle has Spoken.</h3>
+            <div id="oracleContent" class="prophecy-text"></div>
             
-            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
-                <p style="font-size: 16px; color: #ccc; margin-bottom: 15px;">While you wait, observe the world through the Eye.</p>
-                <button class="reveal-btn" onclick="location.href='eye-of-equilibrium.html'" style="font-size: 18px; padding: 12px 25px;">
-                    Enter Eye of Equilibrium
-                </button>
+            <div id="visionFormArea" style="margin-top: 40px; border-top: 1px solid #333; padding-top: 30px;">
+                <label style="color: var(--warning);">▼ Final Ritual: Time Capsule (English Only, 70 chars)</label>
+                <p style="font-size:14px; color:#888; margin-bottom:15px;">This will be engraved behind your Totem. Cannot be changed.</p>
+                <textarea id="visionInput" maxlength="70" placeholder="Write your vision for 2030..." style="height:80px;"></textarea>
+                <button class="submit-btn" onclick="submitVision()">Seal the Vision</button>
             </div>
         </div>
 
-        <div id="grantedSection" class="status-section">
-            <h3 class="luster-text" style="font-size: 32px;">The Oracle has Spoken.</h3>
-            <p>The Equilibrium has responded to your frequency.</p>
-            <button class="reveal-btn" onclick="openOracleModal()">Reveal the Prophecy</button>
-            <div style="margin-top: 30px;">
-                <button class="small-btn" onclick="location.href='eye-of-equilibrium.html'">Go to Eye of Equilibrium</button>
+        <div id="finalSection" class="status-section">
+            <h3>Ritual Complete.</h3>
+            <p>You have embraced the Gnosis.</p>
+            <button class="eye-btn" onclick="location.href='eye-of-equilibrium.html'">Enter Eye of Equilibrium</button>
+            
+            <div class="final-actions" style="display:block;">
+                <label>Update Contact Info (Until Aug 2029)</label>
+                <input type="text" id="updateAddressInput" placeholder="New Address / Phone">
+                <button class="small-btn" onclick="updateInfo()">Update Info</button>
             </div>
         </div>
 
-        <div id="addressUpdateSection" class="address-update-box">
-            <label>Update Physical Address (Until Aug 2029)</label>
-            <input type="text" id="updateAddressInput" placeholder="New Full Address">
-            <button class="small-btn" onclick="updateAddress()">Update Address</button>
-        </div>
     </div>
 
     <footer>© 2030 THE CHOSEN OFFICIAL</footer>
 
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 class="modal-title" style="color:var(--warning)">Final Confirmation</h3>
-            <p class="modal-msg">All contents CANNOT be modified after submission.<br><br>Only the address can be modified <strong>until the end of August 2029.</strong><br><br><span style="color:#ff6b6b; font-size:14px;">(We do NOT accept or collect email addresses.)</span></p>
-            <div class="modal-btns">
-                <button class="modal-btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
-                <button class="modal-btn btn-confirm" onclick="realSubmit()">Submit</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="oracleModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeOracleModal()">&times;</span>
-            <h3 class="luster-text">Prophecy</h3>
-            <div id="oracleContent" class="modal-msg" style="color:var(--silver-light)"></div>
-            <div style="font-size: 14px; color: #555; margin-top: 30px;">The Chosen Oracle</div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2Od5T6K7YwNBb3dvY5jku3T_ELq_gi7M",
@@ -288,169 +138,115 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const userHash = localStorage.getItem('user_code') ? await digestMessage(localStorage.getItem('user_code')) : null;
+        if (localStorage.getItem('chosen_access') !== 'granted') window.location.replace("index.html");
 
-        async function digestMessage(message) {
-            const msgUint8 = new TextEncoder().encode(message.toUpperCase());
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        window.onload = async function() {
-            if (localStorage.getItem('chosen_access') !== 'granted' || !userHash) {
-                alert("Unauthorized Access.");
-                window.location.replace("index.html");
-                return;
-            }
-            const storedID = localStorage.getItem('my_guardian_id');
-            const displayID = storedID ? String(storedID).padStart(4, '0') : "????";
-            document.getElementById('guardianIdDisplay').innerText = "No. " + displayID;
-
+        window.onload = function() {
+            const gid = localStorage.getItem('my_guardian_id') || "????";
+            document.getElementById('guardianIdDisplay').innerText = "No. " + String(gid).padStart(4, '0');
             initDateSelects();
-            checkOracleStatus();
+            checkStatus();
         };
 
         window.toggleMenu = function() { document.getElementById('compactMenu').classList.toggle('active'); }
         window.logout = function() { localStorage.clear(); window.location.replace("index.html"); }
 
-        function checkOracleStatus() {
-            const docRef = doc(db, "oracle_requests", userHash);
+        function checkStatus() {
+            const wallet = localStorage.getItem('my_wallet_id');
+            if(!wallet) { alert("Login Error"); window.location.replace("index.html"); return; }
+
+            const docRef = doc(db, "oracle_requests", wallet);
             onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
+                if(docSnap.exists()) {
                     const data = docSnap.data();
-                    localStorage.setItem('oracle_submitted', 'true');
-                    if(data.guardian_id) {
-                        localStorage.setItem('my_guardian_id', data.guardian_id);
-                        document.getElementById('guardianIdDisplay').innerText = "No. " + String(data.guardian_id).padStart(4, '0');
-                    }
-
-                    document.getElementById('formSection').style.display = 'none';
-                    document.getElementById('addressUpdateSection').style.display = 'block';
                     
-                    const addrStr = typeof data.address === 'object' 
-                        ? `${data.address.street}, ${data.address.city}, ${data.address.state}, ${data.address.zip}, ${data.address.country}`
-                        : data.address;
-                    document.getElementById('updateAddressInput').value = addrStr;
-
-                    const waitingTitle = document.querySelector('#waitingSection h3');
-                    const waitingP = document.querySelector('#waitingSection p');
-                    
-                    if(data.status === 'granted' && data.guardian_id) {
-                        document.getElementById('waitingSection').style.display = 'none';
-                        document.getElementById('grantedSection').style.display = 'block';
-                        document.getElementById('oracleContent').innerText = data.oracle_message;
-                        document.querySelector('#grantedSection h3').innerHTML = `No. ${String(data.guardian_id).padStart(4,'0')}<br>The Oracle has Spoken.`;
-                    } else {
+                    // 1. 아직 오라클 제출 안함
+                    if(!data.sovereign_task) {
+                        document.getElementById('formSection').style.display = 'block';
+                    } 
+                    // 2. 제출함, 신탁 대기중
+                    else if(data.status === 'oracle_submitted') {
+                        document.getElementById('formSection').style.display = 'none';
                         document.getElementById('waitingSection').style.display = 'block';
-                        document.getElementById('grantedSection').style.display = 'none';
-                        waitingTitle.innerText = "The Offering is Made.";
-                        waitingP.innerText = "Wait for the Oracle's verification.";
+                        document.getElementById('submittedTime').innerText = "Submitted: " + new Date(data.submitted_at).toLocaleString();
                     }
-                } else {
-                    document.getElementById('formSection').style.display = 'block';
+                    // 3. 신탁 내려옴 (oracle_granted)
+                    else if(data.status === 'oracle_granted') {
+                        document.getElementById('formSection').style.display = 'none';
+                        document.getElementById('waitingSection').style.display = 'none';
+                        
+                        // 비전(타임캡슐)이 아직 없으면 -> 비전 작성창 보여줌
+                        if(!data.vision_2030) {
+                            document.getElementById('prophecySection').style.display = 'block';
+                            document.getElementById('oracleContent').innerText = data.oracle_message;
+                        } 
+                        // 비전까지 다 씀 -> 최종 화면
+                        else {
+                            document.getElementById('prophecySection').style.display = 'none'; // 혹은 신탁을 계속 보여주고 싶으면 block 유지
+                            document.getElementById('finalSection').style.display = 'block';
+                            // 최종 화면에서도 신탁을 다시 보고 싶다면 여기에 추가 가능
+                            document.getElementById('updateAddressInput').value = data.address;
+                        }
+                    }
                 }
             });
         }
 
-        window.preSubmitCheck = function() {
-            const form = document.getElementById('oracleForm');
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-            const vision = document.getElementById('vision').value;
-            const englishRegex = /^[A-Za-z0-9\s.,!?'"()-]*$/;
-            if (!englishRegex.test(vision)) { alert("Vision must be in English only."); return; }
-            const confirmModal = document.getElementById('confirmModal');
-            confirmModal.style.display = 'flex';
-            setTimeout(() => confirmModal.style.opacity = 1, 10);
-        }
-
-        window.realSubmit = async function() {
-            closeConfirmModal();
-            const btn = document.querySelector('.submit-btn');
-            btn.innerText = "Verifying & Offering...";
-            btn.disabled = true;
-
-            const wallet = document.getElementById('walletAddress').value.trim();
-            const addressObj = {
-                street: document.getElementById('addr_street').value,
-                city: document.getElementById('addr_city').value,
-                state: document.getElementById('addr_state').value,
-                zip: document.getElementById('addr_zip').value,
-                country: document.getElementById('addr_country').value
+        window.submitTask = async function() {
+            if(!confirm("Submit your Sovereign Task? This cannot be undone.")) return;
+            const wallet = localStorage.getItem('my_wallet_id');
+            
+            // 데이터 수집 (간소화)
+            const birth = { 
+                year: document.getElementById('birthYear').value, 
+                month: document.getElementById('birthMonth').value, 
+                day: document.getElementById('birthDay').value 
             };
-            const fullAddressStr = `${addressObj.street}, ${addressObj.city}, ${addressObj.state}, ${addressObj.zip}, ${addressObj.country}`;
-            const code = document.getElementById('countryCode').value;
-            const num = document.getElementById('phoneNumber').value;
-            const fullPhone = code ? `${code} ${num}` : num;
-
-            // 중복 지갑 체크
-            const q = query(collection(db, "oracle_requests"), where("wallet_address", "==", wallet));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                alert("ACCESS DENIED.\nThis Wallet Address has already submitted an offering.");
-                btn.innerText = "Offer to Equilibrium";
-                btn.disabled = false;
-                return;
-            }
-
-            const formData = {
-                guardian_id: null, // 매니저 승인 시 부여
-                birth_date: { year: document.getElementById('birthYear').value, month: document.getElementById('birthMonth').value, day: document.getElementById('birthDay').value },
-                birth_time: document.getElementById('birthTime').value,
+            
+            await updateDoc(doc(db, "oracle_requests", wallet), {
+                birth_date: birth,
                 nationality: document.getElementById('nationality').value,
                 sovereign_task: document.getElementById('sovereignTask').value,
-                vision_2030: document.getElementById('vision').value,
-                address: fullAddressStr, 
-                address_detail: addressObj, 
-                phone: fullPhone,
-                wallet_address: wallet,
-                status: 'pending',
-                timestamp: new Date().toISOString()
-            };
-
-            try {
-                await setDoc(doc(db, "oracle_requests", userHash), formData);
-                localStorage.setItem('oracle_submitted', 'true');
-                alert("Offering Accepted. Wait for verification.");
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Connection Error. Please try again.");
-                btn.innerText = "Offer to Equilibrium";
-                btn.disabled = false;
-            }
+                address: document.getElementById('addr_full').value,
+                phone: document.getElementById('phoneNumber').value,
+                status: 'oracle_submitted',
+                submitted_at: new Date().toISOString()
+            });
+            alert("Oracle Requested.");
         };
 
-        window.closeConfirmModal = function() { const modal = document.getElementById('confirmModal'); modal.style.opacity = 0; setTimeout(() => modal.style.display = 'none', 300); }
-        window.openOracleModal = function() { const modal = document.getElementById('oracleModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = 1, 10); }
-        window.closeOracleModal = function() { const modal = document.getElementById('oracleModal'); modal.style.opacity = 0; setTimeout(() => modal.style.display = 'none', 300); }
+        window.submitVision = async function() {
+            const vision = document.getElementById('visionInput').value;
+            const regex = /^[A-Za-z0-9\s.,!?'"()-]*$/;
+            if(!vision) return alert("Write your vision.");
+            if(!regex.test(vision)) return alert("English Only.");
+            
+            if(!confirm("Seal this Vision? (Cannot be changed)")) return;
+            
+            const wallet = localStorage.getItem('my_wallet_id');
+            await updateDoc(doc(db, "oracle_requests", wallet), {
+                vision_2030: vision,
+                vision_sealed_at: new Date().toISOString()
+            });
+            alert("Vision Sealed. The Eye is open.");
+        };
 
-        window.updateAddress = async function() {
-            const newAddr = document.getElementById('updateAddressInput').value;
-            if(!newAddr) return alert("Please enter an address.");
-            if(confirm("Update your physical address?")) {
-                try {
-                    const docRef = doc(db, "oracle_requests", userHash);
-                    await updateDoc(docRef, { address: newAddr });
-                    alert("Address Updated.");
-                } catch(e) { alert("Update Failed."); }
+        window.updateInfo = async function() {
+            const newInfo = document.getElementById('updateAddressInput').value;
+            if(!newInfo) return;
+            if(confirm("Update contact info?")) {
+                const wallet = localStorage.getItem('my_wallet_id');
+                await updateDoc(doc(db, "oracle_requests", wallet), { address: newInfo });
+                alert("Updated.");
             }
         };
 
         function initDateSelects() {
-            const yearSelect = document.getElementById('birthYear');
-            const monthSelect = document.getElementById('birthMonth');
-            const daySelect = document.getElementById('birthDay');
-            for (let i = 2026; i >= 1900; i--) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; yearSelect.appendChild(opt); }
-            for (let i = 1; i <= 12; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; monthSelect.appendChild(opt); }
-            function updateDays() {
-                const year = parseInt(yearSelect.value);
-                const month = parseInt(monthSelect.value);
-                if (!year || !month) return;
-                const lastDay = new Date(year, month, 0).getDate();
-                daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
-                for (let i = 1; i <= lastDay; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerHTML = i; daySelect.appendChild(opt); }
-            }
-            yearSelect.onchange = updateDays;
-            monthSelect.onchange = updateDays;
+            const y = document.getElementById('birthYear');
+            const m = document.getElementById('birthMonth');
+            const d = document.getElementById('birthDay');
+            for(let i=2026; i>=1900; i--) { let o=document.createElement('option'); o.text=i; y.add(o); }
+            for(let i=1; i<=12; i++) { let o=document.createElement('option'); o.text=i; m.add(o); }
+            for(let i=1; i<=31; i++) { let o=document.createElement('option'); o.text=i; d.add(o); }
         }
     </script>
 </body>

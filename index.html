@@ -28,13 +28,13 @@
             position: relative;
         }
 
-        /* 배경: 진리의 문 (흐릿하게 고정) */
+        /* ✨ 배경 수정: 흐림 정도 줄임 (8px -> 3px) */
         #bg-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
-            filter: blur(8px) brightness(0.6);
+            filter: blur(3px) brightness(0.5); /* 형태가 은은하게 보임 */
             z-index: -1;
-            transform: scale(1.1);
+            transform: scale(1.05); /* 테두리 잘림 방지 */
         }
 
         .container {
@@ -43,6 +43,8 @@
             z-index: 10;
             transition: opacity 0.5s;
             display: flex; flex-direction: column; align-items: center;
+            /* 타이머와의 간격을 위해 약간 위로 올림 */
+            margin-bottom: 50px; 
         }
 
         h1 {
@@ -102,6 +104,27 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); }
 
+        /* ✨ 2030 카운트다운 타이머 스타일 */
+        .timer-box {
+            margin-top: 20px; /* 로그인창 아래에 배치 */
+            text-align: center;
+            z-index: 10;
+            padding: 15px;
+            border-top: 1px solid rgba(165, 201, 225, 0.2);
+            width: 80%; max-width: 300px;
+        }
+        .timer-title {
+            font-size: 24px; color: var(--silver-mid); letter-spacing: 3px; margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .timer-days {
+            font-size: 32px; color: var(--silver-light); letter-spacing: 2px; font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .timer-hms {
+            font-size: 18px; color: var(--silver-dark); letter-spacing: 2px; margin-top: 2px;
+        }
+
         /* 상태 화면 (Pending / Welcome) */
         .status-overlay {
             display: none; flex-direction: column; align-items: center; gap: 20px;
@@ -127,13 +150,14 @@
 
         .smoke-out { animation: smokeFade 1.5s ease-out forwards; pointer-events: none; }
         @keyframes smokeFade {
-            0% { opacity: 1; transform: scale(1); filter: blur(0px); }
+            0% { opacity: 1; transform: scale(1); filter: blur(3px); }
             100% { opacity: 0; transform: scale(1.1); filter: blur(10px); }
         }
 
         @media (max-width: 768px) {
             h1 { font-size: 48px; margin-bottom: 30px; }
-            .container { width: 85%; }
+            .container { width: 85%; margin-bottom: 30px; }
+            .timer-box { width: 90%; }
         }
     </style>
 </head>
@@ -149,9 +173,7 @@
                 <input type="password" id="accessCode" placeholder="FREQUENCY CODE" oninput="clearError()">
                 <input type="text" id="walletAddr" placeholder="WALLET ADDRESS (0x...)" oninput="clearError()">
             </div>
-            
             <div id="errorMsg" class="error-msg">Incorrect Frequency Code.</div>
-            
             <button class="submit-btn" onclick="requestEntry()">Request Entry</button>
             <a href="https://opensea.io/" target="_blank" class="buy-ticket">Decide Your Future</a>
         </div>
@@ -167,11 +189,11 @@
 
         <div id="welcomeView" class="status-overlay">
             <div class="status-title" id="welcomeTitle">Welcome, Guardian</div>
-            <div class="status-desc">
-                You have been chosen.<br>
-                Proceed to the Sanctum.
+            <div class="status-desc" id="welcomeDesc">
+                You stand before the Gate of Gnosis.<br>
+                Will you embrace the immutable essence?
             </div>
-            <button class="enter-btn" onclick="enterSanctum()">ENTER SANCTUM</button>
+            <button class="enter-btn" onclick="enterSanctum()">YES, I AM READY</button>
         </div>
 
         <div id="rejectedView" class="status-overlay">
@@ -181,6 +203,12 @@
                 Return to the Infrastructure.
             </div>
         </div>
+    </div>
+
+    <div class="timer-box" id="timeCapsule">
+        <div class="timer-title">THE DAY</div>
+        <div class="timer-days" id="d-days">0000 DAYS</div>
+        <div class="timer-hms" id="d-hms">00:00:00</div>
     </div>
 
     <footer>© 2030 THE CHOSEN OFFICIAL</footer>
@@ -201,7 +229,33 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 암호화
+        // --- 2030 타이머 로직 ---
+        function updateGlobalTimer() {
+            const targetDate = new Date("Jan 1, 2030 00:00:00").getTime();
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference < 0) {
+                document.getElementById("d-days").innerText = "THE TIME HAS COME";
+                document.getElementById("d-hms").innerText = "";
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById("d-days").innerText = String(days).padStart(4, '0') + " DAYS";
+            document.getElementById("d-hms").innerText = 
+                String(hours).padStart(2, '0') + ":" + 
+                String(minutes).padStart(2, '0') + ":" + 
+                String(seconds).padStart(2, '0');
+        }
+        setInterval(updateGlobalTimer, 1000);
+        updateGlobalTimer();
+        // -----------------------
+
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -246,32 +300,30 @@
                     return;
                 }
 
-                // 2. 지갑 주소 상태 확인
+                // 2. 지갑 확인
                 const userDocRef = doc(db, "oracle_requests", walletInput);
                 const userSnap = await getDoc(userDocRef);
 
                 if (!userSnap.exists()) {
-                    // [최초] 상태: 'pending_entry' (입장 대기)
+                    // 신규 -> 대기
                     await setDoc(userDocRef, {
                         wallet_address: walletInput,
-                        status: 'pending_entry', 
+                        status: 'pending_entry',
                         entry_requested_at: new Date().toISOString(),
                         guardian_id: null
                     });
                     showPendingScreen(new Date());
                 } else {
-                    // [기존] 상태 확인
+                    // 기존
                     const data = userSnap.data();
                     
                     if (data.status === 'pending_entry') {
-                        // 아직 승인 안 됨 -> 대기 화면
                         showPendingScreen(new Date(data.entry_requested_at));
                     } else if (data.status === 'rejected') {
-                        // 거절됨
                         document.getElementById('loginForm').style.display = 'none';
                         document.getElementById('rejectedView').style.display = 'flex';
                     } else {
-                        // 그 외 (entry_approved, oracle_submitted 등) -> 입장 허용
+                        // 승인됨 (entry_approved 이상)
                         showWelcomeScreen(data);
                     }
                 }
@@ -291,7 +343,7 @@
             document.getElementById('pendingView').style.display = 'flex';
 
             const requestMs = requestTime.getTime();
-            const waitTime = 48 * 60 * 60 * 1000; // 48시간
+            const waitTime = 48 * 60 * 60 * 1000; 
             
             const updateTimer = () => {
                 const now = new Date().getTime();
@@ -319,7 +371,15 @@
             const no = data.guardian_id ? String(data.guardian_id).padStart(4, '0') : "????";
             document.getElementById('welcomeTitle').innerText = `Welcome, Guardian No. ${no}`;
             
-            // 로컬 저장 (성소에서 사용)
+            const descEl = document.getElementById('welcomeDesc');
+            if (!data.sovereign_task) {
+                descEl.innerHTML = `You stand before the Gate of Gnosis.<br>Will you embrace the immutable essence?`;
+            } else if (!data.oracle_message) {
+                descEl.innerHTML = `The Gnosis is silent.<br>Wait for the descent within 7 days.`;
+            } else {
+                descEl.innerHTML = `The Gnosis has descended.<br>Check the Oracle and claim the Eye.`;
+            }
+
             localStorage.setItem('my_guardian_id', data.guardian_id);
             localStorage.setItem('my_wallet_id', document.getElementById('walletAddr').value);
         }
@@ -327,6 +387,7 @@
         window.enterSanctum = function() {
             localStorage.setItem('chosen_access', 'granted');
             document.getElementById('loginContainer').classList.add('smoke-out');
+            document.getElementById('timeCapsule').classList.add('smoke-out'); // 타이머도 같이 사라짐
             setTimeout(() => {
                 window.location.href = "inner-sanctum.html";
             }, 1500);

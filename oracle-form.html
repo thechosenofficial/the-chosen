@@ -34,7 +34,9 @@
         .field-group { margin-bottom: 20px; text-align: left; }
         label { display: block; margin-bottom: 8px; color: var(--silver-mid); }
         input, textarea, select { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: #fff; font-family: 'Pirata One'; font-size: 18px; outline: none; box-sizing: border-box; }
-        .submit-btn { background: var(--silver-mid); color: #000; border: none; border-radius: 30px; padding: 15px; font-size: 22px; width: 100%; cursor: pointer; font-family: 'Pirata One'; margin-top: 20px; }
+        
+        .submit-btn { background: var(--silver-mid); color: #000; border: none; border-radius: 30px; padding: 15px; font-size: 22px; width: 100%; cursor: pointer; font-family: 'Pirata One'; margin-top: 20px; transition: 0.3s; }
+        .submit-btn:hover { background: var(--silver-light); transform: translateY(-2px); }
         
         .status-section { display: none; text-align: center; border: 1px solid var(--border); padding: 30px 20px; border-radius: 20px; background: var(--card-bg); animation: fadeIn 1s; margin-bottom: 30px; }
         .prophecy-text { font-size: 20px; color: #fff; white-space: pre-wrap; line-height: 1.6; margin: 20px 0; border-left: 3px solid var(--silver-mid); padding-left: 15px; text-align: left; }
@@ -76,9 +78,10 @@
                         <select id="birthDay" required><option value="" disabled selected>Day</option></select>
                     </div>
                 </div>
-                <div class="field-group"><label>Time of Birth</label><select id="birthTime" required><option value="unknown">Unknown</option><option value="known">Specific Time (Select later)</option></select></div> <div class="field-group"><label>Nationality</label><input type="text" id="nationality" required></div>
+                <div class="field-group"><label>Time of Birth</label><select id="birthTime" required><option value="unknown">Unknown</option><option value="known">Specific Time (Select later)</option></select></div> 
+                <div class="field-group"><label>Nationality</label><input type="text" id="nationality" placeholder="e.g. South Korea" required></div>
                 
-                <div class="field-group"><label>Sovereign Task (Your Burden)</label><textarea id="sovereignTask" style="height:120px;" required></textarea></div>
+                <div class="field-group"><label>Sovereign Task (Your Burden)</label><textarea id="sovereignTask" placeholder="Describe the burden you carry..." style="height:120px;" required></textarea></div>
                 
                 <div class="field-group"><label>Physical Address</label><input type="text" id="addr_full" placeholder="Full Address with ZipCode" required></div>
                 <div class="field-group"><label>Phone</label><input type="tel" id="phoneNumber" placeholder="+82 10-1234-5678" required></div>
@@ -138,7 +141,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        if (localStorage.getItem('chosen_access') !== 'granted') window.location.replace("index.html");
+        // 로그인 안 되어 있으면 내보냄
+        if (localStorage.getItem('chosen_access') !== 'granted') {
+            alert("Unauthorized Access.");
+            window.location.replace("index.html");
+        }
 
         window.onload = function() {
             const gid = localStorage.getItem('my_guardian_id') || "????";
@@ -159,11 +166,11 @@
                 if(docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // 1. 아직 오라클 제출 안함
+                    // 1. 아직 오라클 제출 안함 (Task Form)
                     if(!data.sovereign_task) {
                         document.getElementById('formSection').style.display = 'block';
                     } 
-                    // 2. 제출함, 신탁 대기중
+                    // 2. 제출함, 신탁 대기중 (Waiting)
                     else if(data.status === 'oracle_submitted') {
                         document.getElementById('formSection').style.display = 'none';
                         document.getElementById('waitingSection').style.display = 'block';
@@ -174,16 +181,15 @@
                         document.getElementById('formSection').style.display = 'none';
                         document.getElementById('waitingSection').style.display = 'none';
                         
-                        // 비전(타임캡슐)이 아직 없으면 -> 비전 작성창 보여줌
+                        // 비전(타임캡슐)이 아직 없으면 -> 신탁 보여주고 비전 작성창 (Prophecy & Vision)
                         if(!data.vision_2030) {
                             document.getElementById('prophecySection').style.display = 'block';
                             document.getElementById('oracleContent').innerText = data.oracle_message;
                         } 
-                        // 비전까지 다 씀 -> 최종 화면
+                        // 비전까지 다 씀 -> 최종 화면 (Final)
                         else {
-                            document.getElementById('prophecySection').style.display = 'none'; // 혹은 신탁을 계속 보여주고 싶으면 block 유지
+                            document.getElementById('prophecySection').style.display = 'none'; 
                             document.getElementById('finalSection').style.display = 'block';
-                            // 최종 화면에서도 신탁을 다시 보고 싶다면 여기에 추가 가능
                             document.getElementById('updateAddressInput').value = data.address;
                         }
                     }
@@ -195,7 +201,7 @@
             if(!confirm("Submit your Sovereign Task? This cannot be undone.")) return;
             const wallet = localStorage.getItem('my_wallet_id');
             
-            // 데이터 수집 (간소화)
+            // 생년월일 조합
             const birth = { 
                 year: document.getElementById('birthYear').value, 
                 month: document.getElementById('birthMonth').value, 
@@ -204,19 +210,21 @@
             
             await updateDoc(doc(db, "oracle_requests", wallet), {
                 birth_date: birth,
+                birth_time: document.getElementById('birthTime').value,
                 nationality: document.getElementById('nationality').value,
                 sovereign_task: document.getElementById('sovereignTask').value,
                 address: document.getElementById('addr_full').value,
                 phone: document.getElementById('phoneNumber').value,
-                status: 'oracle_submitted',
+                status: 'oracle_submitted', // 매니저에게 신탁 요청 상태로 변경
                 submitted_at: new Date().toISOString()
             });
-            alert("Oracle Requested.");
+            alert("Oracle Requested. Your frequency is sent.");
         };
 
         window.submitVision = async function() {
             const vision = document.getElementById('visionInput').value;
             const regex = /^[A-Za-z0-9\s.,!?'"()-]*$/;
+            
             if(!vision) return alert("Write your vision.");
             if(!regex.test(vision)) return alert("English Only.");
             
@@ -244,9 +252,9 @@
             const y = document.getElementById('birthYear');
             const m = document.getElementById('birthMonth');
             const d = document.getElementById('birthDay');
-            for(let i=2026; i>=1900; i--) { let o=document.createElement('option'); o.text=i; y.add(o); }
-            for(let i=1; i<=12; i++) { let o=document.createElement('option'); o.text=i; m.add(o); }
-            for(let i=1; i<=31; i++) { let o=document.createElement('option'); o.text=i; d.add(o); }
+            for(let i=2026; i>=1900; i--) { let o=document.createElement('option'); o.text=i; o.value=i; y.add(o); }
+            for(let i=1; i<=12; i++) { let o=document.createElement('option'); o.text=i; o.value=i; m.add(o); }
+            for(let i=1; i<=31; i++) { let o=document.createElement('option'); o.text=i; o.value=i; d.add(o); }
         }
     </script>
 </body>

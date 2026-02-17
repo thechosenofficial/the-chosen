@@ -28,6 +28,7 @@
             position: relative;
         }
 
+        /* 배경: 진리의 문 (은은하게 보이도록 설정) */
         #bg-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
@@ -102,6 +103,7 @@
         }
         .buy-ticket:hover { opacity: 1; color: var(--silver-mid); }
 
+        /* 타이머 스타일 */
         .timer-box {
             margin-top: 20px; 
             text-align: center;
@@ -122,6 +124,7 @@
             font-size: 18px; color: var(--silver-dark); letter-spacing: 2px; margin-top: 2px;
         }
 
+        /* 상태 화면들 */
         .status-overlay {
             display: none; flex-direction: column; align-items: center; gap: 20px;
             width: 100%; text-align: center; animation: fadeIn 1s;
@@ -166,7 +169,7 @@
         
         <div id="loginForm">
             <div class="form-group">
-                <input type="text" id="accessCode" placeholder="FREQUENCY CODE" oninput="clearError()">
+                <input type="password" id="accessCode" placeholder="FREQUENCY CODE" oninput="clearError()">
                 <input type="text" id="walletAddr" placeholder="WALLET ADDRESS (0x...)" oninput="clearError()">
             </div>
             <div id="errorMsg" class="error-msg">Incorrect Frequency Code.</div>
@@ -225,7 +228,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- 2030 타이머 ---
+        // --- 2030 타이머 로직 ---
         function updateGlobalTimer() {
             const targetDate = new Date("Jan 1, 2030 00:00:00").getTime();
             const now = new Date().getTime();
@@ -251,6 +254,7 @@
         setInterval(updateGlobalTimer, 1000);
         updateGlobalTimer();
 
+        // 암호화 함수
         async function digestMessage(message) {
             const msgUint8 = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -261,6 +265,7 @@
             document.getElementById('errorMsg').classList.remove('show');
         }
 
+        // 입장 요청 함수 (최종)
         window.requestEntry = async function() {
             const codeInput = document.getElementById('accessCode').value.trim().toUpperCase();
             const walletInput = document.getElementById('walletAddr').value.trim();
@@ -281,13 +286,8 @@
             btn.style.pointerEvents = "none";
 
             try {
-                // 1. 암호 해시 생성
+                // 1. 암호 검증
                 const codeHash = await digestMessage(codeInput);
-
-                // 🔥 [디버깅용 팝업] 생성된 해시값을 눈으로 확인하고 복사하세요!
-                prompt("이 값을 복사해서 DB 문서 ID로 쓰세요:", codeHash);
-
-                // 2. DB 확인
                 const codeRef = doc(db, "secret_codes", codeHash);
                 const codeSnap = await getDoc(codeRef);
 
@@ -300,33 +300,37 @@
                     return;
                 }
 
-                // 3. 지갑 확인
+                // 2. 지갑 확인 및 로직 처리
                 const userDocRef = doc(db, "oracle_requests", walletInput);
                 const userSnap = await getDoc(userDocRef);
 
                 if (!userSnap.exists()) {
+                    // 신규 유저 -> 대기 상태로 DB 생성
                     await setDoc(userDocRef, {
                         wallet_address: walletInput,
-                        status: 'pending_entry',
+                        status: 'pending_entry', 
                         entry_requested_at: new Date().toISOString(),
                         guardian_id: null
                     });
                     showPendingScreen(new Date());
                 } else {
+                    // 기존 유저 -> 상태별 화면 이동
                     const data = userSnap.data();
+                    
                     if (data.status === 'pending_entry') {
                         showPendingScreen(new Date(data.entry_requested_at));
                     } else if (data.status === 'rejected') {
                         document.getElementById('loginForm').style.display = 'none';
                         document.getElementById('rejectedView').style.display = 'flex';
                     } else {
+                        // entry_approved, oracle_submitted, oracle_granted 등
                         showWelcomeScreen(data);
                     }
                 }
 
             } catch (e) {
                 console.error(e);
-                errorEl.innerText = "Connection Error: " + e.message;
+                errorEl.innerText = "Connection Error.";
                 errorEl.classList.add('show');
                 btn.innerText = "Request Entry";
                 btn.style.opacity = "1";
@@ -339,7 +343,7 @@
             document.getElementById('pendingView').style.display = 'flex';
 
             const requestMs = requestTime.getTime();
-            const waitTime = 48 * 60 * 60 * 1000; 
+            const waitTime = 48 * 60 * 60 * 1000; // 48시간
             
             const updateTimer = () => {
                 const now = new Date().getTime();
